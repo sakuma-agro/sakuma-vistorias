@@ -441,6 +441,13 @@ dialog.ficha-dlg{max-width:760px}
 .an-normas label{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-family:var(--mono);text-transform:none;letter-spacing:0;font-weight:400;color:var(--texto);border:1px solid var(--linha);border-radius:20px;padding:4px 10px;cursor:pointer}
 .an-normas label:has(input:checked){border-color:var(--verde);background:var(--verde-claro);color:var(--verde-esc)}
 .an-normas input{margin:0}
+
+/* lista de cargos de quem aprova, na aba Configurações */
+.cfg-lista-cargos{display:flex;flex-wrap:wrap;gap:8px}
+.cargo-chip{display:inline-flex;align-items:center;gap:7px;background:var(--superficie-2);border:1px solid var(--linha);border-radius:20px;padding:5px 6px 5px 12px;font-size:13px}
+.cargo-chip .x{border:0;background:none;color:var(--texto-fraco);font-size:15px;line-height:1;cursor:pointer;padding:2px 5px;border-radius:50%}
+.cargo-chip .x:hover{background:var(--critico-bg);color:var(--critico)}
+#cfg-cargo-novo{flex:1;min-width:200px;max-width:320px}
 </style>
 </head>
 <body>
@@ -517,8 +524,8 @@ dialog.ficha-dlg{max-width:760px}
             </select>
           </div>
           <div class="campo"><label for="f-aprovador">Aprovado por</label><input type="text" id="f-aprovador" data-cab="aprovador" placeholder="Nome de quem aprova"></div>
-          <div class="campo"><label for="f-aprovador-cargo">Cargo de quem aprova</label><input type="text" id="f-aprovador-cargo" data-cab="aprovadorCargo" value="Gerente Administrativo"></div>
-          <div class="campo"><label for="f-codigo">Código do documento</label><input type="text" id="f-codigo" data-cab="codigo" value="VIST-001"></div>
+          <div class="campo"><label for="f-aprovador-cargo">Cargo de quem aprova</label><select id="f-aprovador-cargo" data-cab="aprovadorCargo"></select></div>
+          <div class="campo"><label for="f-codigo">Código do documento</label><input type="text" id="f-codigo" data-cab="codigo" placeholder="automático ao salvar"></div>
         </div>
       </div>
     </div>
@@ -566,6 +573,7 @@ dialog.ficha-dlg{max-width:760px}
   <section class="painel" id="painel-relatorio" role="tabpanel" aria-labelledby="t-relatorio" hidden>
     <div class="barra-doc">
       <button class="bt bt-forte" type="button" id="bt-pdf-2">Imprimir / Salvar em PDF</button>
+      <button class="bt" type="button" id="bt-exportar" title="Gera um arquivo do relatório para enviar ou guardar — funciona sem internet">Exportar</button>
       <span class="aviso">No Chrome: Imprimir → Destino “Salvar como PDF” → Margens padrão.</span>
     </div>
     <article class="doc" id="doc"></article>
@@ -593,6 +601,16 @@ dialog.ficha-dlg{max-width:760px}
         <span>dias ou menos para o vencimento.</span>
       </div>
       <div class="cfg-previa" id="cfg-previa"></div>
+    </div>
+
+    <div class="cfg-secao" id="sec-cargos">
+      <h3>Cargos de quem aprova <span class="cfg-trava" id="trava-cargos" hidden>somente administradores</span></h3>
+      <p>Os cargos que aparecem na lista do campo <b>Cargo de quem aprova</b>, no cabeçalho da vistoria. Valem para toda a equipe.</p>
+      <div class="cfg-lista-cargos" id="cfg-cargos"></div>
+      <div class="cfg-atencao" style="margin-top:12px">
+        <input type="text" id="cfg-cargo-novo" placeholder="Ex.: Gerente Administrativo" maxlength="60">
+        <button class="bt" type="button" id="cfg-cargo-add">Adicionar cargo</button>
+      </div>
     </div>
 
     <div class="cfg-secao">
@@ -1023,7 +1041,7 @@ const GRAUS = {
 
 /* ══════════════════════════ estado ══════════════════════════ */
 const CHAVE="sakuma-vistoria-v1";
-let estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"",aprovadorCargo:"Gerente Administrativo",codigo:"VIST-001"},id:null,salvoEm:null,itens:[]};
+let estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"",aprovadorCargo:"",codigo:""},id:null,salvoEm:null,itens:[]};
 let proximoId=1;
 
 const $=s=>document.querySelector(s);
@@ -1292,7 +1310,7 @@ function renderDoc(){
     <div class="doc-cab">${cabLogo}</div>
     <div class="doc-titulo">
       <h1>Relatório de Vistoria de Conformidade</h1>
-      <div class="dir"><b>${esc(c.codigo)||"VIST-001"}</b> · ${dataBR(c.data)}<br>${esc(c.motivo)||""}</div>
+      <div class="dir"><b>${esc(c.codigo)||"(sem número)"}</b> · ${dataBR(c.data)}<br>${esc(c.motivo)||""}</div>
     </div>
     <div class="linha-fina">${esc(c.unidade)||"Unidade não informada"}${c.setor?" · "+esc(c.setor):""}</div>
 
@@ -1324,7 +1342,7 @@ function renderDoc(){
       <div><span>Aprovado</span><b>${esc(c.aprovador)||"—"}</b><br>${esc(c.aprovadorCargo)||""}</div>
       <div style="text-align:right"><span>Feito por</span><b>${esc(c.tecnico)||"—"}</b><br>${esc(c.cargo)||""}</div>
     </div>
-    <div class="doc-cod">${esc(c.codigo)||"VIST-001"} · Relatório de Vistoria · SAKUMA Agronegócios</div>`;
+    <div class="doc-cod">${esc(c.codigo)||"(sem número)"} · Relatório de Vistoria · SAKUMA Agronegócios</div>`;
 }
 
 /* ══════════════════════════ eventos ══════════════════════════ */
@@ -1476,7 +1494,7 @@ $("#bt-pdf").onclick=imprimir;
 $("#bt-pdf-2").onclick=imprimir;
 $("#bt-limpar").onclick=()=>{
   if(!estado.itens.length&&!estado.cab.unidade){toast("Não há nada para limpar.");return;}
-  estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"",aprovadorCargo:"Gerente Administrativo",codigo:"VIST-001"},id:uuid(),salvoEm:null,itens:[]};
+  estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"",aprovadorCargo:"",codigo:""},id:uuid(),salvoEm:null,itens:[]};
   proximoId=1;
   try{localStorage.removeItem(CHAVE);}catch(e){}
   preencherCabecalho();render();salvar();toast("Vistoria limpa.");
@@ -1629,7 +1647,8 @@ async function urlDaFoto(caminho){
 const REGRAS_PADRAO={
   dias:{"Crítico":1,"Alto":7,"Médio":30,"Baixo":90},
   atencao:3,
-  anomalias:{}      // chave da anomalia -> { grau?, dias? }
+  anomalias:{},     // chave da anomalia -> { grau?, dias? }
+  cargos:["Gerente Administrativo","Diretor","Coordenador","Encarregado","Responsável Técnico"]
 };
 const K_REGRAS="sakuma-regras", K_BIBLIO="sakuma-biblioteca", K_ADMINS="sakuma-admins";
 let regras=JSON.parse(JSON.stringify(REGRAS_PADRAO));
@@ -1678,6 +1697,28 @@ function aplicarRegras(){
     GRAUS[g].dias=Number.isFinite(regras.dias[g])?regras.dias[g]:GRAUS[g].dias;
     GRAUS[g].prazo=rotuloPrazo(GRAUS[g].dias);
   });
+  preencherCargos();
+}
+
+/* ───────────── cargos de quem aprova ─────────────
+   A lista mora nas regras, então é a mesma para toda a equipe. O campo começa
+   vazio de propósito: quem aprova muda de vistoria para vistoria. */
+function listaCargos(){
+  const c=Array.isArray(regras.cargos)?regras.cargos:REGRAS_PADRAO.cargos;
+  return c.map(x=>String(x||"").trim()).filter(Boolean);
+}
+
+function preencherCargos(){
+  const sel=$("#f-aprovador-cargo");
+  if(!sel)return;
+  const atual=estado.cab.aprovadorCargo||"";
+  const opcoes=listaCargos();
+  /* um cargo gravado numa vistoria antiga continua aparecendo mesmo que a
+     equipe já tenha tirado ele da lista — senão o campo mentiria */
+  if(atual&&opcoes.indexOf(atual)<0)opcoes.push(atual);
+  sel.innerHTML='<option value="">— escolher —</option>'+
+    opcoes.map(c=>`<option value="${esc(c)}"${c===atual?" selected":""}>${esc(c)}</option>`).join("");
+  sel.value=atual;
 }
 
 function calcularPrazoData(dataVistoria,grau,chave){
@@ -1728,6 +1769,98 @@ function miniatura(dataUrl){
   });
 }
 
+/* ══════════════════════════ exportar a vistoria ══════════════════════════
+   Sem internet, "Salvar" não sobe nada. Exportar resolve isso: gera um arquivo
+   HTML fechado em si mesmo — relatório completo, fotos embutidas, abre em
+   qualquer navegador sem app e sem rede. No celular vai direto para o
+   WhatsApp ou o e-mail pelo compartilhamento do sistema. */
+
+function nomeDoArquivo(){
+  const c=estado.cab;
+  const pedaco=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")   .replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,28);
+  const partes=[pedaco(c.codigo)||"vistoria",pedaco(c.unidade),(c.data||"").slice(0,10)];
+  return partes.filter(Boolean).join("_")+".html";
+}
+
+function montarArquivo(){
+  renderDoc();
+  const estilo=Array.from(document.querySelectorAll("style")).map(s=>s.textContent).join("\n");
+  const c=estado.cab;
+  const titulo=`${c.codigo||"Vistoria"} — ${c.unidade||"SAKUMA"}`;
+  /* Os dados crus vão junto, num bloco que o navegador ignora. Serve de
+     comprovante do que foi registrado e permite reimportar mais adiante. */
+  const dados=JSON.stringify({versao:1,exportadoEm:new Date().toISOString(),cab:c,itens:estado.itens})
+    .replace(/</g,"\\u003c");
+  return `<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(titulo)}</title>
+<style>${estilo}
+body{background:#fff;padding:0;margin:0}
+.doc{max-width:820px;margin:0 auto;padding:28px 22px}
+.aviso-exp{max-width:820px;margin:16px auto 0;padding:10px 14px;border:1px solid var(--linha,#DDD);border-radius:10px;font:13px/1.5 system-ui,sans-serif;color:#6b6f63}
+@media print{.aviso-exp{display:none}}
+</style>
+</head>
+<body>
+<div class="aviso-exp">Relatório exportado do app SAKUMA Vistorias &amp; Segurança em ${new Date().toLocaleString("pt-BR")}. Para gerar o PDF, use Imprimir do navegador.</div>
+<div class="doc">${$("#doc").innerHTML}</div>
+<script type="application/json" id="sakuma-dados">${dados}<\/script>
+</body>
+</html>`;
+}
+
+async function exportarVistoria(){
+  if(!estado.itens.length){toast("Adicione ao menos uma não conformidade antes de exportar.");return;}
+  const bt=$("#bt-exportar");
+  bt.disabled=true;const rotulo=bt.textContent;bt.textContent="Gerando…";
+  try{
+    const html=montarArquivo();
+    const nome=nomeDoArquivo();
+    const arquivo=new File([html],nome,{type:"text/html"});
+    /* no celular o compartilhamento do sistema é o caminho natural */
+    if(navigator.canShare&&navigator.canShare({files:[arquivo]})){
+      try{
+        await navigator.share({files:[arquivo],title:nome});
+        toast("Relatório enviado.");
+        return;
+      }catch(e){
+        if(e&&e.name==="AbortError")return;   /* a pessoa cancelou: não é erro */
+      }
+    }
+    const url=URL.createObjectURL(new Blob([html],{type:"text/html"}));
+    const a=document.createElement("a");
+    a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    toast("Arquivo gerado: "+nome);
+  }catch(e){
+    toast("Não deu para exportar: "+String(e.message).slice(0,90));
+  }finally{
+    bt.disabled=false;bt.textContent=rotulo;
+  }
+}
+$("#bt-exportar").onclick=exportarVistoria;
+
+/* ─────────────── número da vistoria ───────────────
+   Sequência contínua VIST-001, VIST-002… lida da base no momento de salvar.
+   Códigos digitados à mão que não seguem o padrão são simplesmente ignorados
+   na contagem, então numeração antiga e manual convivem sem estragar nada. */
+async function codigoDaBase(){
+  try{
+    const d=await rest("vistorias?select=codigo&limit=2000");
+    let maior=0;
+    (d||[]).forEach(v=>{
+      const m=/^VIST-(\d+)$/i.exec(String(v.codigo||"").trim());
+      if(m){const n=Number(m[1]);if(n>maior)maior=n;}
+    });
+    return "VIST-"+String(maior+1).padStart(3,"0");
+  }catch(e){
+    return "";   /* sem base agora: fica em branco e ganha número no próximo salvamento */
+  }
+}
+
 /* ══════════════════════════ salvar a vistoria ══════════════════════════ */
 async function salvarVistoria(){
   if(!estado.itens.length){toast("Adicione ao menos uma não conformidade antes de salvar.");return;}
@@ -1751,11 +1884,18 @@ async function salvarVistoria(){
 
   const bt=$("#bt-salvar");bt.disabled=true;bt.textContent="Salvando…";
   try{
+    /* Número da vistoria: quem manda é a base, e só na hora de salvar. Assim
+       dois técnicos preenchendo offline não brigam pelo mesmo código. Se o
+       campo já tem algo digitado, respeita — o número é sugestão, não trava. */
+    if(!String(estado.cab.codigo||"").trim()){
+      estado.cab.codigo=await codigoDaBase();
+      preencherCabecalho();
+    }
     const c=estado.cab;
     await rest("vistorias",{
       method:"POST",
       headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
-      body:JSON.stringify([{id:estado.id,codigo:c.codigo||"VIST-001",unidade:c.unidade,setor:c.setor,
+      body:JSON.stringify([{id:estado.id,codigo:c.codigo||"",unidade:c.unidade,setor:c.setor,
         data:c.data||null,tecnico:c.tecnico,cargo:c.cargo,motivo:c.motivo,
         aprovador:c.aprovador,aprovador_cargo:c.aprovadorCargo}])
     });
@@ -2135,17 +2275,11 @@ $("#lg-senha").addEventListener("keydown",ev=>{if(ev.key==="Enter")confirmarCont
 
 $("#bt-nova-vistoria").onclick=()=>{
   if(estado.itens.length&&!estado.salvoEm&&!confirm("A vistoria atual ainda não foi salva. Começar uma nova mesmo assim?"))return;
-  estado={cab:{...estado.cab,setor:"",codigo:proximoCodigo(estado.cab.codigo),data:new Date().toISOString().slice(0,10)},
+  estado={cab:{...estado.cab,setor:"",codigo:"",data:new Date().toISOString().slice(0,10)},
           id:uuid(),salvoEm:null,itens:[]};
   proximoId=1;preencherCabecalho();render();salvar();
   aba("vistoria");toast("Nova vistoria começada.");
 };
-
-function proximoCodigo(atual){
-  const m=String(atual||"VIST-001").match(/^(.*?)(\d+)$/);
-  if(!m)return atual;
-  return m[1]+String(Number(m[2])+1).padStart(m[2].length,"0");
-}
 
 /* cliques da aba Em aberto */
 $("#lista-aberto").addEventListener("click",ev=>{
@@ -2289,6 +2423,7 @@ $("#bt-sair").onclick=()=>{
 };
 
 /* quem já entrou neste aparelho entra direto, com ou sem sinal */
+preencherCargos();
 if(sessao&&sessao.token){ abrirApp(); } else { mostrarPortao(); }
 
 
@@ -2311,6 +2446,7 @@ function renderConfig(){
   }).join("");
 
   $("#cfg-atencao").value=Number.isFinite(regras.atencao)?regras.atencao:3;
+  renderCargos();
 
   const hoje=new Date();
   const exemplo=d=>{const x=new Date(hoje);x.setDate(x.getDate()+d);return x.toISOString().slice(0,10);};
@@ -2667,6 +2803,46 @@ $("#ad-corpo").addEventListener("click",async ev=>{
   }catch(e){ toast("A base recusou: "+String(e.message).slice(0,110)); }
 });
 
+/* ─────────────── lista de cargos na aba Configurações ─────────────── */
+function renderCargos(){
+  const alvo=$("#cfg-cargos");
+  if(!alvo)return;
+  const lista=listaCargos();
+  alvo.innerHTML=lista.length
+    ? lista.map((c,i)=>`<span class="cargo-chip">${esc(c)}<button type="button" class="x" data-cargo-fora="${i}" title="Tirar da lista">×</button></span>`).join("")
+    : `<span class="dica">Nenhum cargo na lista — o campo do cabeçalho fica vazio até você adicionar um.</span>`;
+}
+
+function addCargo(){
+  const campo=$("#cfg-cargo-novo");
+  const nome=(campo.value||"").trim();
+  if(!nome)return;
+  const lista=listaCargos();
+  if(lista.some(c=>c.toLowerCase()===nome.toLowerCase())){
+    toast("Esse cargo já está na lista.");campo.value="";return;
+  }
+  lista.push(nome);
+  regras.cargos=lista;
+  campo.value="";
+  renderCargos();preencherCargos();
+}
+
+const secCargos=$("#sec-cargos");
+if(secCargos){
+  $("#cfg-cargo-add").onclick=addCargo;
+  $("#cfg-cargo-novo").addEventListener("keydown",ev=>{
+    if(ev.key==="Enter"){ev.preventDefault();addCargo();}
+  });
+  secCargos.addEventListener("click",ev=>{
+    const b=ev.target.closest("[data-cargo-fora]");
+    if(!b)return;
+    const lista=listaCargos();
+    lista.splice(Number(b.dataset.cargoFora),1);
+    regras.cargos=lista;
+    renderCargos();preencherCargos();
+  });
+}
+
 /* ─────────────── trava visual para quem não é administrador ─────────────── */
 function aplicarTrava(){
   ["#sec-normas","#sec-anomalias","#sec-admins"].forEach(sel=>{
@@ -2678,6 +2854,7 @@ function aplicarTrava(){
   });
   $("#trava-normas").hidden=souAdmin;
   $("#trava-anomalias").hidden=souAdmin;
+  const tc=$("#trava-cargos"); if(tc)tc.hidden=souAdmin;
   $("#cfg-salvar").disabled=!souAdmin;
   $("#cfg-restaurar").disabled=!souAdmin;
 }
