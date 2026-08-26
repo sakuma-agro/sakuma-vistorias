@@ -216,7 +216,11 @@ grant select, update on public.configuracoes to authenticated;
 -- ───────────────────── 8. Visão de pendências ─────────────────────
 -- Alimenta a aba "Em aberto" com uma consulta só.
 
-create or replace view public.pendencias
+-- A visão é recriada do zero: o "create or replace" recusa mudar a ordem ou o
+-- nome das colunas de uma visão que já existe.
+drop view if exists public.pendencias;
+
+create view public.pendencias
 with (security_invoker = true) as
 select
   i.id, i.vistoria_id, i.ordem, i.chave, i.categoria,
