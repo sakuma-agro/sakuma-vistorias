@@ -1119,7 +1119,7 @@ function adicionar(){
 /* ══════════════════════════ render: formulário ══════════════════════════ */
 function opcoesAnomalia(sel){
   return CATEGORIAS.map(c=>{
-    const opts=Object.entries(ANOMALIAS).filter(([k,a])=>a.cat===c.id&&(k===sel||anomaliaVisivel(k)))
+    const opts=Object.entries(ANOMALIAS).filter(([k,a])=>a.cat===c.id&&(k===sel||!a.oculta))
       .map(([k,a])=>`<option value="${k}"${k===sel?" selected":""}>${esc(a.titulo)}</option>`).join("");
     return `<optgroup label="${esc(c.nome)}">${opts}</optgroup>`;
   }).join("");
