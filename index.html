@@ -516,7 +516,7 @@ dialog.ficha-dlg{max-width:760px}
               <option>Atendimento a ocorrência</option>
             </select>
           </div>
-          <div class="campo"><label for="f-aprovador">Aprovado por</label><input type="text" id="f-aprovador" data-cab="aprovador" value="Guilherme Lopes"></div>
+          <div class="campo"><label for="f-aprovador">Aprovado por</label><input type="text" id="f-aprovador" data-cab="aprovador" placeholder="Nome de quem aprova"></div>
           <div class="campo"><label for="f-aprovador-cargo">Cargo de quem aprova</label><input type="text" id="f-aprovador-cargo" data-cab="aprovadorCargo" value="Gerente Administrativo"></div>
           <div class="campo"><label for="f-codigo">Código do documento</label><input type="text" id="f-codigo" data-cab="codigo" value="VIST-001"></div>
         </div>
@@ -654,7 +654,7 @@ dialog.ficha-dlg{max-width:760px}
       </div>
       <div class="grade" style="padding:0;margin-top:12px">
         <div class="campo"><label for="ad-email">E-mail da conta</label><input type="text" id="ad-email" placeholder="nome@sakuma.com" autocapitalize="off" spellcheck="false"></div>
-        <div class="campo"><label for="ad-nome">Nome</label><input type="text" id="ad-nome" placeholder="Guilherme Lopes"></div>
+        <div class="campo"><label for="ad-nome">Nome</label><input type="text" id="ad-nome" placeholder="Nome da pessoa"></div>
       </div>
       <div class="rodape-item" style="margin-top:12px">
         <button class="bt" type="button" id="ad-add">Adicionar administrador</button>
@@ -1023,7 +1023,7 @@ const GRAUS = {
 
 /* ══════════════════════════ estado ══════════════════════════ */
 const CHAVE="sakuma-vistoria-v1";
-let estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"Guilherme Lopes",aprovadorCargo:"Gerente Administrativo",codigo:"VIST-001"},id:null,salvoEm:null,itens:[]};
+let estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"",aprovadorCargo:"Gerente Administrativo",codigo:"VIST-001"},id:null,salvoEm:null,itens:[]};
 let proximoId=1;
 
 const $=s=>document.querySelector(s);
@@ -1476,7 +1476,7 @@ $("#bt-pdf").onclick=imprimir;
 $("#bt-pdf-2").onclick=imprimir;
 $("#bt-limpar").onclick=()=>{
   if(!estado.itens.length&&!estado.cab.unidade){toast("Não há nada para limpar.");return;}
-  estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"Guilherme Lopes",aprovadorCargo:"Gerente Administrativo",codigo:"VIST-001"},id:uuid(),salvoEm:null,itens:[]};
+  estado={cab:{unidade:"",setor:"",data:"",tecnico:"",cargo:"Técnico de Segurança do Trabalho",motivo:"Vistoria de rotina",aprovador:"",aprovadorCargo:"Gerente Administrativo",codigo:"VIST-001"},id:uuid(),salvoEm:null,itens:[]};
   proximoId=1;
   try{localStorage.removeItem(CHAVE);}catch(e){}
   preencherCabecalho();render();salvar();toast("Vistoria limpa.");
