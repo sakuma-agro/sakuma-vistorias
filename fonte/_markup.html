@@ -1,0 +1,279 @@
+
+<section class="portao" id="portao">
+  <div class="portao-caixa">
+    <div class="portao-marca">
+      <img id="portao-logo" alt="SAKUMA Agronegócios">
+      <h1>Vistorias &amp; Segurança</h1>
+      <p>Entre com a conta que o administrador criou para você.</p>
+    </div>
+    <div class="portao-form">
+      <div class="campo"><label for="pt-email">E-mail</label>
+        <input type="text" id="pt-email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false"></div>
+      <div class="campo"><label for="pt-senha">Senha</label>
+        <input type="password" id="pt-senha" autocomplete="current-password"></div>
+      <div class="dlg-erro" id="pt-erro" hidden></div>
+      <button class="bt bt-forte" type="button" id="pt-entrar">Entrar</button>
+    </div>
+    <div class="portao-rodape">
+      <b>SAKUMA Agronegócios</b><br>
+      Não tem conta? Fale com o administrador do sistema.
+    </div>
+  </div>
+</section>
+
+<header class="topo">
+  <div class="marca">
+    <img id="logo-img" class="marca-logo" alt="SAKUMA Agronegócios">
+    <div class="marca-texto">
+      <strong>Vistorias &amp; Segurança</strong>
+      <span>SAKUMA Agronegócios</span>
+    </div>
+  </div>
+  <div class="abas" role="tablist">
+    <button class="aba" id="t-vistoria" role="tab" aria-selected="true" aria-controls="painel-vistoria">Vistoria <b class="n" id="cont-itens">0</b></button>
+    <button class="aba" id="t-aberto" role="tab" aria-selected="false" aria-controls="painel-aberto">Em aberto <b class="n" id="cont-aberto">0</b></button>
+    <button class="aba" id="t-relatorio" role="tab" aria-selected="false" aria-controls="painel-relatorio">Relatório</button>
+    <button class="aba" id="t-config" role="tab" aria-selected="false" aria-controls="painel-config">Configurações</button>
+  </div>
+  <div class="acoes">
+    <button class="conta off" id="bt-conta" type="button"><span class="bola">—</span><b>Entrar</b></button>
+    <button class="bt bt-fantasma" id="bt-instalar" type="button" hidden title="Instalar no aparelho">⤓ Instalar</button>
+    <button class="bt bt-fantasma" id="bt-tema" type="button" title="Alternar tema">◐</button>
+    <button class="bt" id="bt-salvar" type="button">Salvar vistoria</button>
+    <button class="bt bt-forte" id="bt-pdf" type="button">Imprimir / PDF</button>
+  </div>
+</header>
+
+<main class="palco">
+
+  <!-- ────────── painel vistoria ────────── -->
+  <section class="painel" id="painel-vistoria" role="tabpanel" aria-labelledby="t-vistoria">
+
+    <div class="secao">
+      <div class="secao-topo">
+        <span class="etapa">Etapa 1</span>
+        <h2>Dados da vistoria</h2>
+        <span class="dica">Preenchido uma vez, vale para todo o relatório.</span>
+      </div>
+      <div class="cartao">
+        <div class="grade" id="cabecalho">
+          <div class="campo"><label for="f-unidade">Unidade / propriedade</label><input type="text" id="f-unidade" data-cab="unidade" placeholder="Fazenda Morro Branco"></div>
+          <div class="campo"><label for="f-setor">Setor ou área</label><input type="text" id="f-setor" data-cab="setor" placeholder="Galpão de insumos"></div>
+          <div class="campo"><label for="f-data">Data da vistoria</label><input type="date" id="f-data" data-cab="data"></div>
+          <div class="campo"><label for="f-tecnico">Técnico responsável</label><input type="text" id="f-tecnico" data-cab="tecnico" placeholder="Nome de quem vistoriou"></div>
+          <div class="campo"><label for="f-cargo">Cargo do técnico</label><input type="text" id="f-cargo" data-cab="cargo" placeholder="Técnico de Segurança do Trabalho"></div>
+          <div class="campo"><label for="f-motivo">Motivo</label>
+            <select id="f-motivo" data-cab="motivo">
+              <option>Vistoria de rotina</option>
+              <option>Preparação para auditoria</option>
+              <option>Recheque de apontamentos anteriores</option>
+              <option>Atendimento a ocorrência</option>
+            </select>
+          </div>
+          <div class="campo"><label for="f-aprovador">Aprovado por</label><input type="text" id="f-aprovador" data-cab="aprovador" placeholder="Nome de quem aprova"></div>
+          <div class="campo"><label for="f-aprovador-cargo">Cargo de quem aprova</label><select id="f-aprovador-cargo" data-cab="aprovadorCargo"></select></div>
+          <div class="campo"><label for="f-codigo">Código do documento</label><input type="text" id="f-codigo" data-cab="codigo" placeholder="automático ao salvar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao-topo">
+        <span class="etapa">Etapa 2</span>
+        <h2>Não conformidades</h2>
+        <span class="dica">Escolha a anomalia — norma, risco, ação e prazo vêm preenchidos e podem ser editados.</span>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="itens" id="itens"></div>
+      <div class="vazio" id="vazio">
+        <p>Nenhuma não conformidade registrada ainda.</p>
+        <button class="bt bt-forte" type="button" data-novo>＋ Adicionar não conformidade</button>
+      </div>
+      <div class="rodape-item" style="margin-top:12px" id="rodape-add" hidden>
+        <button class="bt bt-fantasma" type="button" id="bt-nova-vistoria">Começar nova vistoria</button>
+        <button class="bt bt-forte" type="button" data-novo>＋ Adicionar não conformidade</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────── painel em aberto ────────── -->
+  <section class="painel" id="painel-aberto" role="tabpanel" aria-labelledby="t-aberto" hidden>
+    <div class="secao-topo">
+      <h2>Pendências em aberto</h2>
+      <span class="dica" id="fonte-dados">Apontamentos ainda não encerrados, de todas as vistorias salvas.</span>
+    </div>
+
+    <div class="kpis" id="kpis-aberto"></div>
+
+    <div class="filtros">
+      <div class="campo"><label for="fl-busca">Buscar</label><input type="text" id="fl-busca" placeholder="Título, ação, responsável, local"></div>
+      <div class="campo"><label for="fl-unidade">Unidade</label><select id="fl-unidade"><option value="">Todas</option></select></div>
+      <div class="campo"><label for="fl-grau">Grau</label><select id="fl-grau"><option value="">Todos</option><option>Crítico</option><option>Alto</option><option>Médio</option><option>Baixo</option></select></div>
+      <div class="campo"><label for="fl-status">Situação</label><select id="fl-status"><option value="abertos">Em aberto</option><option value="Aberto">Aberto</option><option value="Em andamento">Em andamento</option><option value="Concluído">Concluído</option><option value="">Tudo</option></select></div>
+      <button class="bt" type="button" id="bt-recarregar">Recarregar</button>
+    </div>
+
+    <div id="lista-aberto"></div>
+  </section>
+
+  <!-- ────────── painel relatório ────────── -->
+  <section class="painel" id="painel-relatorio" role="tabpanel" aria-labelledby="t-relatorio" hidden>
+    <div class="barra-doc">
+      <button class="bt bt-forte" type="button" id="bt-pdf-2">Imprimir / Salvar em PDF</button>
+      <button class="bt" type="button" id="bt-exportar" title="Gera um arquivo do relatório para enviar ou guardar — funciona sem internet">Exportar</button>
+      <span class="aviso">No Chrome: Imprimir → Destino “Salvar como PDF” → Margens padrão.</span>
+    </div>
+    <article class="doc" id="doc"></article>
+  </section>
+
+  <!-- ────────── painel configurações ────────── -->
+  <section class="painel" id="painel-config" role="tabpanel" aria-labelledby="t-config" hidden>
+    <div class="secao-topo">
+      <h2>Regras de prazo</h2>
+      <span class="dica" id="cfg-origem">Valem para toda a equipe.</span>
+    </div>
+
+    <div class="cfg-secao">
+      <h3>Prazo por grau de risco</h3>
+      <p>Quantos dias cada grau tem para ser resolvido, contados a partir da data da vistoria. É esse número que define quando o apontamento aparece como vencido na aba Em aberto.</p>
+      <div class="cfg-graus" id="cfg-graus"></div>
+    </div>
+
+    <div class="cfg-secao">
+      <h3>Aviso de atenção</h3>
+      <p>Quantos dias antes do vencimento o apontamento passa a ser sinalizado como “vence em breve”, em laranja — o aviso para agir antes de estourar o prazo.</p>
+      <div class="cfg-atencao">
+        <span>Avisar quando faltarem</span>
+        <input type="number" id="cfg-atencao" min="0" max="60" step="1">
+        <span>dias ou menos para o vencimento.</span>
+      </div>
+      <div class="cfg-previa" id="cfg-previa"></div>
+    </div>
+
+    <div class="cfg-secao" id="sec-cargos">
+      <h3>Cargos de quem aprova <span class="cfg-trava" id="trava-cargos" hidden>somente administradores</span></h3>
+      <p>Os cargos que aparecem na lista do campo <b>Cargo de quem aprova</b>, no cabeçalho da vistoria. Valem para toda a equipe.</p>
+      <div class="cfg-lista-cargos" id="cfg-cargos"></div>
+      <div class="cfg-atencao" style="margin-top:12px">
+        <input type="text" id="cfg-cargo-novo" placeholder="Ex.: Gerente Administrativo" maxlength="60">
+        <button class="bt" type="button" id="cfg-cargo-add">Adicionar cargo</button>
+      </div>
+    </div>
+
+    <div class="cfg-secao">
+      <h3>Prazo específico por anomalia</h3>
+      <p>Por padrão cada anomalia usa o prazo do grau dela. Aqui você muda o grau ou fixa um prazo próprio para uma anomalia específica — útil quando um item da sua realidade é mais urgente do que a regra geral sugere. Deixe o prazo em branco para seguir o grau.</p>
+      <div class="campo" style="max-width:340px;margin-bottom:12px">
+        <label for="cfg-busca">Buscar anomalia</label>
+        <input type="text" id="cfg-busca" placeholder="extintor, agrotóxico, quadro elétrico…">
+      </div>
+      <div class="cfg-tabela-env">
+        <table class="cfg-anomalias">
+          <thead><tr><th>Anomalia</th><th style="width:130px">Grau</th><th style="width:150px">Prazo próprio</th></tr></thead>
+          <tbody id="cfg-corpo"></tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="cfg-secao" id="sec-normas">
+      <h3>Biblioteca de normas <span class="cfg-trava" id="trava-normas" hidden>somente administradores</span></h3>
+      <p>As normas que o app cita em cada apontamento. As que vêm de fábrica podem ser corrigidas, e você pode criar as suas. Deixe <b>confirmar item</b> marcado enquanto o número do dispositivo não tiver sido conferido em fonte oficial — é isso que faz o selo aparecer no relatório.</p>
+      <div class="campo" style="max-width:340px;margin-bottom:12px">
+        <label for="nm-busca">Buscar norma</label>
+        <input type="text" id="nm-busca" placeholder="NBR 12693, NR-31, GLOBALG.A.P…">
+      </div>
+      <div class="cfg-tabela-env">
+        <table class="cfg-anomalias" id="tab-normas">
+          <thead><tr><th style="width:190px">Referência</th><th style="width:90px">Item</th><th>Exigência</th><th style="width:96px">Confirmar</th><th style="width:44px"></th></tr></thead>
+          <tbody id="nm-corpo"></tbody>
+        </table>
+      </div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="nm-nova">＋ Nova norma</button>
+      </div>
+    </div>
+
+    <div class="cfg-secao" id="sec-anomalias">
+      <h3>Biblioteca de anomalias <span class="cfg-trava" id="trava-anomalias" hidden>somente administradores</span></h3>
+      <p>Os textos que o app preenche sozinho quando o técnico escolhe uma anomalia. Escolha uma para editar, ou crie uma nova. Ocultar uma anomalia tira ela da lista sem apagar o histórico de quem já a usou.</p>
+      <div class="grade" style="padding:0;margin-bottom:14px">
+        <div class="campo largo"><label for="an-escolha">Anomalia</label>
+          <select id="an-escolha"></select></div>
+      </div>
+      <div id="an-editor"></div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt bt-fantasma" type="button" id="an-ocultar">Ocultar da lista</button>
+        <button class="bt" type="button" id="an-nova">＋ Nova anomalia</button>
+      </div>
+    </div>
+
+    <div class="cfg-secao" id="sec-admins">
+      <h3>Quem pode editar</h3>
+      <p>Só quem estiver nesta lista altera prazos, normas e anomalias. Os demais usam o app normalmente e enxergam tudo — só não mudam a régua. Enquanto a lista estiver vazia, qualquer pessoa logada pode editar; o primeiro nome gravado fecha a porta.</p>
+      <div class="cfg-tabela-env" style="max-height:220px">
+        <table class="cfg-anomalias">
+          <thead><tr><th>E-mail</th><th style="width:200px">Nome</th><th style="width:44px"></th></tr></thead>
+          <tbody id="ad-corpo"></tbody>
+        </table>
+      </div>
+      <div class="grade" style="padding:0;margin-top:12px">
+        <div class="campo"><label for="ad-email">E-mail da conta</label><input type="text" id="ad-email" placeholder="nome@sakuma.com" autocapitalize="off" spellcheck="false"></div>
+        <div class="campo"><label for="ad-nome">Nome</label><input type="text" id="ad-nome" placeholder="Nome da pessoa"></div>
+      </div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="ad-add">Adicionar administrador</button>
+      </div>
+    </div>
+
+    <div class="cfg-barra">
+      <button class="bt bt-forte" type="button" id="cfg-salvar">Salvar regras</button>
+      <button class="bt bt-fantasma" type="button" id="cfg-restaurar">Restaurar padrão</button>
+      <span class="cfg-salvo" id="cfg-salvo"></span>
+    </div>
+  </section>
+</main>
+
+<div class="status">
+  <span id="status-txt">Rascunho automático ativo neste aparelho.</span>
+  <span class="sinc off" id="sinc">só neste aparelho</span>
+  <button class="bt bt-fantasma bt-perigo" type="button" id="bt-limpar" style="margin-left:auto;padding:4px 10px;font-size:12.5px">Limpar vistoria atual</button>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="lupa" id="lupa" hidden><img alt=""></div>
+
+
+<!-- ────────── ficha da anomalia ────────── -->
+<dialog id="dlg-item" class="ficha-dlg">
+  <div class="fd-topo">
+    <h3 id="fd-titulo">Apontamento</h3>
+    <span class="selo" id="fd-grau"></span>
+    <span class="prazo" id="fd-prazo"></span>
+    <button class="x" type="button" data-fechar-item>×</button>
+  </div>
+  <div class="fd-corpo" id="fd-corpo"></div>
+  <div class="dlg-rodape">
+    <select id="fd-status" style="margin-right:auto;width:auto;min-width:160px"></select>
+    <button class="bt bt-fantasma" type="button" data-fechar-item>Fechar</button>
+    <button class="bt bt-forte" type="button" id="fd-encerrar">Encerrar com evidência</button>
+  </div>
+</dialog>
+
+<!-- ────────── diálogo de conta ────────── -->
+<dialog id="dlg-conta">
+  <div class="dlg-topo"><h3 id="dlg-titulo">Entrar</h3><button class="x" type="button" data-fechar>×</button></div>
+  <div class="dlg-corpo">
+    <div id="bloco-login">
+      <div class="campo"><label for="lg-email">E-mail</label><input type="text" id="lg-email" autocomplete="username" inputmode="email"></div>
+      <div class="campo" style="margin-top:10px"><label for="lg-senha">Senha</label><input type="password" id="lg-senha" autocomplete="current-password"></div>
+    </div>
+    <div id="bloco-logado" hidden>
+      <div class="dlg-ok">Conectado como <b id="lg-quem"></b>. As vistorias salvas vão para a base e aparecem para toda a equipe.</div>
+    </div>
+    <div class="dlg-erro" id="dlg-erro" hidden></div>
+  </div>
+  <div class="dlg-rodape">
+    <button class="bt bt-fantasma bt-perigo" type="button" id="bt-sair" hidden>Sair</button>
+    <button class="bt bt-forte" type="button" id="bt-confirmar">Continuar</button>
+  </div>
+</dialog>
