@@ -2,12 +2,13 @@
    Guarda a casca do app para abrir sem internet. Nunca guarda chamada de API:
    tudo que vai para o Supabase passa direto pela rede.
    Ao publicar uma versão nova, mude o número em VERSAO. */
-const VERSAO = "v1";
+const VERSAO = "v2";
 const CACHE = `sakuma-vistorias-${VERSAO}`;
 
 const CASCA = [
   "./",
   "./index.html",
+  "./config.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -38,6 +39,16 @@ self.addEventListener("fetch", ev => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;           // supabase, fontes: rede
   if (url.pathname.includes("/rest/") || url.pathname.includes("/auth/")) return;
+
+  // config.js: rede primeiro, para uma chave trocada valer na hora
+  if (url.pathname.endsWith("/config.js")) {
+    ev.respondWith(
+      fetch(req, { cache: "no-store" })
+        .then(r => { const c = r.clone(); caches.open(CACHE).then(k => k.put(req, c)); return r; })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
 
   // navegação: rede primeiro, com a casca guardada como reserva
   if (req.mode === "navigate") {

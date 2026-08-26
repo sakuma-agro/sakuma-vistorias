@@ -35,6 +35,7 @@ create table if not exists public.itens (
   risco             text,
   grau              text check (grau in ('Crítico','Alto','Médio','Baixo')),
   normas            text[] not null default '{}',
+  normas_texto      jsonb  not null default '[]'::jsonb,  -- texto congelado no momento do salvamento
   requerida         text,
   acao              text,
   prazo             text,
@@ -138,15 +139,88 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on public.vistorias to authenticated;
 grant select, insert, update, delete on public.itens     to authenticated;
 
--- ───────────────────── 6. Visão de pendências ─────────────────────
+-- ─────────────────── 6. Quem pode editar normas e regras ───────────────────
+-- Só administradores mudam a biblioteca de normas, as anomalias e os prazos.
+-- Bootstrap: enquanto a tabela estiver vazia, qualquer pessoa logada conta como
+-- administrador — é assim que o primeiro se cadastra. A partir do primeiro nome
+-- gravado, só quem está na lista edita.
+
+create table if not exists public.administradores (
+  email      text primary key,
+  nome       text,
+  criado_em  timestamptz not null default now(),
+  criado_por uuid references auth.users(id)
+);
+
+create or replace function public.eh_admin()
+returns boolean
+language sql stable security definer set search_path = public, auth as $$
+  select
+    not exists (select 1 from public.administradores)
+    or exists (
+      select 1 from public.administradores a
+      where lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    );
+$$;
+
+alter table public.administradores enable row level security;
+
+drop policy if exists admin_ler     on public.administradores;
+drop policy if exists admin_inserir on public.administradores;
+drop policy if exists admin_apagar  on public.administradores;
+
+create policy admin_ler     on public.administradores for select to authenticated using (true);
+create policy admin_inserir on public.administradores for insert to authenticated with check (public.eh_admin());
+create policy admin_apagar  on public.administradores for delete to authenticated using (public.eh_admin());
+
+grant select, insert, delete on public.administradores to authenticated;
+grant execute on function public.eh_admin() to authenticated;
+
+-- ─────────────────── 7. Regras de prazo, normas e anomalias ───────────────────
+-- Uma linha só, compartilhada por toda a equipe: prazo de cada grau de risco,
+-- a janela de atenção e os prazos específicos por anomalia.
+
+create table if not exists public.configuracoes (
+  id            int primary key default 1 check (id = 1),
+  regras        jsonb not null default '{}'::jsonb,   -- prazos por grau, janela de atenção
+  normas        jsonb not null default '{}'::jsonb,   -- normas criadas ou alteradas pela equipe
+  anomalias     jsonb not null default '{}'::jsonb,   -- anomalias criadas ou alteradas pela equipe
+  atualizado_em timestamptz not null default now(),
+  atualizado_por uuid references auth.users(id)
+);
+
+alter table public.configuracoes add column if not exists normas    jsonb not null default '{}'::jsonb;
+alter table public.configuracoes add column if not exists anomalias jsonb not null default '{}'::jsonb;
+
+insert into public.configuracoes (id, regras) values (1, '{}'::jsonb)
+on conflict (id) do nothing;
+
+drop trigger if exists configuracoes_atualizado on public.configuracoes;
+create trigger configuracoes_atualizado before update on public.configuracoes
+  for each row execute function public.marca_atualizacao();
+
+alter table public.configuracoes enable row level security;
+
+drop policy if exists config_ler     on public.configuracoes;
+drop policy if exists config_alterar on public.configuracoes;
+
+create policy config_ler     on public.configuracoes for select to authenticated using (true);
+create policy config_alterar on public.configuracoes for update to authenticated using (public.eh_admin()) with check (public.eh_admin());
+
+grant select, update on public.configuracoes to authenticated;
+
+-- ───────────────────── 8. Visão de pendências ─────────────────────
 -- Alimenta a aba "Em aberto" com uma consulta só.
 
 create or replace view public.pendencias
 with (security_invoker = true) as
 select
-  i.id, i.vistoria_id, i.ordem, i.titulo, i.local, i.grau, i.status,
-  i.acao, i.responsavel, i.prazo, i.prazo_data, i.normas,
-  i.foto_encontrada, i.foto_requerida, i.encerrado_em,
+  i.id, i.vistoria_id, i.ordem, i.chave, i.categoria,
+  i.titulo, i.local, i.grau, i.status,
+  i.encontrada, i.risco, i.requerida, i.acao, i.evidencia, i.pendencias,
+  i.responsavel, i.prazo, i.prazo_data, i.normas, i.normas_texto,
+  i.foto_encontrada, i.foto_requerida, i.foto_encerramento,
+  i.encerrado_em, i.encerrado_obs,
   v.codigo   as vistoria_codigo,
   v.unidade  as unidade,
   v.setor    as setor,

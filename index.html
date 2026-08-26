@@ -355,9 +355,117 @@ dialog::backdrop{background:rgba(20,22,18,.5)}
   #bt-tema{display:none}
   .kpis{grid-template-columns:1fr 1fr}
 }
+
+/* ═══════════════════════ portão de entrada ═══════════════════════ */
+.portao{position:fixed;inset:0;z-index:100;background:var(--fundo);display:grid;place-items:center;padding:24px;overflow:auto}
+.portao[hidden]{display:none}
+.portao-caixa{width:100%;max-width:380px;display:grid;gap:18px}
+.portao-marca{display:grid;gap:12px;justify-items:center;text-align:center}
+.portao-marca img{height:56px;width:auto;object-fit:contain}
+:root[data-theme="dark"] .portao-marca img,:root:not([data-theme="light"]) .portao-marca img{background:#fff;padding:8px 12px;border-radius:8px}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .portao-marca img{background:none;padding:0}}
+.portao-marca h1{font-size:19px;letter-spacing:-.01em}
+.portao-marca p{margin:0;font-size:13.5px;color:var(--texto-fraco);max-width:300px;line-height:1.5}
+.portao-form{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--r);box-shadow:var(--sombra);padding:20px;display:grid;gap:14px}
+.portao-form .bt{width:100%;justify-content:center;padding:11px}
+.portao-rodape{text-align:center;font-size:12.5px;color:var(--texto-fraco);line-height:1.6}
+.portao-rodape b{color:var(--texto);font-weight:600}
+body.travado{overflow:hidden}
+
+/* ═══════════════════════ aba Configurações ═══════════════════════ */
+.cfg-secao{background:var(--superficie);border:1px solid var(--linha);border-radius:var(--r);box-shadow:var(--sombra);padding:18px;margin-bottom:16px}
+.cfg-secao h3{font-size:15px;margin-bottom:4px}
+.cfg-secao > p{margin:0 0 14px;font-size:13px;color:var(--texto-fraco);line-height:1.55;max-width:62ch}
+.cfg-graus{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.cfg-grau{border:1px solid var(--linha);border-left:4px solid var(--faixa,var(--linha-forte));border-radius:8px;padding:12px}
+.cfg-grau.g-critico{--faixa:var(--critico)} .cfg-grau.g-alto{--faixa:var(--alto)}
+.cfg-grau.g-medio{--faixa:var(--medio)} .cfg-grau.g-baixo{--faixa:var(--baixo)}
+.cfg-grau .nome{font-weight:600;font-size:13.5px;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.cfg-linha{display:flex;align-items:center;gap:8px}
+.cfg-linha input[type=number]{width:82px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.cfg-linha span{font-size:13px;color:var(--texto-fraco)}
+.cfg-exemplo{font-size:12px;color:var(--texto-fraco);margin-top:8px;font-family:var(--mono)}
+
+.cfg-atencao{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cfg-atencao input[type=number]{width:82px;text-align:right;font-family:var(--mono)}
+.cfg-previa{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+table.cfg-anomalias{width:100%;border-collapse:collapse;font-size:13px}
+table.cfg-anomalias th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--texto-fraco);padding:8px 10px;border-bottom:1px solid var(--linha);position:sticky;top:0;background:var(--superficie);z-index:1}
+table.cfg-anomalias td{padding:7px 10px;border-bottom:1px solid var(--linha);vertical-align:middle}
+table.cfg-anomalias tr:hover td{background:var(--superficie-2)}
+table.cfg-anomalias select{width:auto;min-width:104px;padding:5px 28px 5px 8px;font-size:12.5px}
+table.cfg-anomalias input[type=number]{width:76px;text-align:right;padding:5px 8px;font-size:12.5px;font-family:var(--mono)}
+.cfg-tabela-env{max-height:420px;overflow:auto;border:1px solid var(--linha);border-radius:8px}
+.cfg-cat{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--texto-fraco)}
+.cfg-padrao{font-size:11.5px;color:var(--texto-fraco);font-family:var(--mono)}
+.cfg-barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;background:var(--fundo);padding:12px 0;border-top:1px solid var(--linha);margin-top:4px}
+.cfg-salvo{font-size:12.5px;color:var(--verde-esc)}
+
+/* ═══════════════════════ ficha da anomalia ═══════════════════════ */
+dialog.ficha-dlg{max-width:760px}
+.fd-topo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:18px 20px 0}
+.fd-topo h3{font-size:16.5px;flex:1;min-width:200px}
+.fd-corpo{padding:14px 20px 18px;display:grid;gap:14px;max-height:70vh;overflow:auto}
+.fd-fotos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.fd-fotos{grid-template-columns:1fr}}
+.fd-fotos figure{margin:0}
+.fd-fotos img{width:100%;height:190px;object-fit:cover;border-radius:8px;border:1px solid var(--linha);display:block;cursor:zoom-in}
+.fd-fotos .sem{height:190px;border:1.5px dashed var(--linha-forte);border-radius:8px;display:grid;place-items:center;font-size:12.5px;color:var(--texto-fraco);text-align:center;padding:12px}
+.fd-fotos figcaption{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;margin-top:5px}
+.fd-fotos .e figcaption{color:var(--critico)} .fd-fotos .r figcaption{color:var(--verde-esc)}
+.fd-fotos .c figcaption{color:var(--baixo)}
+.fd-campos{display:grid;grid-template-columns:150px 1fr;gap:9px 16px;font-size:13.5px}
+@media (max-width:640px){.fd-campos{grid-template-columns:1fr;gap:2px 0}.fd-campos dt{padding-top:9px}}
+.fd-campos dt{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-fraco);font-weight:600;padding-top:2px}
+.fd-campos dd{margin:0;line-height:1.55;color:var(--texto)}
+.fd-norma{border-left:2px solid var(--verde);background:var(--verde-claro);padding:8px 11px;border-radius:0 6px 6px 0;margin-bottom:6px}
+.fd-norma b{display:block;font-family:var(--mono);font-size:11.5px;color:var(--verde-esc);margin-bottom:3px}
+.fd-norma i{font-style:normal;font-size:12.5px;color:var(--cinza);line-height:1.5}
+.fd-norma .conf{font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--medio-bg);color:var(--medio);padding:1px 5px;border-radius:3px;margin-left:6px}
+
+.pend-topo .tit{border:0;background:none;padding:0;text-align:left;cursor:pointer;color:var(--texto);font-family:inherit}
+.pend-topo .tit:hover{color:var(--verde-esc);text-decoration:underline;text-underline-offset:3px}
+
+.cfg-trava{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;background:var(--medio-bg);color:var(--medio);padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.cfg-secao.travada{opacity:.62}
+.cfg-secao.travada input,.cfg-secao.travada select,.cfg-secao.travada textarea,.cfg-secao.travada button{pointer-events:none}
+.cfg-secao.travada #nm-busca,.cfg-secao.travada #an-escolha{pointer-events:auto;opacity:1}
+#tab-normas td input[type=text]{width:100%;padding:5px 8px;font-size:12.5px}
+#tab-normas td textarea{width:100%;min-height:52px;font-size:12.5px;padding:6px 8px}
+.bt-mini{border:0;background:none;color:var(--texto-fraco);cursor:pointer;font-size:16px;line-height:1;padding:3px 6px;border-radius:5px}
+.bt-mini:hover{background:var(--critico-bg);color:var(--critico)}
+.an-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.an-grade .largo{grid-column:1/-1}
+.an-normas{display:flex;flex-wrap:wrap;gap:7px;padding:10px;border:1px solid var(--linha-forte);border-radius:8px;max-height:180px;overflow:auto}
+.an-normas label{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-family:var(--mono);text-transform:none;letter-spacing:0;font-weight:400;color:var(--texto);border:1px solid var(--linha);border-radius:20px;padding:4px 10px;cursor:pointer}
+.an-normas label:has(input:checked){border-color:var(--verde);background:var(--verde-claro);color:var(--verde-esc)}
+.an-normas input{margin:0}
 </style>
 </head>
 <body>
+
+<section class="portao" id="portao">
+  <div class="portao-caixa">
+    <div class="portao-marca">
+      <img id="portao-logo" alt="SAKUMA Agronegócios">
+      <h1>Vistorias &amp; Segurança</h1>
+      <p>Entre com a conta que o administrador criou para você.</p>
+    </div>
+    <div class="portao-form">
+      <div class="campo"><label for="pt-email">E-mail</label>
+        <input type="text" id="pt-email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false"></div>
+      <div class="campo"><label for="pt-senha">Senha</label>
+        <input type="password" id="pt-senha" autocomplete="current-password"></div>
+      <div class="dlg-erro" id="pt-erro" hidden></div>
+      <button class="bt bt-forte" type="button" id="pt-entrar">Entrar</button>
+    </div>
+    <div class="portao-rodape">
+      <b>SAKUMA Agronegócios</b><br>
+      Não tem conta? Fale com o administrador do sistema.
+    </div>
+  </div>
+</section>
 
 <header class="topo">
   <div class="marca">
@@ -371,6 +479,7 @@ dialog::backdrop{background:rgba(20,22,18,.5)}
     <button class="aba" id="t-vistoria" role="tab" aria-selected="true" aria-controls="painel-vistoria">Vistoria <b class="n" id="cont-itens">0</b></button>
     <button class="aba" id="t-aberto" role="tab" aria-selected="false" aria-controls="painel-aberto">Em aberto <b class="n" id="cont-aberto">0</b></button>
     <button class="aba" id="t-relatorio" role="tab" aria-selected="false" aria-controls="painel-relatorio">Relatório</button>
+    <button class="aba" id="t-config" role="tab" aria-selected="false" aria-controls="painel-config">Configurações</button>
   </div>
   <div class="acoes">
     <button class="conta off" id="bt-conta" type="button"><span class="bola">—</span><b>Entrar</b></button>
@@ -461,6 +570,103 @@ dialog::backdrop{background:rgba(20,22,18,.5)}
     </div>
     <article class="doc" id="doc"></article>
   </section>
+
+  <!-- ────────── painel configurações ────────── -->
+  <section class="painel" id="painel-config" role="tabpanel" aria-labelledby="t-config" hidden>
+    <div class="secao-topo">
+      <h2>Regras de prazo</h2>
+      <span class="dica" id="cfg-origem">Valem para toda a equipe.</span>
+    </div>
+
+    <div class="cfg-secao">
+      <h3>Prazo por grau de risco</h3>
+      <p>Quantos dias cada grau tem para ser resolvido, contados a partir da data da vistoria. É esse número que define quando o apontamento aparece como vencido na aba Em aberto.</p>
+      <div class="cfg-graus" id="cfg-graus"></div>
+    </div>
+
+    <div class="cfg-secao">
+      <h3>Aviso de atenção</h3>
+      <p>Quantos dias antes do vencimento o apontamento passa a ser sinalizado como “vence em breve”, em laranja — o aviso para agir antes de estourar o prazo.</p>
+      <div class="cfg-atencao">
+        <span>Avisar quando faltarem</span>
+        <input type="number" id="cfg-atencao" min="0" max="60" step="1">
+        <span>dias ou menos para o vencimento.</span>
+      </div>
+      <div class="cfg-previa" id="cfg-previa"></div>
+    </div>
+
+    <div class="cfg-secao">
+      <h3>Prazo específico por anomalia</h3>
+      <p>Por padrão cada anomalia usa o prazo do grau dela. Aqui você muda o grau ou fixa um prazo próprio para uma anomalia específica — útil quando um item da sua realidade é mais urgente do que a regra geral sugere. Deixe o prazo em branco para seguir o grau.</p>
+      <div class="campo" style="max-width:340px;margin-bottom:12px">
+        <label for="cfg-busca">Buscar anomalia</label>
+        <input type="text" id="cfg-busca" placeholder="extintor, agrotóxico, quadro elétrico…">
+      </div>
+      <div class="cfg-tabela-env">
+        <table class="cfg-anomalias">
+          <thead><tr><th>Anomalia</th><th style="width:130px">Grau</th><th style="width:150px">Prazo próprio</th></tr></thead>
+          <tbody id="cfg-corpo"></tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="cfg-secao" id="sec-normas">
+      <h3>Biblioteca de normas <span class="cfg-trava" id="trava-normas" hidden>somente administradores</span></h3>
+      <p>As normas que o app cita em cada apontamento. As que vêm de fábrica podem ser corrigidas, e você pode criar as suas. Deixe <b>confirmar item</b> marcado enquanto o número do dispositivo não tiver sido conferido em fonte oficial — é isso que faz o selo aparecer no relatório.</p>
+      <div class="campo" style="max-width:340px;margin-bottom:12px">
+        <label for="nm-busca">Buscar norma</label>
+        <input type="text" id="nm-busca" placeholder="NBR 12693, NR-31, GLOBALG.A.P…">
+      </div>
+      <div class="cfg-tabela-env">
+        <table class="cfg-anomalias" id="tab-normas">
+          <thead><tr><th style="width:190px">Referência</th><th style="width:90px">Item</th><th>Exigência</th><th style="width:96px">Confirmar</th><th style="width:44px"></th></tr></thead>
+          <tbody id="nm-corpo"></tbody>
+        </table>
+      </div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="nm-nova">＋ Nova norma</button>
+      </div>
+    </div>
+
+    <div class="cfg-secao" id="sec-anomalias">
+      <h3>Biblioteca de anomalias <span class="cfg-trava" id="trava-anomalias" hidden>somente administradores</span></h3>
+      <p>Os textos que o app preenche sozinho quando o técnico escolhe uma anomalia. Escolha uma para editar, ou crie uma nova. Ocultar uma anomalia tira ela da lista sem apagar o histórico de quem já a usou.</p>
+      <div class="grade" style="padding:0;margin-bottom:14px">
+        <div class="campo largo"><label for="an-escolha">Anomalia</label>
+          <select id="an-escolha"></select></div>
+      </div>
+      <div id="an-editor"></div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt bt-fantasma" type="button" id="an-ocultar">Ocultar da lista</button>
+        <button class="bt" type="button" id="an-nova">＋ Nova anomalia</button>
+      </div>
+    </div>
+
+    <div class="cfg-secao" id="sec-admins">
+      <h3>Quem pode editar</h3>
+      <p>Só quem estiver nesta lista altera prazos, normas e anomalias. Os demais usam o app normalmente e enxergam tudo — só não mudam a régua. Enquanto a lista estiver vazia, qualquer pessoa logada pode editar; o primeiro nome gravado fecha a porta.</p>
+      <div class="cfg-tabela-env" style="max-height:220px">
+        <table class="cfg-anomalias">
+          <thead><tr><th>E-mail</th><th style="width:200px">Nome</th><th style="width:44px"></th></tr></thead>
+          <tbody id="ad-corpo"></tbody>
+        </table>
+      </div>
+      <div class="grade" style="padding:0;margin-top:12px">
+        <div class="campo"><label for="ad-email">E-mail da conta</label><input type="text" id="ad-email" placeholder="nome@sakuma.com" autocapitalize="off" spellcheck="false"></div>
+        <div class="campo"><label for="ad-nome">Nome</label><input type="text" id="ad-nome" placeholder="Guilherme Lopes"></div>
+      </div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="ad-add">Adicionar administrador</button>
+      </div>
+    </div>
+
+    <div class="cfg-barra">
+      <button class="bt bt-forte" type="button" id="cfg-salvar">Salvar regras</button>
+      <button class="bt bt-fantasma" type="button" id="cfg-restaurar">Restaurar padrão</button>
+      <span class="cfg-salvo" id="cfg-salvo"></span>
+    </div>
+  </section>
 </main>
 
 <div class="status">
@@ -471,16 +677,28 @@ dialog::backdrop{background:rgba(20,22,18,.5)}
 <div class="toast" id="toast" hidden></div>
 <div class="lupa" id="lupa" hidden><img alt=""></div>
 
+
+<!-- ────────── ficha da anomalia ────────── -->
+<dialog id="dlg-item" class="ficha-dlg">
+  <div class="fd-topo">
+    <h3 id="fd-titulo">Apontamento</h3>
+    <span class="selo" id="fd-grau"></span>
+    <span class="prazo" id="fd-prazo"></span>
+    <button class="x" type="button" data-fechar-item>×</button>
+  </div>
+  <div class="fd-corpo" id="fd-corpo"></div>
+  <div class="dlg-rodape">
+    <select id="fd-status" style="margin-right:auto;width:auto;min-width:160px"></select>
+    <button class="bt bt-fantasma" type="button" data-fechar-item>Fechar</button>
+    <button class="bt bt-forte" type="button" id="fd-encerrar">Encerrar com evidência</button>
+  </div>
+</dialog>
+
 <!-- ────────── diálogo de conta ────────── -->
 <dialog id="dlg-conta">
   <div class="dlg-topo"><h3 id="dlg-titulo">Entrar</h3><button class="x" type="button" data-fechar>×</button></div>
   <div class="dlg-corpo">
-    <div id="bloco-config">
-      <p>Este aparelho ainda não sabe onde fica a base. Cole os dois valores do painel do Supabase, em <code>Project Settings → API</code>.</p>
-      <div class="campo" style="margin-top:10px"><label for="cfg-url">Project URL</label><input type="text" id="cfg-url" placeholder="https://xxxxxxxx.supabase.co" autocomplete="off"></div>
-      <div class="campo" style="margin-top:10px"><label for="cfg-key">Chave anon public</label><input type="text" id="cfg-key" placeholder="eyJhbGciOi..." autocomplete="off"></div>
-    </div>
-    <div id="bloco-login" hidden>
+    <div id="bloco-login">
       <div class="campo"><label for="lg-email">E-mail</label><input type="text" id="lg-email" autocomplete="username" inputmode="email"></div>
       <div class="campo" style="margin-top:10px"><label for="lg-senha">Senha</label><input type="password" id="lg-senha" autocomplete="current-password"></div>
     </div>
@@ -490,12 +708,12 @@ dialog::backdrop{background:rgba(20,22,18,.5)}
     <div class="dlg-erro" id="dlg-erro" hidden></div>
   </div>
   <div class="dlg-rodape">
-    <button class="bt bt-fantasma" type="button" id="bt-trocar-base" hidden>Trocar base</button>
     <button class="bt bt-fantasma bt-perigo" type="button" id="bt-sair" hidden>Sair</button>
     <button class="bt bt-forte" type="button" id="bt-confirmar">Continuar</button>
   </div>
 </dialog>
 
+<script src="config.js"></script>
 <script>
 
 "use strict";
@@ -901,7 +1119,7 @@ function adicionar(){
 /* ══════════════════════════ render: formulário ══════════════════════════ */
 function opcoesAnomalia(sel){
   return CATEGORIAS.map(c=>{
-    const opts=Object.entries(ANOMALIAS).filter(([,a])=>a.cat===c.id)
+    const opts=Object.entries(ANOMALIAS).filter(([k,a])=>a.cat===c.id&&(k===sel||anomaliaVisivel(k)))
       .map(([k,a])=>`<option value="${k}"${k===sel?" selected":""}>${esc(a.titulo)}</option>`).join("");
     return `<optgroup label="${esc(c.nome)}">${opts}</optgroup>`;
   }).join("");
@@ -1022,8 +1240,7 @@ function renderDoc(){
     const foto=(src,cls,leg)=>src
       ? `<figure class="${cls}"><img src="${src}" alt="${leg}"><figcaption>${leg}</figcaption></figure>`
       : `<figure class="${cls}"><div class="sem">Sem registro fotográfico</div><figcaption>${leg}</figcaption></figure>`;
-    const normas=it.normas.map(k=>{
-      const n=NORMAS[k];if(!n)return"";
+    const normas=normasDoItem(it).map(n=>{
       const item=n.item&&n.item!=="—"?`, item ${esc(n.item)}`:"";
       return `<div class="doc-norma"><b>${esc(n.ref)}${item}${n.ok?"":'<span class="conf">confirmar item</span>'}</b><i>${esc(n.txt)}</i></div>`;
     }).join("")||`<div class="doc-texto">Requisito não vinculado.</div>`;
@@ -1233,7 +1450,7 @@ document.addEventListener("paste",ev=>{
 });
 
 /* abas */
-const PAINEIS=["vistoria","aberto","relatorio"];
+const PAINEIS=["vistoria","aberto","relatorio","config"];
 function aba(qual){
   PAINEIS.forEach(p=>{
     $("#painel-"+p).hidden = p!==qual;
@@ -1244,6 +1461,7 @@ function aba(qual){
 $("#t-vistoria").onclick=()=>aba("vistoria");
 $("#t-aberto").onclick=()=>{carregarPendencias();aba("aberto");};
 $("#t-relatorio").onclick=()=>{renderDoc();aba("relatorio");};
+$("#t-config").onclick=()=>{renderConfig();aba("config");};
 
 /* tema */
 $("#bt-tema").onclick=()=>{
@@ -1282,8 +1500,15 @@ render();
    sendo um arquivo só, funciona offline e não depende de CDN nenhum.
    ══════════════════════════════════════════════════════════════════════════ */
 
-const K_CFG="sakuma-cfg", K_SESSAO="sakuma-sessao", K_HIST="sakuma-historico";
-let cfg=null, sessao=null, pendencias=[], fonteRemota=false;
+/* Base da SAKUMA, gravada no próprio app: o técnico não configura nada,
+   só entra com e-mail e senha. A chave anon é pública por definição —
+   quem protege os dados é a segurança por linha do supabase.sql. */
+const BASE = (window.SAKUMA_BASE && window.SAKUMA_BASE.key)
+  ? window.SAKUMA_BASE
+  : {url:"https://jhwnmtekxsdkhvgcjzhj.supabase.co", key:"__CHAVE_ANON__"};
+
+const K_SESSAO="sakuma-sessao", K_HIST="sakuma-historico";
+let cfg=BASE, sessao=null, pendencias=[], fonteRemota=false;
 
 function lerJSON(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function gravarJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
@@ -1313,19 +1538,31 @@ async function autenticar(email,senha){
 
 async function renovar(){
   if(!sessao||!sessao.refresh)return false;
-  const r=await fetch(`${cfg.url}/auth/v1/token?grant_type=refresh_token`,{
-    method:"POST",
-    headers:{"apikey":cfg.key,"Content-Type":"application/json"},
-    body:JSON.stringify({refresh_token:sessao.refresh})
-  });
-  if(!r.ok){sessao=null;localStorage.removeItem(K_SESSAO);atualizarConta();return false;}
+  let r;
+  try{
+    r=await fetch(`${cfg.url}/auth/v1/token?grant_type=refresh_token`,{
+      method:"POST",
+      headers:{"apikey":cfg.key,"Content-Type":"application/json"},
+      body:JSON.stringify({refresh_token:sessao.refresh})
+    });
+  }catch(e){ return false; }   // sem rede: mantém a sessão, o app segue offline
+  if(!r.ok){
+    // 400/401 = token de renovação inválido: a sessão acabou de verdade.
+    // Qualquer outro caso (rede fora) mantém a sessão e o app segue offline.
+    if(r.status===400||r.status===401){
+      sessao=null;localStorage.removeItem(K_SESSAO);atualizarConta();
+      if(typeof mostrarPortao==="function")mostrarPortao();
+    }
+    return false;
+  }
   const d=await r.json();
   sessao={...sessao,token:d.access_token,refresh:d.refresh_token,expira:Date.now()+(d.expires_in-60)*1000};
   gravarJSON(K_SESSAO,sessao);
   return true;
 }
 
-const conectado=()=>!!(cfg&&cfg.url&&cfg.key&&sessao&&sessao.token);
+const baseConfigurada=()=>!!(cfg&&cfg.url&&cfg.key&&!cfg.key.startsWith("__")&&!/^COLE_AQUI/i.test(cfg.key));
+const conectado=()=>!!(baseConfigurada()&&sessao&&sessao.token);
 
 async function comToken(){
   if(!conectado())throw new Error("sem-sessao");
@@ -1386,23 +1623,90 @@ async function urlDaFoto(caminho){
   }catch(e){return "";}
 }
 
-/* ─────────────── prazo ─────────────── */
-function calcularPrazoData(dataVistoria,grau){
-  const g=GRAUS[grau]||GRAUS["Médio"];
-  const base=dataVistoria?new Date(dataVistoria+"T12:00:00"):new Date();
-  if(isNaN(base))return null;
-  base.setDate(base.getDate()+g.dias);
-  return base.toISOString().slice(0,10);
+/* ═══════════════════════ regras de prazo ═══════════════════════
+   Editáveis na aba Configurações e compartilhadas por toda a equipe. */
+
+const REGRAS_PADRAO={
+  dias:{"Crítico":1,"Alto":7,"Médio":30,"Baixo":90},
+  atencao:3,
+  anomalias:{}      // chave da anomalia -> { grau?, dias? }
+};
+const K_REGRAS="sakuma-regras", K_BIBLIO="sakuma-biblioteca", K_ADMINS="sakuma-admins";
+let regras=JSON.parse(JSON.stringify(REGRAS_PADRAO));
+
+/* Biblioteca: o app nasce com as normas e anomalias embutidas; a equipe pode
+   criar novas e alterar as existentes. O que vem da base entra por cima. */
+const NORMAS_BASE=JSON.parse(JSON.stringify(NORMAS));
+const ANOMALIAS_BASE=JSON.parse(JSON.stringify(ANOMALIAS));
+let normasCustom={}, anomaliasCustom={}, administradores=[], souAdmin=false;
+
+function aplicarBiblioteca(){
+  Object.keys(NORMAS).forEach(k=>{ if(!NORMAS_BASE[k]&&!normasCustom[k])delete NORMAS[k]; });
+  Object.keys(ANOMALIAS).forEach(k=>{ if(!ANOMALIAS_BASE[k]&&!anomaliasCustom[k])delete ANOMALIAS[k]; });
+  Object.assign(NORMAS,NORMAS_BASE,normasCustom);
+  Object.assign(ANOMALIAS,ANOMALIAS_BASE,anomaliasCustom);
+}
+const anomaliaVisivel=k=>!(ANOMALIAS[k]&&ANOMALIAS[k].oculta);
+
+/* texto congelado: o que o apontamento citava no dia em que foi salvo */
+function congelarNormas(chaves){
+  return (chaves||[]).map(k=>{
+    const n=NORMAS[k]; if(!n)return null;
+    return {k,ref:n.ref,item:n.item,ok:n.ok,txt:n.txt};
+  }).filter(Boolean);
+}
+function normasDoItem(it){
+  if(it&&Array.isArray(it.normasTexto)&&it.normasTexto.length)return it.normasTexto;
+  return congelarNormas(it&&it.normas);
+}
+
+const grauDe=(chave,padrao)=>(regras.anomalias[chave]&&regras.anomalias[chave].grau)||padrao;
+function diasDe(chave,grau){
+  const e=regras.anomalias[chave];
+  if(e&&Number.isFinite(e.dias)&&e.dias>=0)return e.dias;
+  const d=regras.dias[grau];
+  return Number.isFinite(d)?d:30;
+}
+function rotuloPrazo(dias){
+  if(dias<=0)return "Imediato";
+  if(dias===1)return "Imediato (24 h)";
+  return dias+" dias";
+}
+/* mantém GRAUS coerente com as regras, para o resto do app que já o consulta */
+function aplicarRegras(){
+  Object.keys(GRAUS).forEach(g=>{
+    GRAUS[g].dias=Number.isFinite(regras.dias[g])?regras.dias[g]:GRAUS[g].dias;
+    GRAUS[g].prazo=rotuloPrazo(GRAUS[g].dias);
+  });
+}
+
+function calcularPrazoData(dataVistoria,grau,chave){
+  const dias=diasDe(chave,grau);
+  let base;
+  if(dataVistoria){
+    const [A,M,D]=String(dataVistoria).slice(0,10).split("-").map(Number);
+    if(!A||!M||!D)return null;
+    base=new Date(A,M-1,D);
+  }else{
+    base=new Date();base.setHours(0,0,0,0);
+  }
+  base.setDate(base.getDate()+dias);
+  const p2=n=>String(n).padStart(2,"0");
+  return `${base.getFullYear()}-${p2(base.getMonth()+1)}-${p2(base.getDate())}`;
 }
 
 function situacaoPrazo(p){
   if(p.status==="Concluído")return{cls:"p-feito",txt:"Concluído"};
   if(!p.prazoData)return{cls:"p-semprazo",txt:"Sem prazo"};
+  /* dois meia-noites locais: assim "vence hoje" é hoje mesmo, sem meio dia de erro */
   const hoje=new Date();hoje.setHours(0,0,0,0);
-  const d=new Date(p.prazoData+"T12:00:00");
-  const dias=Math.round((d-hoje)/86400000);
+  const [A,M,D]=String(p.prazoData).slice(0,10).split("-").map(Number);
+  if(!A||!M||!D)return{cls:"p-semprazo",txt:"Sem prazo"};
+  const venc=new Date(A,M-1,D);
+  const dias=Math.round((venc-hoje)/86400000);
+  const janela=Number.isFinite(regras.atencao)?regras.atencao:3;
   if(dias<0)return{cls:"p-vencido",txt:`Vencido há ${Math.abs(dias)} d`};
-  if(dias<=3)return{cls:"p-breve",txt:dias===0?"Vence hoje":`Vence em ${dias} d`};
+  if(dias<=janela)return{cls:"p-breve",txt:dias===0?"Vence hoje":`Vence em ${dias} d`};
   return{cls:"p-noprazo",txt:`${dias} d restantes`};
 }
 
@@ -1431,8 +1735,9 @@ async function salvarVistoria(){
   if(!estado.id)estado.id=uuid();
   estado.itens.forEach(it=>{
     if(!it.uid)it.uid=uuid();
-    it.prazoData=it.prazoData||calcularPrazoData(estado.cab.data,it.grau);
+    it.prazoData=it.prazoData||calcularPrazoData(estado.cab.data,it.grau,it.chave);
     if(!it.status)it.status="Aberto";
+    if(!Array.isArray(it.normasTexto)||!it.normasTexto.length)it.normasTexto=congelarNormas(it.normas);
   });
 
   await salvarLocal();
@@ -1468,7 +1773,8 @@ async function salvarVistoria(){
       body:JSON.stringify(estado.itens.map((it,i)=>({
         id:it.uid,vistoria_id:estado.id,ordem:i+1,chave:it.chave,categoria:it.cat,
         titulo:it.titulo,local:it.local,encontrada:it.encontrada,risco:it.risco,grau:it.grau,
-        normas:it.normas,requerida:it.requerida,acao:it.acao,prazo:it.prazo,prazo_data:it.prazoData,
+        normas:it.normas,normas_texto:it.normasTexto||[],
+        requerida:it.requerida,acao:it.acao,prazo:it.prazo,prazo_data:it.prazoData,
         responsavel:it.responsavel,evidencia:it.evidencia,pendencias:it.pendencias,
         status:it.status||"Aberto",
         foto_encontrada:it.fotoEPath||null,foto_requerida:it.fotoRPath||null
@@ -1492,9 +1798,11 @@ async function salvarLocal(){
   const itens=[];
   for(const it of estado.itens){
     itens.push({
-      uid:it.uid,titulo:it.titulo,local:it.local,grau:it.grau,acao:it.acao,
+      uid:it.uid,chave:it.chave,cat:it.cat,titulo:it.titulo,local:it.local,grau:it.grau,
+      encontrada:it.encontrada,risco:it.risco,requerida:it.requerida,
+      acao:it.acao,evidencia:it.evidencia,pendenciasTxt:it.pendencias,
       responsavel:it.responsavel,prazo:it.prazo,prazoData:it.prazoData,
-      normas:it.normas,status:it.status||"Aberto",
+      normas:it.normas,normasTexto:it.normasTexto||[],status:it.status||"Aberto",
       encerradoEm:it.encerradoEm||"",encerradoObs:it.encerradoObs||"",
       miniE:await miniatura(it.fotoE),miniR:await miniatura(it.fotoR)
     });
@@ -1509,18 +1817,91 @@ async function salvarLocal(){
   }
 }
 
+/* ══════════════════════════ regras: base e aparelho ══════════════════════════ */
+async function carregarRegras(){
+  const local=lerJSON(K_REGRAS);
+  if(local)regras={...REGRAS_PADRAO,...local,dias:{...REGRAS_PADRAO.dias,...(local.dias||{})},anomalias:local.anomalias||{}};
+  const bib=lerJSON(K_BIBLIO);
+  if(bib){normasCustom=bib.normas||{};anomaliasCustom=bib.anomalias||{};}
+  administradores=lerJSON(K_ADMINS)||[];
+
+  if(conectado()){
+    try{
+      const d=await rest("configuracoes?select=regras,normas,anomalias&id=eq.1");
+      const c=(d&&d[0])||{};
+      const r=c.regras;
+      if(r&&Object.keys(r).length){
+        regras={...REGRAS_PADRAO,...r,dias:{...REGRAS_PADRAO.dias,...(r.dias||{})},anomalias:r.anomalias||{}};
+        gravarJSON(K_REGRAS,regras);
+      }
+      normasCustom=c.normas||{};
+      anomaliasCustom=c.anomalias||{};
+      gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom});
+
+      const ad=await rest("administradores?select=email,nome&order=email.asc");
+      administradores=ad||[];
+      gravarJSON(K_ADMINS,administradores);
+      $("#cfg-origem").textContent="Valem para toda a equipe — guardadas na base.";
+    }catch(e){
+      $("#cfg-origem").textContent="Mostrando as regras deste aparelho: a base não respondeu.";
+    }
+  }else{
+    $("#cfg-origem").textContent="Regras deste aparelho. Entre na base para compartilhar com a equipe.";
+  }
+
+  const meu=((sessao&&sessao.email)||"").toLowerCase();
+  souAdmin = !conectado() || administradores.length===0 ||
+             administradores.some(a=>String(a.email||"").toLowerCase()===meu);
+
+  aplicarBiblioteca();
+  aplicarRegras();
+}
+
+async function salvarRegras(){
+  const bt=$("#cfg-salvar"), aviso=$("#cfg-salvo");
+  aviso.textContent="";
+  gravarJSON(K_REGRAS,regras);
+  gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom});
+  aplicarBiblioteca();
+  aplicarRegras();
+  if(!souAdmin){
+    aviso.textContent="Só administradores alteram as regras.";
+    return;
+  }
+  if(!conectado()){
+    aviso.textContent="Salvo neste aparelho.";
+    renderConfig();renderAberto();return;
+  }
+  bt.disabled=true;bt.textContent="Salvando…";
+  try{
+    await rest("configuracoes?id=eq.1",{
+      method:"PATCH",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({regras,normas:normasCustom,anomalias:anomaliasCustom,atualizado_por:sessao.uid||null})
+    });
+    aviso.textContent="Salvo. Vale para toda a equipe.";
+  }catch(e){
+    aviso.textContent="Salvo aqui, mas a base recusou: "+String(e.message).slice(0,80);
+  }finally{
+    bt.disabled=false;bt.textContent="Salvar regras";
+    renderConfig();renderAberto();
+  }
+}
+
 /* ══════════════════════════ pendências ══════════════════════════ */
 async function carregarPendencias(){
   if(conectado()){
     try{
       const d=await rest("pendencias?select=*&order=prazo_data.asc.nullslast&limit=500");
       pendencias=d.map(p=>({
-        uid:p.id,vistoriaId:p.vistoria_id,titulo:p.titulo,local:p.local,grau:p.grau,
-        status:p.status,acao:p.acao,responsavel:p.responsavel,prazo:p.prazo,prazoData:p.prazo_data,
-        normas:p.normas||[],codigo:p.vistoria_codigo,unidade:p.unidade,setor:p.setor,
+        uid:p.id,vistoriaId:p.vistoria_id,chave:p.chave,cat:p.categoria,
+        titulo:p.titulo,local:p.local,grau:p.grau,status:p.status,
+        encontrada:p.encontrada,risco:p.risco,requerida:p.requerida,
+        acao:p.acao,evidencia:p.evidencia,pendenciasTxt:p.pendencias,
+        responsavel:p.responsavel,prazo:p.prazo,prazoData:p.prazo_data,
+        normas:p.normas||[],normasTexto:p.normas_texto||[],codigo:p.vistoria_codigo,unidade:p.unidade,setor:p.setor,
         data:p.vistoria_data,tecnico:p.tecnico,
-        fotoEPath:p.foto_encontrada,fotoRPath:p.foto_requerida,
-        encerradoEm:p.encerrado_em,remoto:true
+        fotoEPath:p.foto_encontrada,fotoRPath:p.foto_requerida,fotoCPath:p.foto_encerramento,
+        encerradoEm:p.encerrado_em,encerradoObs:p.encerrado_obs,remoto:true
       }));
       fonteRemota=true;
       $("#fonte-dados").textContent="Apontamentos de todas as vistorias da base, de toda a equipe.";
@@ -1601,7 +1982,7 @@ function renderAberto(){
   });
 }
 
-const refsNorma=ns=>[...new Set((ns||[]).map(k=>NORMAS[k]?NORMAS[k].ref:"").filter(Boolean))].join(" · ");
+const refsNorma=it=>[...new Set(normasDoItem(it).map(n=>n.ref).filter(Boolean))].join(" · ");
 
 function cartaoPendencia(p){
   const g=GRAUS[p.grau]||GRAUS["Médio"];
@@ -1615,7 +1996,7 @@ function cartaoPendencia(p){
 
   return `<article class="pend g-${g.cls}${feito?" feito":""}" data-pend="${esc(p.uid)}">
     <div class="pend-topo">
-      <span class="tit">${esc(p.titulo)}</span>
+      <button class="tit" type="button" data-abrir="${esc(p.uid)}">${esc(p.titulo)}</button>
       <span class="selo s-${g.cls}">${esc(p.grau)}</span>
       <span class="prazo ${sp.cls}">${sp.txt}</span>
     </div>
@@ -1624,7 +2005,7 @@ function cartaoPendencia(p){
       ${p.local?`<span>📍 ${esc(p.local)}</span>`:""}
       ${p.data?`<span>Vistoria de ${dataBR(p.data)}</span>`:""}
       ${p.responsavel?`<span>Responsável: ${esc(p.responsavel)}</span>`:""}
-      ${refsNorma(p.normas)?`<span>${esc(refsNorma(p.normas))}</span>`:""}
+      ${refsNorma(p)?`<span>${esc(refsNorma(p))}</span>`:""}
     </div>
     <div class="pend-acao">${esc(p.acao)||"—"}</div>
     ${fotos?`<div class="pend-fotos">${fotos}</div>`:""}
@@ -1632,6 +2013,7 @@ function cartaoPendencia(p){
       <select data-status="${esc(p.uid)}">
         ${["Aberto","Em andamento","Concluído"].map(s=>`<option${s===p.status?" selected":""}>${s}</option>`).join("")}
       </select>
+      <button class="bt" type="button" data-abrir="${esc(p.uid)}">Abrir ficha</button>
       ${feito
         ? `<span class="dica">${p.encerradoEm?"Encerrado em "+dataBR(String(p.encerradoEm).slice(0,10)):"Encerrado"}${p.encerradoObs?" — "+esc(p.encerradoObs):""}</span>`
         : `<button class="bt" type="button" data-encerrar="${esc(p.uid)}">Encerrar com evidência</button>`}
@@ -1687,6 +2069,7 @@ async function gravarStatus(uid,status,obs,fotoEv){
   if(local){local.status=status;local.encerradoEm=p.encerradoEm;local.encerradoObs=p.encerradoObs;salvar();}
 
   renderAberto();
+  if(typeof fichaAtual==="object"&&fichaAtual&&fichaAtual.uid===uid&&$("#dlg-item").open)abrirFicha(uid);
 }
 
 /* ══════════════════════════ conta ══════════════════════════ */
@@ -1696,13 +2079,9 @@ function atualizarConta(){
     bt.className="conta on";
     bt.innerHTML=`<span class="bola">${esc((sessao.email||"?")[0].toUpperCase())}</span><b>${esc(sessao.email)}</b>`;
     sinc.className="sinc on";sinc.textContent="base conectada";
-  }else if(cfg&&cfg.url){
-    bt.className="conta off";
-    bt.innerHTML=`<span class="bola">—</span><b>Entrar</b>`;
-    sinc.className="sinc off";sinc.textContent="fora da base";
   }else{
     bt.className="conta off";
-    bt.innerHTML=`<span class="bola">—</span><b>Conectar base</b>`;
+    bt.innerHTML=`<span class="bola">—</span><b>Entrar</b>`;
     sinc.className="sinc off";sinc.textContent="só neste aparelho";
   }
 }
@@ -1710,31 +2089,26 @@ function atualizarConta(){
 function abrirConta(){
   const d=$("#dlg-conta"), erro=$("#dlg-erro");
   erro.hidden=true;
-  const temCfg=!!(cfg&&cfg.url&&cfg.key);
-  $("#bloco-config").hidden=temCfg;
-  $("#bloco-login").hidden=!temCfg||conectado();
+  if(!baseConfigurada()){
+    erro.textContent="Este app ainda não recebeu a chave da base. Avise o administrador.";
+    erro.hidden=false;
+  }
+  $("#bloco-login").hidden=conectado();
   $("#bloco-logado").hidden=!conectado();
   $("#bt-sair").hidden=!conectado();
-  $("#bt-trocar-base").hidden=!temCfg;
   $("#bt-confirmar").hidden=conectado();
-  $("#dlg-titulo").textContent=!temCfg?"Conectar à base":(conectado()?"Sua conta":"Entrar");
+  $("#dlg-titulo").textContent=conectado()?"Sua conta":"Entrar";
   if(conectado())$("#lg-quem").textContent=sessao.email;
-  if(!temCfg&&cfg){$("#cfg-url").value=cfg.url||"";$("#cfg-key").value=cfg.key||"";}
   d.showModal();
-  setTimeout(()=>{(temCfg?$("#lg-email"):$("#cfg-url")).focus();},60);
+  if(!conectado())setTimeout(()=>$("#lg-email").focus(),60);
 }
 
 async function confirmarConta(){
   const erro=$("#dlg-erro");erro.hidden=true;
   const bt=$("#bt-confirmar");
-  if(!$("#bloco-config").hidden){
-    const url=$("#cfg-url").value.trim().replace(/\/+$/,"");
-    const key=$("#cfg-key").value.trim();
-    if(!/^https:\/\/.+/.test(url)||!key){erro.textContent="Cole a Project URL (começa com https://) e a chave anon public.";erro.hidden=false;return;}
-    cfg={url,key};gravarJSON(K_CFG,cfg);atualizarConta();abrirConta();return;
-  }
   const email=$("#lg-email").value.trim(), senha=$("#lg-senha").value;
   if(!email||!senha){erro.textContent="Preencha e-mail e senha.";erro.hidden=false;return;}
+  if(!baseConfigurada()){erro.textContent="Este app ainda não recebeu a chave da base. Avise o administrador.";erro.hidden=false;return;}
   bt.disabled=true;bt.textContent="Entrando…";
   try{
     await autenticar(email,senha);
@@ -1756,15 +2130,6 @@ $("#bt-recarregar").onclick=()=>carregarPendencias();
   $(s).addEventListener("input",renderAberto);
   $(s).addEventListener("change",renderAberto);
 });
-$("#bt-sair").onclick=()=>{
-  sessao=null;localStorage.removeItem(K_SESSAO);cacheAssinado.clear();
-  atualizarConta();$("#dlg-conta").close();carregarPendencias();toast("Sessão encerrada.");
-};
-$("#bt-trocar-base").onclick=()=>{
-  $("#bloco-config").hidden=false;$("#bloco-login").hidden=true;$("#bloco-logado").hidden=true;
-  $("#bt-confirmar").hidden=false;$("#dlg-titulo").textContent="Conectar à base";
-  $("#cfg-url").value=(cfg&&cfg.url)||"";$("#cfg-key").value=(cfg&&cfg.key)||"";
-};
 $("#dlg-conta").addEventListener("click",ev=>{if(ev.target.closest("[data-fechar]"))$("#dlg-conta").close();});
 $("#lg-senha").addEventListener("keydown",ev=>{if(ev.key==="Enter")confirmarConta();});
 
@@ -1788,6 +2153,9 @@ $("#lista-aberto").addEventListener("click",ev=>{
 
   const zoom=t.closest("[data-lupa],[data-lupa-remota]");
   if(zoom&&zoom.src){const l=$("#lupa");l.querySelector("img").src=zoom.src;l.hidden=false;return;}
+
+  const abrir=t.closest("[data-abrir]");
+  if(abrir){abrirFicha(abrir.dataset.abrir);return;}
 
   const enc=t.closest("[data-encerrar]");
   if(enc){
@@ -1851,16 +2219,468 @@ if("serviceWorker" in navigator&&location.protocol.startsWith("http")){
 }
 
 /* ══════════════════════════ início da parte nova ══════════════════════════ */
-cfg=lerJSON(K_CFG);
 sessao=lerJSON(K_SESSAO);
 if(!estado.id)estado.id=uuid();
 estado.itens.forEach(it=>{if(!it.uid)it.uid=uuid();if(!it.status)it.status="Aberto";});
 atualizarConta();
-carregarPendencias();
 
 const parametros=new URLSearchParams(location.search);
 if(parametros.get("aba")==="aberto")aba("aberto");
 if(parametros.get("acao")==="nova"&&!estado.itens.length)adicionar();
+
+
+/* ══════════════════════════ portão de entrada ══════════════════════════
+   O app só abre para quem tem conta. Uma vez logado, a sessão fica guardada
+   no aparelho: quem já entrou continua entrando mesmo sem sinal no campo,
+   e o que registrar offline sobe assim que a rede voltar. */
+
+function mostrarPortao(){
+  $("#portao").hidden=false;
+  document.body.classList.add("travado");
+  $("#portao-logo").src=LOGO;
+  setTimeout(()=>$("#pt-email").focus(),80);
+}
+
+async function abrirApp(){
+  $("#portao").hidden=true;
+  document.body.classList.remove("travado");
+  atualizarConta();
+  await carregarRegras();
+  renderConfig();
+  render();
+  carregarPendencias();
+}
+
+async function entrarPeloPortao(){
+  const erro=$("#pt-erro"), bt=$("#pt-entrar");
+  erro.hidden=true;
+  const email=$("#pt-email").value.trim(), senha=$("#pt-senha").value;
+  if(!email||!senha){erro.textContent="Preencha e-mail e senha.";erro.hidden=false;return;}
+  if(!baseConfigurada()){
+    erro.textContent="Este app ainda não recebeu a chave da base. Avise o administrador.";
+    erro.hidden=false;return;
+  }
+  bt.disabled=true;bt.textContent="Entrando…";
+  try{
+    await autenticar(email,senha);
+    $("#pt-senha").value="";
+    abrirApp();
+    toast("Bem-vindo. Carregando pendências da base…");
+  }catch(e){
+    const msg=String(e.message);
+    erro.textContent=/Failed to fetch|NetworkError/i.test(msg)
+      ? "Sem conexão para verificar a conta. Conecte-se à internet e tente de novo."
+      : (/Invalid login/i.test(msg) ? "E-mail ou senha incorretos." : msg);
+    erro.hidden=false;
+  }finally{bt.disabled=false;bt.textContent="Entrar";}
+}
+
+$("#pt-entrar").onclick=entrarPeloPortao;
+["#pt-email","#pt-senha"].forEach(sel=>{
+  $(sel).addEventListener("keydown",ev=>{if(ev.key==="Enter")entrarPeloPortao();});
+});
+
+/* sair volta para o portão */
+$("#bt-sair").onclick=()=>{
+  sessao=null;localStorage.removeItem(K_SESSAO);cacheAssinado.clear();
+  pendencias=[];atualizarConta();$("#dlg-conta").close();
+  $("#pt-email").value="";$("#pt-senha").value="";$("#pt-erro").hidden=true;
+  mostrarPortao();
+};
+
+/* quem já entrou neste aparelho entra direto, com ou sem sinal */
+if(sessao&&sessao.token){ abrirApp(); } else { mostrarPortao(); }
+
+
+/* ══════════════════════════ aba Configurações ══════════════════════════ */
+
+function renderConfig(){
+  const ordem=["Crítico","Alto","Médio","Baixo"];
+
+  $("#cfg-graus").innerHTML=ordem.map(g=>{
+    const cls=GRAUS[g].cls;
+    const dias=Number.isFinite(regras.dias[g])?regras.dias[g]:REGRAS_PADRAO.dias[g];
+    return `<div class="cfg-grau g-${cls}">
+      <div class="nome"><span class="selo s-${cls}">${g}</span></div>
+      <div class="cfg-linha">
+        <input type="number" min="0" max="365" step="1" value="${dias}" data-regra-grau="${g}">
+        <span>dias</span>
+      </div>
+      <div class="cfg-exemplo">${rotuloPrazo(dias)}</div>
+    </div>`;
+  }).join("");
+
+  $("#cfg-atencao").value=Number.isFinite(regras.atencao)?regras.atencao:3;
+
+  const hoje=new Date();
+  const exemplo=d=>{const x=new Date(hoje);x.setDate(x.getDate()+d);return x.toISOString().slice(0,10);};
+  $("#cfg-previa").innerHTML=[
+    {d:-2,rot:"vencido há 2 d"},{d:0,rot:"vence hoje"},
+    {d:regras.atencao,rot:"limite do aviso"},{d:regras.atencao+5,rot:"folgado"}
+  ].map(e=>{
+    const sp=situacaoPrazo({status:"Aberto",prazoData:exemplo(e.d)});
+    return `<span class="prazo ${sp.cls}">${sp.txt}</span>`;
+  }).join("");
+
+  const busca=($("#cfg-busca").value||"").toLowerCase().trim();
+  const linhas=[];
+  CATEGORIAS.forEach(c=>{
+    const desta=Object.entries(ANOMALIAS)
+      .filter(([k,a])=>a.cat===c.id&&k!=="outro")
+      .filter(([k,a])=>!busca||a.titulo.toLowerCase().includes(busca)||c.nome.toLowerCase().includes(busca));
+    if(!desta.length)return;
+    linhas.push(`<tr><td colspan="3" class="cfg-cat">${esc(c.nome)}</td></tr>`);
+    desta.forEach(([k,a])=>{
+      const e=regras.anomalias[k]||{};
+      const grau=e.grau||a.grau;
+      const proprio=Number.isFinite(e.dias)?e.dias:"";
+      linhas.push(`<tr>
+        <td>${esc(a.titulo)}<div class="cfg-padrao">padrão: ${esc(a.grau)} · ${rotuloPrazo(regras.dias[grau])}</div></td>
+        <td><select data-anom-grau="${k}">${["Crítico","Alto","Médio","Baixo"].map(g=>`<option${g===grau?" selected":""}>${g}</option>`).join("")}</select></td>
+        <td><input type="number" min="0" max="365" step="1" placeholder="—" value="${proprio}" data-anom-dias="${k}"></td>
+      </tr>`);
+    });
+  });
+  $("#cfg-corpo").innerHTML=linhas.join("")||'<tr><td colspan="3" class="cfg-padrao">Nenhuma anomalia com esse termo.</td></tr>';
+
+  renderNormas();
+  renderAnomLista();
+  renderAnomEditor();
+  renderAdmins();
+  aplicarTrava();
+}
+
+function guardaAnomalia(k){
+  if(!regras.anomalias[k])regras.anomalias[k]={};
+  return regras.anomalias[k];
+}
+function limpaAnomalia(k){
+  const e=regras.anomalias[k];
+  if(e&&e.grau===undefined&&e.dias===undefined)delete regras.anomalias[k];
+}
+
+$("#painel-config").addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.dataset.regraGrau!==undefined&&t.dataset.regraGrau!==""){
+    const v=parseInt(t.value,10);
+    if(Number.isFinite(v)&&v>=0){regras.dias[t.dataset.regraGrau]=v;aplicarRegras();renderConfig();}
+    return;
+  }
+  if(t.id==="cfg-atencao"){
+    const v=parseInt(t.value,10);
+    if(Number.isFinite(v)&&v>=0){regras.atencao=v;renderConfig();}
+    return;
+  }
+  if(t.id==="cfg-busca"){renderConfig();return;}
+  if(t.dataset.anomDias!==undefined&&t.dataset.anomDias!==""){
+    const k=t.dataset.anomDias, v=parseInt(t.value,10);
+    const e=guardaAnomalia(k);
+    if(t.value.trim()===""||!Number.isFinite(v)||v<0)delete e.dias; else e.dias=v;
+    limpaAnomalia(k);
+    return;
+  }
+});
+
+$("#painel-config").addEventListener("change",ev=>{
+  const t=ev.target;
+  if(t.dataset.anomGrau){
+    const k=t.dataset.anomGrau, e=guardaAnomalia(k);
+    if(t.value===ANOMALIAS[k].grau)delete e.grau; else e.grau=t.value;
+    limpaAnomalia(k);renderConfig();
+  }
+});
+
+$("#cfg-salvar").onclick=salvarRegras;
+$("#cfg-restaurar").onclick=()=>{
+  if(!confirm("Voltar todas as regras de prazo ao padrão?"))return;
+  regras=JSON.parse(JSON.stringify(REGRAS_PADRAO));
+  aplicarRegras();renderConfig();
+  $("#cfg-salvo").textContent="Padrão restaurado — clique em Salvar regras para valer.";
+};
+
+/* ══════════════════════════ ficha da anomalia ══════════════════════════ */
+
+let fichaAtual=null;
+
+async function abrirFicha(uid){
+  const p=pendencias.find(x=>x.uid===uid);
+  if(!p)return;
+  fichaAtual=p;
+  const g=GRAUS[p.grau]||GRAUS["Médio"];
+  const sp=situacaoPrazo(p);
+  const feito=p.status==="Concluído";
+
+  $("#fd-titulo").textContent=p.titulo||"Apontamento";
+  $("#fd-grau").className="selo s-"+g.cls; $("#fd-grau").textContent=p.grau||"";
+  $("#fd-prazo").className="prazo "+sp.cls; $("#fd-prazo").textContent=sp.txt;
+
+  const foto=(mini,caminho,cls,leg)=>
+    (mini||caminho)
+      ? `<figure class="${cls}"><img ${mini?`src="${mini}"`:""} ${caminho?`data-foto-path="${esc(caminho)}"`:""} alt="${leg}"><figcaption>${leg}</figcaption></figure>`
+      : `<figure class="${cls}"><div class="sem">Sem registro fotográfico</div><figcaption>${leg}</figcaption></figure>`;
+
+  const normas=normasDoItem(p).map(n=>{
+    const item=n.item&&n.item!=="—"?", item "+esc(n.item):"";
+    return `<div class="fd-norma"><b>${esc(n.ref)}${item}${n.ok?"":'<span class="conf">confirmar item</span>'}</b><i>${esc(n.txt)}</i></div>`;
+  }).join("")||"—";
+
+  const linha=(rot,val)=>val?`<dt>${rot}</dt><dd>${nl(val)}</dd>`:"";
+
+  $("#fd-corpo").innerHTML=`
+    <div class="fd-fotos">
+      ${foto(p.miniE,p.fotoEPath,"e","Situação encontrada")}
+      ${foto(p.miniR,p.fotoRPath,"r","Situação requerida")}
+    </div>
+    ${feito&&p.fotoCPath?`<div class="fd-fotos"><figure class="c"><img data-foto-path="${esc(p.fotoCPath)}" alt="Evidência de encerramento"><figcaption>Evidência de encerramento</figcaption></figure><div></div></div>`:""}
+    <dl class="fd-campos">
+      <dt>Vistoria</dt><dd>${esc(p.codigo||"—")} · ${esc(p.unidade||"—")}${p.setor?" · "+esc(p.setor):""}${p.data?" · "+dataBR(p.data):""}</dd>
+      ${linha("Localização",p.local)}
+      ${p.tecnico?`<dt>Registrado por</dt><dd>${esc(p.tecnico)}</dd>`:""}
+      ${linha("Situação encontrada",p.encontrada)}
+      ${linha("Risco associado",p.risco)}
+      <dt>Requisito aplicável</dt><dd>${normas}</dd>
+      ${linha("Situação requerida",p.requerida)}
+      ${linha("Ação corretiva",p.acao)}
+      <dt>Prazo</dt><dd>${esc(p.prazo||"—")}${p.prazoData?" · vence em "+dataBR(p.prazoData):""}</dd>
+      ${linha("Responsável",p.responsavel)}
+      ${linha("Evidência exigida",p.evidencia)}
+      ${linha("Pendências de campo",p.pendenciasTxt)}
+      ${feito?`<dt>Encerramento</dt><dd>${p.encerradoEm?dataBR(String(p.encerradoEm).slice(0,10)):"—"}${p.encerradoObs?" — "+nl(p.encerradoObs):""}</dd>`:""}
+    </dl>`;
+
+  const sel=$("#fd-status");
+  sel.innerHTML=["Aberto","Em andamento","Concluído"].map(x=>`<option${x===p.status?" selected":""}>${x}</option>`).join("");
+  $("#fd-encerrar").hidden=feito;
+
+  $("#dlg-item").showModal();
+
+  if(fonteRemota)$("#fd-corpo").querySelectorAll("[data-foto-path]").forEach(async img=>{
+    if(img.getAttribute("src"))return;
+    const u=await urlDaFoto(img.dataset.fotoPath);
+    if(u)img.src=u; else img.closest("figure").innerHTML='<div class="sem">Foto não disponível</div>';
+  });
+}
+
+$("#dlg-item").addEventListener("click",ev=>{
+  if(ev.target.closest("[data-fechar-item]")){$("#dlg-item").close();return;}
+  const img=ev.target.closest(".fd-fotos img");
+  if(img&&img.src){const l=$("#lupa");l.querySelector("img").src=img.src;l.hidden=false;}
+});
+$("#fd-status").addEventListener("change",ev=>{
+  if(fichaAtual)gravarStatus(fichaAtual.uid,ev.target.value,"",null);
+});
+$("#fd-encerrar").onclick=()=>{
+  if(!fichaAtual)return;
+  const uid=fichaAtual.uid;
+  $("#dlg-item").close();
+  aba("aberto");
+  setTimeout(()=>{
+    const f=document.querySelector(`[data-form="${uid}"]`);
+    const cartao=document.querySelector(`[data-pend="${uid}"]`);
+    if(f){f.hidden=false;}
+    if(cartao)cartao.scrollIntoView({behavior:"smooth",block:"center"});
+  },120);
+};
+
+
+/* ══════════════════ biblioteca de normas e anomalias ══════════════════ */
+
+function chaveNova(prefixo){
+  let i=1, k;
+  do{ k=prefixo+"-"+String(i).padStart(2,"0"); i++; }while(NORMAS[k]||ANOMALIAS[k]);
+  return k;
+}
+
+function renderNormas(){
+  const busca=($("#nm-busca").value||"").toLowerCase().trim();
+  const linhas=Object.entries(NORMAS)
+    .filter(([k,n])=>!busca||(n.ref+" "+n.item+" "+n.txt).toLowerCase().includes(busca))
+    .sort((a,b)=>a[1].ref.localeCompare(b[1].ref)||String(a[1].item).localeCompare(String(b[1].item)))
+    .map(([k,n])=>{
+      const daCasa=!!NORMAS_BASE[k];
+      return `<tr>
+        <td><input type="text" value="${esc(n.ref)}" data-nm="${esc(k)}" data-campo="ref"></td>
+        <td><input type="text" value="${esc(n.item)}" data-nm="${esc(k)}" data-campo="item"></td>
+        <td><textarea data-nm="${esc(k)}" data-campo="txt">${esc(n.txt)}</textarea></td>
+        <td style="text-align:center"><input type="checkbox" data-nm="${esc(k)}" data-campo="conf"${n.ok?"":" checked"}></td>
+        <td>${daCasa?'<span class="cfg-padrao" title="Vem de fábrica">·</span>':`<button class="bt-mini" type="button" data-nm-apagar="${esc(k)}" title="Apagar">×</button>`}</td>
+      </tr>`;
+    });
+  $("#nm-corpo").innerHTML=linhas.join("")||'<tr><td colspan="5" class="cfg-padrao">Nenhuma norma com esse termo.</td></tr>';
+}
+
+function editarNorma(k,campo,valor){
+  const atual=NORMAS[k]; if(!atual)return;
+  const base=NORMAS_BASE[k];
+  const alvo=normasCustom[k]||{...atual};
+  if(campo==="conf")alvo.ok=!valor; else alvo[campo]=valor;
+  if(base&&base.ref===alvo.ref&&base.item===alvo.item&&base.txt===alvo.txt&&base.ok===alvo.ok)
+    delete normasCustom[k];
+  else normasCustom[k]=alvo;
+  aplicarBiblioteca();
+}
+
+$("#sec-normas").addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.id==="nm-busca"){renderNormas();return;}
+  if(t.dataset.nm)editarNorma(t.dataset.nm,t.dataset.campo,t.value);
+});
+$("#sec-normas").addEventListener("change",ev=>{
+  const t=ev.target;
+  if(t.dataset.nm&&t.dataset.campo==="conf")editarNorma(t.dataset.nm,"conf",t.checked);
+});
+$("#sec-normas").addEventListener("click",ev=>{
+  const ap=ev.target.closest("[data-nm-apagar]");
+  if(ap){
+    const k=ap.dataset.nmApagar;
+    if(!confirm("Apagar esta norma da biblioteca? Apontamentos já salvos continuam com o texto congelado."))return;
+    delete normasCustom[k];aplicarBiblioteca();renderNormas();renderAnomEditor();
+  }
+});
+$("#nm-nova").onclick=()=>{
+  const k=chaveNova("norma");
+  normasCustom[k]={ref:"Nova norma",item:"—",ok:false,txt:"Descreva aqui a exigência."};
+  aplicarBiblioteca();$("#nm-busca").value="";renderNormas();
+  const alvo=document.querySelector(`[data-nm="${k}"][data-campo="ref"]`);
+  if(alvo){alvo.scrollIntoView({block:"center"});alvo.select();}
+};
+
+/* ─────────────── anomalias ─────────────── */
+
+function renderAnomLista(){
+  const sel=$("#an-escolha"), atual=sel.value;
+  sel.innerHTML=CATEGORIAS.map(c=>{
+    const opts=Object.entries(ANOMALIAS).filter(([k,a])=>a.cat===c.id&&k!=="outro")
+      .map(([k,a])=>`<option value="${esc(k)}"${k===atual?" selected":""}>${a.oculta?"(oculta) ":""}${esc(a.titulo)}</option>`).join("");
+    return opts?`<optgroup label="${esc(c.nome)}">${opts}</optgroup>`:"";
+  }).join("");
+  if(!sel.value)sel.selectedIndex=0;
+}
+
+function renderAnomEditor(){
+  const k=$("#an-escolha").value, a=ANOMALIAS[k];
+  if(!a){$("#an-editor").innerHTML="";return;}
+  const campo=(rot,nome,val,area)=>area
+    ? `<div class="campo largo"><label>${rot}</label><textarea data-an="${esc(k)}" data-campo="${nome}">${esc(val||"")}</textarea></div>`
+    : `<div class="campo"><label>${rot}</label><input type="text" data-an="${esc(k)}" data-campo="${nome}" value="${esc(val||"")}"></div>`;
+  const normas=Object.entries(NORMAS).sort((x,y)=>x[1].ref.localeCompare(y[1].ref)).map(([nk,n])=>
+    `<label><input type="checkbox" data-an-norma="${esc(nk)}"${(a.normas||[]).includes(nk)?" checked":""}>${esc(n.ref)}${n.item&&n.item!=="—"?" "+esc(n.item):""}</label>`).join("");
+  $("#an-editor").innerHTML=`<div class="an-grade">
+    ${campo("Título","titulo",a.titulo)}
+    <div class="campo"><label>Categoria</label><select data-an="${esc(k)}" data-campo="cat">
+      ${CATEGORIAS.map(c=>`<option value="${c.id}"${c.id===a.cat?" selected":""}>${esc(c.nome)}</option>`).join("")}</select></div>
+    <div class="campo"><label>Grau padrão</label><select data-an="${esc(k)}" data-campo="grau">
+      ${["Crítico","Alto","Médio","Baixo"].map(g=>`<option${g===a.grau?" selected":""}>${g}</option>`).join("")}</select></div>
+    <div class="campo largo"><label>Normas citadas</label><div class="an-normas">${normas}</div></div>
+    ${campo("Situação encontrada","encontrada",a.encontrada,1)}
+    ${campo("Risco associado","risco",a.risco,1)}
+    ${campo("Situação requerida","requerida",a.requerida,1)}
+    ${campo("Ação corretiva","acao",a.acao,1)}
+    ${campo("Evidência de encerramento","evidencia",a.evidencia,1)}
+    ${campo("Pendências de verificação","pendencias",a.pendencias,1)}
+  </div>`;
+  $("#an-ocultar").textContent=a.oculta?"Voltar para a lista":"Ocultar da lista";
+}
+
+function editarAnomalia(k,campo,valor){
+  const atual=ANOMALIAS[k]; if(!atual)return;
+  const alvo=anomaliasCustom[k]||JSON.parse(JSON.stringify(atual));
+  alvo[campo]=valor;
+  anomaliasCustom[k]=alvo;
+  aplicarBiblioteca();
+}
+
+$("#an-escolha").addEventListener("change",renderAnomEditor);
+$("#sec-anomalias").addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.dataset.an)editarAnomalia(t.dataset.an,t.dataset.campo,t.value);
+});
+$("#sec-anomalias").addEventListener("change",ev=>{
+  const t=ev.target;
+  if(t.dataset.an&&(t.dataset.campo==="cat"||t.dataset.campo==="grau")){
+    editarAnomalia(t.dataset.an,t.dataset.campo,t.value);
+    if(t.dataset.campo==="cat")renderAnomLista();
+    return;
+  }
+  if(t.dataset.anNorma!==undefined){
+    const k=$("#an-escolha").value;
+    const marcadas=[...$("#an-editor").querySelectorAll("[data-an-norma]:checked")].map(x=>x.dataset.anNorma);
+    editarAnomalia(k,"normas",marcadas);
+  }
+});
+$("#an-nova").onclick=()=>{
+  const k=chaveNova("anomalia");
+  anomaliasCustom[k]={cat:CATEGORIAS[0].id,titulo:"Nova anomalia",grau:"Médio",normas:[],
+    encontrada:"",risco:"",requerida:"",acao:"",evidencia:"",pendencias:""};
+  aplicarBiblioteca();renderAnomLista();
+  $("#an-escolha").value=k;renderAnomEditor();
+  const t=$("#an-editor").querySelector('[data-campo="titulo"]');
+  if(t){t.scrollIntoView({block:"center"});t.select();}
+};
+$("#an-ocultar").onclick=()=>{
+  const k=$("#an-escolha").value, a=ANOMALIAS[k]; if(!a)return;
+  editarAnomalia(k,"oculta",!a.oculta);
+  renderAnomLista();renderAnomEditor();
+};
+
+/* ─────────────── administradores ─────────────── */
+
+function renderAdmins(){
+  $("#ad-corpo").innerHTML=administradores.length
+    ? administradores.map(a=>`<tr>
+        <td>${esc(a.email)}</td><td>${esc(a.nome||"—")}</td>
+        <td><button class="bt-mini" type="button" data-ad-apagar="${esc(a.email)}" title="Remover">×</button></td></tr>`).join("")
+    : '<tr><td colspan="3" class="cfg-padrao">Lista vazia — qualquer pessoa logada pode editar. Adicione o primeiro nome para fechar.</td></tr>';
+}
+
+$("#ad-add").onclick=async()=>{
+  const email=($("#ad-email").value||"").trim().toLowerCase();
+  const nome=($("#ad-nome").value||"").trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast("Informe um e-mail válido.");return;}
+  if(administradores.some(a=>String(a.email).toLowerCase()===email)){toast("Esse e-mail já está na lista.");return;}
+  if(!conectado()){toast("Entre na base para gerenciar administradores.");return;}
+  try{
+    await rest("administradores",{method:"POST",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify([{email,nome:nome||null,criado_por:sessao.uid||null}])});
+    administradores.push({email,nome});
+    administradores.sort((a,b)=>a.email.localeCompare(b.email));
+    gravarJSON(K_ADMINS,administradores);
+    $("#ad-email").value="";$("#ad-nome").value="";
+    const meu=((sessao&&sessao.email)||"").toLowerCase();
+    souAdmin=administradores.some(a=>String(a.email).toLowerCase()===meu);
+    renderAdmins();aplicarTrava();
+    toast(souAdmin?"Administrador adicionado.":"Adicionado — e você não está na lista, então perdeu a permissão de editar.");
+  }catch(e){ toast("A base recusou: "+String(e.message).slice(0,110)); }
+};
+
+$("#ad-corpo").addEventListener("click",async ev=>{
+  const b=ev.target.closest("[data-ad-apagar]"); if(!b)return;
+  const email=b.dataset.adApagar;
+  if(!confirm(`Remover ${email} da lista de administradores?`))return;
+  try{
+    await rest(`administradores?email=eq.${encodeURIComponent(email)}`,{method:"DELETE",headers:{"Prefer":"return=minimal"}});
+    administradores=administradores.filter(a=>a.email!==email);
+    gravarJSON(K_ADMINS,administradores);
+    const meu=((sessao&&sessao.email)||"").toLowerCase();
+    souAdmin=administradores.length===0||administradores.some(a=>String(a.email).toLowerCase()===meu);
+    renderAdmins();aplicarTrava();
+  }catch(e){ toast("A base recusou: "+String(e.message).slice(0,110)); }
+});
+
+/* ─────────────── trava visual para quem não é administrador ─────────────── */
+function aplicarTrava(){
+  ["#sec-normas","#sec-anomalias","#sec-admins"].forEach(sel=>{
+    const el=$(sel); if(el)el.classList.toggle("travada",!souAdmin);
+  });
+  document.querySelectorAll(".cfg-secao").forEach(el=>{
+    if(el.id!=="sec-normas"&&el.id!=="sec-anomalias"&&el.id!=="sec-admins")
+      el.classList.toggle("travada",!souAdmin);
+  });
+  $("#trava-normas").hidden=souAdmin;
+  $("#trava-anomalias").hidden=souAdmin;
+  $("#cfg-salvar").disabled=!souAdmin;
+  $("#cfg-restaurar").disabled=!souAdmin;
+}
 
 </script>
 </body>

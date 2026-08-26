@@ -4,11 +4,7 @@ App de vistoria instalável no celular e no PC. O técnico escolhe a anomalia, a
 
 Funciona de três formas, na mesma base de código:
 
-| Como está | O que acontece |
-|---|---|
-| Arquivo aberto direto no navegador | Tudo local, sem instalação e sem base |
-| Publicado no GitHub Pages | Instala como app no celular e no PC, funciona offline |
-| Publicado + Supabase conectado | Vistorias e fotos na nuvem, equipe compartilhando as pendências |
+**O acesso é por login.** Sem conta criada no Supabase, o app não abre — quem chega vê a tela de entrada e nada mais. Depois do primeiro login o aparelho continua entrando mesmo sem sinal, e o que for registrado offline sobe quando a rede voltar.
 
 ---
 
@@ -100,6 +96,54 @@ Cada pessoa faz isso uma vez, no aparelho dela. Fica guardado.
 
 ---
 
+## As quatro abas
+
+**Vistoria** — o registro em si: dados da vistoria e a lista de não conformidades, cada uma com foto do errado e do correto.
+
+**Em aberto** — os apontamentos ainda não encerrados, de todas as vistorias e de toda a equipe, agrupados por unidade. Clique no título ou em *Abrir ficha* para ver o apontamento inteiro: fotos grandes, o texto da norma aplicável, ação corretiva, responsável, prazo e evidência exigida. Dali mesmo dá para mudar o status ou encerrar.
+
+**Relatório** — o PDF no padrão SAKUMA, pronto para imprimir.
+
+**Configurações** — as regras de prazo, descritas abaixo.
+
+---
+
+## Regras de prazo
+
+Ficam na aba **Configurações** e valem para toda a equipe: são gravadas na base, então mudar em um aparelho muda para todos.
+
+**Prazo por grau de risco** — quantos dias cada grau tem para ser resolvido, contados da data da vistoria. O padrão é Crítico 1 dia, Alto 7, Médio 30, Baixo 90.
+
+**Aviso de atenção** — quantos dias antes do vencimento o apontamento fica laranja como "vence em breve". Padrão: 3 dias. A prévia na tela mostra na hora como cada faixa vai aparecer.
+
+**Prazo específico por anomalia** — cada uma das 28 anomalias pode ter grau diferente do padrão, ou um prazo próprio em dias que ignora o grau. Útil quando um item da realidade de vocês é mais urgente do que a regra geral sugere. Prazo em branco = segue o grau.
+
+Prazo já gravado em apontamento antigo não muda sozinho: a regra nova vale para os próximos. Isso é proposital — mudar a régua não pode reescrever o histórico.
+
+---
+
+## Biblioteca de normas e anomalias
+
+Também na aba **Configurações**, e também guardada na base.
+
+**Normas** — a referência, o item e o texto da exigência que o app cita em cada apontamento. As que vêm de fábrica podem ser corrigidas; você cria as suas com *Nova norma*. A caixa **Confirmar** marcada faz o selo *confirmar item* aparecer no relatório — deixe marcada enquanto o número do dispositivo não tiver sido conferido em fonte oficial.
+
+**Anomalias** — os textos que o app preenche sozinho: título, categoria, grau padrão, situação encontrada, risco, situação requerida, ação corretiva, evidência e pendências, mais quais normas ela cita. Dá para criar novas e para *ocultar* uma que não se usa mais — ocultar tira da lista sem apagar o histórico de quem já a registrou.
+
+### O texto fica congelado
+
+Quando a vistoria é salva, o texto de cada norma citada é **gravado junto com o apontamento**. Editar uma norma depois não muda relatório nenhum que já existe: o de março continua dizendo o que dizia em março, e a versão nova vale a partir do próximo apontamento. Num documento que serve de prova em auditoria, isso não é detalhe.
+
+### Quem pode editar
+
+Só quem estiver na lista de **administradores** altera prazos, normas e anomalias. Os demais usam o app normalmente e enxergam tudo — só não mudam a régua.
+
+A trava não é só visual: a regra está no banco, na política `config_alterar` do `supabase.sql`, que consulta a função `eh_admin()`. Mesmo que alguém contorne a interface, o banco recusa.
+
+Enquanto a lista estiver vazia, qualquer pessoa logada conta como administrador — é assim que o primeiro se cadastra. **Adicione o seu e-mail primeiro:** o primeiro nome gravado fecha a porta para todos os outros, inclusive para você se esquecer de se incluir.
+
+---
+
 ## Como o app se comporta
 
 **Sem base conectada** — vistorias e pendências ficam no navegador daquele aparelho. A aba Em aberto mostra o que foi salvo ali.
@@ -130,7 +174,7 @@ Cada pessoa faz isso uma vez, no aparelho dela. Fica guardado.
 | `index.html` | O app inteiro: interface, biblioteca de anomalias, normas, relatório e integração |
 | `manifest.webmanifest` | Nome, cores e ícones da instalação |
 | `sw.js` | Faz o app abrir sem internet. Mude `VERSAO` a cada publicação |
-| `supabase.sql` | Tabelas, regras de acesso, bucket de fotos e a visão de pendências |
+| `supabase.sql` | Tabelas, regras de acesso, bucket de fotos, regras de prazo e a visão de pendências |
 | `icons/` | Ícone do app em todos os tamanhos |
 
 ---
