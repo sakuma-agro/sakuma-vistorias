@@ -132,10 +132,21 @@ async function abrirLista(){
     pintarLista();
   }catch(e){
     document.querySelector("#vs-lista").innerHTML=
-      '<div class="vazio"><p>'+(String(e.message)==="sem-sessao"
-        ?"A sessão expirou. Entre de novo."
-        :"Não deu para ler a base agora: "+E(String(e.message).slice(0,120)))+'</p></div>';
+      '<div class="vazio"><p>'+E(recado(e))+'</p></div>';
   }
+}
+
+/* Offline a lista não tem como existir: ela mora na base. Dizer isso, e não
+   "a sessão expirou", que manda a pessoa procurar problema onde não tem. */
+function recado(e){
+  var m=String(e&&e.message||"");
+  if(typeof navigator!=="undefined"&&navigator.onLine===false)
+    return "Sem internet neste momento. A lista de vistorias vem da base — "+
+           "reconecte e tente de novo. O que você já preencheu continua guardado no aparelho.";
+  if(/Failed to fetch|NetworkError|Load failed/i.test(m))
+    return "Não deu para falar com a base agora. Verifique a conexão e tente de novo.";
+  if(m==="sem-sessao")return "A sessão expirou. Saia e entre de novo.";
+  return "Não deu para ler a base agora: "+m.slice(0,120);
 }
 
 /* ─────────────────────────── montar o documento ─────────────────────────── */
@@ -330,7 +341,7 @@ async function abrir(id){
     if(typeof aba==="function")aba("relatorio");
     window.scrollTo({top:0,behavior:"smooth"});
   }catch(e){
-    if(aviso)aviso.textContent="Não deu para abrir: "+String(e.message).slice(0,90);
+    if(aviso)aviso.textContent=recado(e);
   }
 }
 
@@ -362,11 +373,17 @@ function ligar(){
   if(acoes&&!document.querySelector("#bt-abrir-vistoria")){
     var b=document.createElement("button");
     b.className="bt";b.type="button";b.id="bt-abrir-vistoria";
-    b.textContent="Abrir vistoria";
     b.title="Ver e imprimir uma vistoria salva na base";
     var alvo=document.querySelector("#bt-salvar");
     if(alvo)acoes.insertBefore(b,alvo);else acoes.appendChild(b);
     b.onclick=abrirLista;
+    /* no celular a barra do topo é estreita: rótulo curto para não quebrar linha */
+    var rotular=function(){
+      b.textContent=(window.innerWidth<=760)?"Abrir":"Abrir vistoria";
+    };
+    rotular();
+    window.addEventListener("resize",rotular);
+    window.addEventListener("orientationchange",rotular);
   }
 
   document.addEventListener("click",function(ev){
