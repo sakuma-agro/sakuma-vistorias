@@ -54,6 +54,10 @@ create table if not exists public.itens (
   atualizado_em     timestamptz not null default now()
 );
 
+-- Colunas acrescentadas depois da primeira versão: o "create table if not
+-- exists" acima não as adiciona num banco que já existe, então vão aqui.
+alter table public.itens add column if not exists normas_texto jsonb not null default '[]'::jsonb;
+
 create index if not exists itens_vistoria_idx on public.itens (vistoria_id);
 create index if not exists itens_status_idx   on public.itens (status);
 create index if not exists itens_prazo_idx    on public.itens (prazo_data);
