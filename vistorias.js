@@ -31,9 +31,26 @@ function situacao(it){
 
 /* ─────────────────────────── a lista de vistorias ─────────────────────────── */
 
+function estilos(){
+  if(document.querySelector("#estilo-vistorias"))return;
+  var st=document.createElement("style");
+  st.id="estilo-vistorias";
+  st.textContent=
+    "#dlg-vistorias{max-width:920px;padding:20px 22px 18px}"+
+    "#dlg-vistorias table{width:100%;table-layout:auto}"+
+    "#dlg-vistorias td,#dlg-vistorias th{vertical-align:middle}"+
+    "#dlg-vistorias td:first-child{min-width:210px}"+
+    "#dlg-vistorias .cfg-cat{text-transform:none;font-size:12px;margin-top:2px}"+
+    "#dlg-vistorias .cfg-tabela-env{overflow:auto}"+
+    /* a faixa é comando de tela: não sai no papel */
+    "@media print{#faixa-vistoria{display:none!important}}";
+  document.head.appendChild(st);
+}
+
 function caixa(){
   var d=document.querySelector("#dlg-vistorias");
   if(d)return d;
+  estilos();
   d=document.createElement("dialog");
   d.id="dlg-vistorias";
   d.innerHTML=''+
@@ -266,13 +283,7 @@ function documento(v,itens){
 function faixa(v){
   var f=document.querySelector("#faixa-vistoria");
   if(!f){
-    if(!document.querySelector("#estilo-faixa-vistoria")){
-      var st=document.createElement("style");
-      st.id="estilo-faixa-vistoria";
-      /* a faixa é comando de tela: não sai no papel */
-      st.textContent="@media print{#faixa-vistoria{display:none!important}}";
-      document.head.appendChild(st);
-    }
+    estilos();
     f=document.createElement("div");
     f.id="faixa-vistoria";
     f.style.cssText="display:flex;gap:12px;align-items:center;flex-wrap:wrap;"+
