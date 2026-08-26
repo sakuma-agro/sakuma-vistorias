@@ -2,13 +2,14 @@
    Guarda a casca do app para abrir sem internet. Nunca guarda chamada de API:
    tudo que vai para o Supabase passa direto pela rede.
    Ao publicar uma versão nova, mude o número em VERSAO. */
-const VERSAO = "v3";
+const VERSAO = "v4";
 const CACHE = `sakuma-vistorias-${VERSAO}`;
 
 const CASCA = [
   "./",
   "./index.html",
   "./config.js",
+  "./vistorias.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
