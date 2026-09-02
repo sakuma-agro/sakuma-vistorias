@@ -465,7 +465,7 @@ async function carregarRegras(){
       anomaliasCustom=c.anomalias||{};
       gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom});
 
-      const ad=await rest("administradores?select=email,nome&order=email.asc");
+      const ad=await rest("administradores?select=email,nome,ve_tudo&order=email.asc");
       administradores=ad||[];
       gravarJSON(K_ADMINS,administradores);
       $("#cfg-origem").textContent="Valem para toda a equipe — guardadas na base.";
@@ -1253,8 +1253,9 @@ function renderAdmins(){
   $("#ad-corpo").innerHTML=administradores.length
     ? administradores.map(a=>`<tr>
         <td>${esc(a.email)}</td><td>${esc(a.nome||"—")}</td>
+        <td style="text-align:center"><input type="checkbox" data-ad-vetudo="${esc(a.email)}"${a.ve_tudo===false?"":" checked"}></td>
         <td><button class="bt-mini" type="button" data-ad-apagar="${esc(a.email)}" title="Remover">×</button></td></tr>`).join("")
-    : '<tr><td colspan="3" class="cfg-padrao">Lista vazia — qualquer pessoa logada pode editar. Adicione o primeiro nome para fechar.</td></tr>';
+    : '<tr><td colspan="4" class="cfg-padrao">Lista vazia — qualquer pessoa logada pode editar. Adicione o primeiro nome para fechar.</td></tr>';
 }
 
 $("#ad-add").onclick=async()=>{
@@ -1265,8 +1266,8 @@ $("#ad-add").onclick=async()=>{
   if(!conectado()){toast("Entre na base para gerenciar administradores.");return;}
   try{
     await rest("administradores",{method:"POST",headers:{"Prefer":"return=minimal"},
-      body:JSON.stringify([{email,nome:nome||null,criado_por:sessao.uid||null}])});
-    administradores.push({email,nome});
+      body:JSON.stringify([{email,nome:nome||null,ve_tudo:false,criado_por:sessao.uid||null}])});
+    administradores.push({email,nome,ve_tudo:false});
     administradores.sort((a,b)=>a.email.localeCompare(b.email));
     gravarJSON(K_ADMINS,administradores);
     $("#ad-email").value="";$("#ad-nome").value="";
@@ -1276,6 +1277,23 @@ $("#ad-add").onclick=async()=>{
     toast(souAdmin?"Administrador adicionado.":"Adicionado — e você não está na lista, então perdeu a permissão de editar.");
   }catch(e){ toast("A base recusou: "+String(e.message).slice(0,110)); }
 };
+
+$("#ad-corpo").addEventListener("change",async ev=>{
+  const c=ev.target.closest("[data-ad-vetudo]"); if(!c)return;
+  const email=c.dataset.adVetudo, valor=c.checked;
+  const reg=administradores.find(a=>String(a.email).toLowerCase()===email.toLowerCase());
+  if(!conectado()){ c.checked=!valor; toast("Entre na base para mudar isso."); return; }
+  try{
+    await rest(`administradores?email=eq.${encodeURIComponent(email)}`,
+      {method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify({ve_tudo:valor})});
+    if(reg)reg.ve_tudo=valor;
+    gravarJSON(K_ADMINS,administradores);
+    toast(valor?`${email} passa a ver todas as vistorias.`:`${email} passa a ver só o que ele mesmo lançar.`);
+  }catch(e){
+    c.checked=!valor;
+    toast("A base recusou: "+String(e.message).slice(0,110));
+  }
+});
 
 $("#ad-corpo").addEventListener("click",async ev=>{
   const b=ev.target.closest("[data-ad-apagar]"); if(!b)return;
