@@ -80,12 +80,52 @@ drop trigger if exists itens_atualizado on public.itens;
 create trigger itens_atualizado before update on public.itens
   for each row execute function public.marca_atualizacao();
 
+-- ─────────── 2b. Quem administra e quem enxerga tudo ───────────
+-- Definido antes das políticas porque elas chamam estas funções.
+-- Bootstrap: enquanto a tabela estiver vazia, qualquer pessoa logada conta como
+-- administrador — é assim que o primeiro se cadastra.
+
+create table if not exists public.administradores (
+  email      text primary key,
+  nome       text,
+  criado_em  timestamptz not null default now(),
+  criado_por uuid references auth.users(id)
+);
+
+create or replace function public.eh_admin()
+returns boolean
+language sql stable security definer set search_path = public, auth as $$
+  select
+    not exists (select 1 from public.administradores)
+    or exists (
+      select 1 from public.administradores a
+      where lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    );
+$$;
+
+-- ve_tudo: quem enxerga as vistorias de toda a equipe. Padrao true para quem
+-- ja estava na lista — ninguem perde acesso sem decisao de quem administra.
+alter table public.administradores add column if not exists ve_tudo boolean not null default true;
+
+create or replace function public.ve_tudo()
+returns boolean
+language sql stable security definer set search_path = public, auth as $$
+  select
+    not exists (select 1 from public.administradores)
+    or exists (
+      select 1 from public.administradores a
+      where lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+        and a.ve_tudo
+    );
+$$;
+
+
 -- ────────────────────── 3. Segurança por linha ──────────────────────
--- Regra adotada: a SAKUMA é uma organização só. Quem tem conta criada por você
--- enxerga e trata todas as vistorias — é isso que permite o Guilherme encerrar
--- o apontamento que o técnico abriu. Quem NÃO tem conta não enxerga nada.
--- Para restringir cada técnico às suas próprias vistorias, troque
--- "using (true)" por "using (user_id = auth.uid())" nas quatro políticas.
+-- Regra adotada: cada conta enxerga e trata as vistorias que ela mesma lançou.
+-- Quem estiver marcado com ve_tudo na tabela administradores enxerga as de toda
+-- a equipe — é isso que permite o Guilherme encerrar o apontamento que o técnico
+-- abriu e acompanhar o quadro inteiro. Quem NÃO tem conta não enxerga nada.
+-- A marcação é feita na aba Configurações, na lista "Quem pode editar".
 
 alter table public.vistorias enable row level security;
 alter table public.itens     enable row level security;
@@ -95,9 +135,11 @@ drop policy if exists vistorias_inserir  on public.vistorias;
 drop policy if exists vistorias_alterar  on public.vistorias;
 drop policy if exists vistorias_apagar   on public.vistorias;
 
-create policy vistorias_ler     on public.vistorias for select to authenticated using (true);
+-- Quem enxerga o quê: cada conta vê o que ela mesma lançou; quem estiver
+-- marcado com ve_tudo na tabela administradores vê as vistorias de todos.
+create policy vistorias_ler     on public.vistorias for select to authenticated using (user_id = auth.uid() or public.ve_tudo());
 create policy vistorias_inserir on public.vistorias for insert to authenticated with check (user_id = auth.uid());
-create policy vistorias_alterar on public.vistorias for update to authenticated using (true) with check (true);
+create policy vistorias_alterar on public.vistorias for update to authenticated using (user_id = auth.uid() or public.ve_tudo()) with check (user_id = auth.uid() or public.ve_tudo());
 create policy vistorias_apagar  on public.vistorias for delete to authenticated using (user_id = auth.uid());
 
 drop policy if exists itens_ler     on public.itens;
@@ -105,9 +147,9 @@ drop policy if exists itens_inserir on public.itens;
 drop policy if exists itens_alterar on public.itens;
 drop policy if exists itens_apagar  on public.itens;
 
-create policy itens_ler     on public.itens for select to authenticated using (true);
+create policy itens_ler     on public.itens for select to authenticated using (user_id = auth.uid() or public.ve_tudo());
 create policy itens_inserir on public.itens for insert to authenticated with check (user_id = auth.uid());
-create policy itens_alterar on public.itens for update to authenticated using (true) with check (true);
+create policy itens_alterar on public.itens for update to authenticated using (user_id = auth.uid() or public.ve_tudo()) with check (user_id = auth.uid() or public.ve_tudo());
 create policy itens_apagar  on public.itens for delete to authenticated using (user_id = auth.uid());
 
 -- ────────────────────────── 4. Fotos ──────────────────────────
@@ -126,8 +168,14 @@ drop policy if exists fotos_enviar  on storage.objects;
 drop policy if exists fotos_trocar  on storage.objects;
 drop policy if exists fotos_apagar  on storage.objects;
 
+-- A foto segue a vistoria: o caminho no bucket comeca com o id dela.
 create policy fotos_ler    on storage.objects for select to authenticated
-  using (bucket_id = 'vistorias');
+  using (bucket_id = 'vistorias' and (
+    public.ve_tudo()
+    or owner = auth.uid()
+    or exists (select 1 from public.vistorias v
+               where v.user_id = auth.uid() and v.id::text = split_part(name, '/', 1))
+  ));
 create policy fotos_enviar on storage.objects for insert to authenticated
   with check (bucket_id = 'vistorias');
 create policy fotos_trocar on storage.objects for update to authenticated
@@ -149,24 +197,6 @@ grant select, insert, update, delete on public.itens     to authenticated;
 -- administrador — é assim que o primeiro se cadastra. A partir do primeiro nome
 -- gravado, só quem está na lista edita.
 
-create table if not exists public.administradores (
-  email      text primary key,
-  nome       text,
-  criado_em  timestamptz not null default now(),
-  criado_por uuid references auth.users(id)
-);
-
-create or replace function public.eh_admin()
-returns boolean
-language sql stable security definer set search_path = public, auth as $$
-  select
-    not exists (select 1 from public.administradores)
-    or exists (
-      select 1 from public.administradores a
-      where lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
-    );
-$$;
-
 alter table public.administradores enable row level security;
 
 drop policy if exists admin_ler     on public.administradores;
@@ -177,8 +207,14 @@ create policy admin_ler     on public.administradores for select to authenticate
 create policy admin_inserir on public.administradores for insert to authenticated with check (public.eh_admin());
 create policy admin_apagar  on public.administradores for delete to authenticated using (public.eh_admin());
 
-grant select, insert, delete on public.administradores to authenticated;
+grant select, insert, update, delete on public.administradores to authenticated;
 grant execute on function public.eh_admin() to authenticated;
+
+grant execute on function public.ve_tudo() to authenticated;
+
+drop policy if exists admin_alterar on public.administradores;
+create policy admin_alterar on public.administradores for update to authenticated
+  using (public.eh_admin()) with check (public.eh_admin());
 
 -- ─────────────────── 7. Regras de prazo, normas e anomalias ───────────────────
 -- Uma linha só, compartilhada por toda a equipe: prazo de cada grau de risco,
