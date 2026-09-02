@@ -971,6 +971,7 @@ function renderConfig(){
   renderAnomEditor();
   renderAdmins();
   aplicarTrava();
+  carregarContas(false);
 }
 
 function guardaAnomalia(k){
@@ -1342,6 +1343,108 @@ function aplicarTrava(){
   $("#trava-normas").hidden=souAdmin;
   $("#trava-anomalias").hidden=souAdmin;
   const tc=$("#trava-cargos"); if(tc)tc.hidden=souAdmin;
+  const tct=$("#trava-contas"); if(tct)tct.hidden=souAdmin;
   $("#cfg-salvar").disabled=!souAdmin;
   $("#cfg-restaurar").disabled=!souAdmin;
+}
+
+/* ─────────────── contas e senhas (só administrador) ─────────────── */
+let contasBase=null;
+
+async function chamarFuncao(nome,corpo){
+  const h=await comToken();
+  const r=await fetch(`${cfg.url}/functions/v1/${nome}`,{
+    method:"POST",
+    headers:{...h,"Content-Type":"application/json"},
+    body:JSON.stringify(corpo||{})
+  });
+  const txt=await r.text();
+  let d=null; try{ d=txt?JSON.parse(txt):null; }catch(e){}
+  if(!r.ok)throw new Error((d&&d.erro)||txt||("Erro "+r.status));
+  return d;
+}
+
+function quandoFoi(iso){
+  if(!iso)return "nunca entrou";
+  const d=new Date(iso);
+  if(isNaN(d))return "—";
+  return d.toLocaleDateString("pt-BR")+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+
+function renderContas(){
+  const corpo=$("#ct-corpo"), sel=$("#ct-alvo");
+  if(!corpo||!sel)return;
+  const lista=contasBase||[];
+  corpo.innerHTML=lista.length
+    ? lista.map(c=>`<tr>
+        <td>${esc(c.email)}</td><td>${esc(quandoFoi(c.ultimo))}</td>
+        <td><button class="bt-mini" type="button" data-ct-alvo="${esc(c.id)}">Trocar senha</button></td></tr>`).join("")
+    : '<tr><td colspan="3" class="cfg-padrao">Nenhuma conta lida.</td></tr>';
+  const antes=sel.value;
+  sel.innerHTML=lista.map(c=>`<option value="${esc(c.id)}">${esc(c.email)}</option>`).join("");
+  if(antes&&lista.some(c=>c.id===antes))sel.value=antes;
+}
+
+function recadoContas(txt){
+  const corpo=$("#ct-corpo"), sel=$("#ct-alvo");
+  if(corpo)corpo.innerHTML=`<tr><td colspan="3" class="cfg-padrao">${esc(txt)}</td></tr>`;
+  if(sel)sel.innerHTML="";
+}
+
+async function carregarContas(forcar){
+  if(!$("#ct-corpo"))return;
+  if(!conectado()){ contasBase=null; recadoContas("Entre na base para ver as contas."); return; }
+  if(!souAdmin){ contasBase=null; recadoContas("Só administradores mexem em contas."); return; }
+  if(contasBase&&!forcar){ renderContas(); return; }
+  recadoContas("Lendo as contas…");
+  try{
+    const d=await chamarFuncao("contas",{acao:"listar"});
+    contasBase=(d&&d.contas)||[];
+    renderContas();
+  }catch(e){
+    contasBase=null;
+    recadoContas("Não deu para ler as contas: "+String(e.message).slice(0,120));
+  }
+}
+
+function sortearSenha(){
+  const abc="abcdefghijkmnpqrstuvwxyz", ABC="ABCDEFGHJKLMNPQRSTUVWXYZ", num="23456789";
+  const tudo=abc+ABC+num, n=new Uint32Array(12);
+  crypto.getRandomValues(n);
+  let s=abc[n[0]%abc.length]+ABC[n[1]%ABC.length]+num[n[2]%num.length];
+  for(let i=3;i<11;i++)s+=tudo[n[i]%tudo.length];
+  return s;
+}
+
+if($("#ct-gerar")){
+  $("#ct-gerar").onclick=()=>{ $("#ct-senha").value=sortearSenha(); $("#ct-aviso").textContent="Senha sorteada — copie antes de definir."; };
+  $("#ct-recarregar").onclick=()=>carregarContas(true);
+  $("#ct-corpo").addEventListener("click",ev=>{
+    const b=ev.target.closest("[data-ct-alvo]"); if(!b)return;
+    $("#ct-alvo").value=b.dataset.ctAlvo;
+    if(!$("#ct-senha").value)$("#ct-senha").value=sortearSenha();
+    $("#ct-senha").focus();
+    $("#ct-aviso").textContent="";
+  });
+  $("#ct-definir").onclick=async()=>{
+    const bt=$("#ct-definir"), aviso=$("#ct-aviso");
+    const id=$("#ct-alvo").value, senha=($("#ct-senha").value||"").trim();
+    const conta=(contasBase||[]).find(c=>c.id===id);
+    aviso.textContent="";
+    if(!conectado()){ aviso.textContent="Sem conexão com a base."; return; }
+    if(!souAdmin){ aviso.textContent="Só administradores mexem em contas."; return; }
+    if(!id||!conta){ aviso.textContent="Escolha a conta."; return; }
+    if(senha.length<8){ aviso.textContent="A senha precisa de pelo menos 8 caracteres."; return; }
+    if(!confirm(`Definir a senha de ${conta.email} como "${senha}"?\n\nA senha antiga deixa de valer na hora.`))return;
+    bt.disabled=true; bt.textContent="Definindo…";
+    try{
+      await chamarFuncao("contas",{acao:"definir",id,senha});
+      aviso.textContent=`Senha de ${conta.email} trocada. Passe "${senha}" para a pessoa.`;
+      toast("Senha trocada.");
+    }catch(e){
+      aviso.textContent="A base recusou: "+String(e.message).slice(0,110);
+    }finally{
+      bt.disabled=false; bt.textContent="Definir senha";
+    }
+  };
 }

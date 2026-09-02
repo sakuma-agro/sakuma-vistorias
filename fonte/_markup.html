@@ -226,6 +226,27 @@
       </div>
     </div>
 
+    <div class="cfg-secao" id="sec-contas">
+      <h3>Contas e senhas <span class="cfg-trava" id="trava-contas" hidden>somente administradores</span></h3>
+      <p>Quando alguém esquecer a senha, defina uma nova aqui e passe para a pessoa. A senha antiga não aparece para ninguém — nem para você: ela fica guardada embaralhada. Quem receber a senha nova pode usá-la direto, sem confirmar e-mail.</p>
+      <div class="cfg-tabela-env" style="max-height:200px">
+        <table class="cfg-anomalias">
+          <thead><tr><th>E-mail</th><th style="width:170px">Último acesso</th><th style="width:120px"></th></tr></thead>
+          <tbody id="ct-corpo"><tr><td colspan="3" class="cfg-padrao">—</td></tr></tbody>
+        </table>
+      </div>
+      <div class="grade" style="padding:0;margin-top:12px">
+        <div class="campo"><label for="ct-alvo">Conta</label><select id="ct-alvo"></select></div>
+        <div class="campo"><label for="ct-senha">Senha nova</label><input type="text" id="ct-senha" placeholder="mínimo 8 caracteres" autocapitalize="off" spellcheck="false" autocomplete="off"></div>
+      </div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt bt-fantasma" type="button" id="ct-gerar">Sortear senha</button>
+        <button class="bt bt-fantasma" type="button" id="ct-recarregar">Atualizar lista</button>
+        <button class="bt" type="button" id="ct-definir">Definir senha</button>
+        <span class="cfg-salvo" id="ct-aviso"></span>
+      </div>
+    </div>
+
     <div class="cfg-barra">
       <button class="bt bt-forte" type="button" id="cfg-salvar">Salvar regras</button>
       <button class="bt bt-fantasma" type="button" id="cfg-restaurar">Restaurar padrão</button>
