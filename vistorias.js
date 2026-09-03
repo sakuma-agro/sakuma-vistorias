@@ -206,6 +206,37 @@ function ficha(it,i){
   '</div>';
 }
 
+function checklistDoc(v){
+  var blocos=Array.isArray(v.checklist)?v.checklist:[];
+  if(!blocos.length)return "";
+  var rot={C:"Conforme",NC:"Não conforme",NA:"Não se aplica","":"—"};
+  return '<h2>Checklist da norma</h2>'+blocos.map(function(b,bi){
+    var its=b.itens||[];
+    var linhas=its.map(function(it){
+      return '<tr class="'+(it.r==="NC"?"nc":"")+'">'+
+        '<td>'+(bi+1)+'.'+it.n+' - '+E(it.txt)+
+        (it.obs?'<div class="obs">Observação: '+E(it.obs)+'</div>':"")+'</td>'+
+        '<td class="r">'+rot[it.r||""]+'</td></tr>';
+    }).join("");
+    var celulas=[];
+    its.forEach(function(it){
+      (it.fotos||[]).forEach(function(f){
+        if(!f._url)return;
+        celulas.push('<figure class="chk-doc-foto"><figcaption>'+E(it.txt)+
+          '</figcaption><img src="'+f._url+'" alt=""></figure>');
+      });
+    });
+    var fotos=celulas.length
+      ? '<div class="chk-doc-faixa">Fotos do bloco — '+(b.ref?E(b.ref)+' · ':"")+E(b.titulo)+'</div>'+
+        '<div class="chk-doc-fotos">'+celulas.join("")+'</div>'
+      : "";
+    return '<div class="chk-doc-bloco">'+
+      '<div class="chk-doc-topo"><span class="n">'+(bi+1)+'</span>'+
+      (b.ref?'<b>'+E(b.ref)+'</b> ':"")+E(b.titulo)+'</div>'+
+      '<table class="chk-doc-tab"><tbody>'+linhas+'</tbody></table>'+fotos+'</div>';
+  }).join("");
+}
+
 function documento(v,itens){
   var g={"Crítico":0,"Alto":0,"Médio":0,"Baixo":0};
   itens.forEach(function(i){if(g[i.grau]!=null)g[i.grau]++;});
@@ -262,6 +293,10 @@ function documento(v,itens){
       '<div><span>Técnico responsável</span><b>'+(E(v.tecnico)||"—")+'</b></div>'+
       '<div><span>Cargo</span><b>'+(E(v.cargo)||"—")+'</b></div>'+
       '<div><span>Situação apurada em</span><b>'+hojeBR+'</b></div>'+
+      (v.hora_inicio||v.hora_fim?'<div><span>Início / fim</span><b>'+(E(v.hora_inicio)||"—")+' · '+(E(v.hora_fim)||"—")+'</b></div>':"")+
+      (v.proprietario?'<div><span>Proprietário</span><b>'+E(v.proprietario)+'</b></div>':"")+
+      (v.responsavel_turma?'<div><span>Responsável pela turma</span><b>'+E(v.responsavel_turma)+'</b></div>':"")+
+      (v.colaboradores?'<div><span>Nº de colaboradores</span><b>'+E(String(v.colaboradores))+'</b></div>':"")+
     '</div>'+
 
     '<h2>Resumo</h2>'+
@@ -279,12 +314,17 @@ function documento(v,itens){
     '</div>'+
     '<div class="doc-texto">'+E(resumoTexto)+'</div>'+
 
+    checklistDoc(v)+
     (itens.length?'<h2>Não conformidades</h2>'+itens.map(ficha).join(""):"")+
     plano+pendBloco+
+    (v.observacoes&&String(v.observacoes).trim()
+      ? '<h2>Observações do técnico</h2><div class="doc-texto">'+NL(v.observacoes)+'</div>' : "")+
 
     '<div class="doc-rodape">'+
       '<div><span>Aprovado</span><b>'+(E(v.aprovador)||"—")+'</b><br>'+E(v.aprovador_cargo||"")+'</div>'+
-      '<div style="text-align:right"><span>Feito por</span><b>'+(E(v.tecnico)||"—")+'</b><br>'+E(v.cargo||"")+'</div>'+
+      '<div><span>Responsável do setor</span><b>'+(E(v.responsavel_turma)||"—")+'</b></div>'+
+      '<div style="text-align:right"><span>Feito por</span><b>'+(E(v.tecnico)||"—")+'</b><br>'+
+        E(v.cargo||"")+(v.tecnico_registro?" · Registro "+E(v.tecnico_registro):"")+'</div>'+
     '</div>'+
     '<div class="doc-cod">'+(E(v.codigo)||"VIST-001")+' · Relatório de Vistoria · SAKUMA Agronegócios</div>';
 }
@@ -334,6 +374,15 @@ async function abrir(id){
       it._fotoE=it.foto_encontrada?await urlDaFoto(it.foto_encontrada):"";
       it._fotoR=it.foto_requerida?await urlDaFoto(it.foto_requerida):"";
       it._fotoC=it.foto_encerramento?await urlDaFoto(it.foto_encerramento):"";
+    }
+    var blocos=Array.isArray(v.checklist)?v.checklist:[];
+    for(var b=0;b<blocos.length;b++){
+      var its=blocos[b].itens||[];
+      for(var k=0;k<its.length;k++){
+        var fs=its[k].fotos||[];
+        for(var f=0;f<fs.length;f++)
+          fs[f]._url=fs[f].path?await urlDaFoto(fs[f].path):"";
+      }
     }
     aberta={v:v,itens:itens};
     if(d&&d.open)d.close();

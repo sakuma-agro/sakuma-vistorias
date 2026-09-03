@@ -58,6 +58,18 @@ create table if not exists public.itens (
 -- exists" acima não as adiciona num banco que já existe, então vão aqui.
 alter table public.itens add column if not exists normas_texto jsonb not null default '[]'::jsonb;
 
+-- Checklist da norma: as respostas ficam congeladas na própria vistoria — o
+-- enunciado do item é gravado junto da resposta, como o texto das normas nos
+-- apontamentos. Mexer na biblioteca depois não altera relatório que já existe.
+alter table public.vistorias add column if not exists checklist          jsonb not null default '[]'::jsonb;
+alter table public.vistorias add column if not exists proprietario       text;
+alter table public.vistorias add column if not exists responsavel_turma  text;
+alter table public.vistorias add column if not exists colaboradores      int;
+alter table public.vistorias add column if not exists hora_inicio        text;
+alter table public.vistorias add column if not exists hora_fim           text;
+alter table public.vistorias add column if not exists tecnico_registro   text;
+alter table public.vistorias add column if not exists observacoes        text;
+
 create index if not exists itens_vistoria_idx on public.itens (vistoria_id);
 create index if not exists itens_status_idx   on public.itens (status);
 create index if not exists itens_prazo_idx    on public.itens (prazo_data);
@@ -231,6 +243,7 @@ create table if not exists public.configuracoes (
 
 alter table public.configuracoes add column if not exists normas    jsonb not null default '{}'::jsonb;
 alter table public.configuracoes add column if not exists anomalias jsonb not null default '{}'::jsonb;
+alter table public.configuracoes add column if not exists checklists jsonb not null default '{}'::jsonb;
 
 insert into public.configuracoes (id, regras) values (1, '{}'::jsonb)
 on conflict (id) do nothing;
