@@ -296,3 +296,10 @@ body.no-inicio .rodape-gr{display:none}
 .ck-add-grupo{border:1px dashed #B9BDAE;border-radius:10px;margin:0 0 14px}
 @media (max-width:560px){.ck-add{flex-direction:column}}
 .ck-card .pe{flex-wrap:wrap;gap:8px}
+
+/* janela duplicada */
+.janela-dupla{position:fixed;inset:0;z-index:9999;background:rgba(40,44,34,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.janela-dupla>div{background:#fff;border-radius:14px;max-width:420px;width:100%;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.3)}
+.janela-dupla h3{margin:0 0 8px;color:#744F28;font-size:17px}
+.janela-dupla p{margin:0 0 16px;color:#51534A;font-size:14px;line-height:1.5}
+.jd-bts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}

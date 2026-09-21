@@ -1125,3 +1125,46 @@ ckRenderConfig();
 window.__vsPronto=true;
 try{ renderDoc(); }catch(e){ console.error("relatório:",e); }
 window.__vsIniciar();
+
+/* ─────────── uma janela só ───────────
+   O manifesto pede "focus-existing": clicar no ícone do app instalado traz a
+   janela aberta para a frente em vez de abrir outra. Quando a janela já
+   existente é reaproveitada, o atalho clicado (?aba=… / ?acao=nova) chega
+   pelo launchQueue e é aplicado aqui.
+   Se mesmo assim houver duas janelas (aba do navegador + app, ou navegador que
+   não suporta), a mais antiga fica bloqueada com aviso: duas janelas gravando
+   o mesmo rascunho apagam o trabalho uma da outra. */
+try{
+  if(window.launchQueue&&window.launchQueue.setConsumer){
+    window.launchQueue.setConsumer(p=>{
+      try{
+        const u=new URL(p.targetURL), qa=u.searchParams.get("aba"), qn=u.searchParams.get("acao");
+        if(qa==="checklists")ckMostrar("lista");
+        else if(qa==="aberto"){carregarPendencias();aba("aberto");}
+        else if(qa)aba(qa);
+        else if(qn==="nova")aba("vistoria");
+      }catch(e){}
+    });
+  }
+}catch(e){}
+try{
+  if("BroadcastChannel" in window){
+    const canal=new BroadcastChannel("sakuma-vistorias-janela");
+    const eu=Math.random().toString(36).slice(2);
+    const bloquear=()=>{
+      if(document.getElementById("janela-dupla"))return;
+      document.body.insertAdjacentHTML("beforeend",`<div id="janela-dupla" class="janela-dupla"><div>
+        <h3>O app foi aberto em outra janela</h3>
+        <p>Para não misturar o rascunho, continue na outra janela. Esta ficou parada.</p>
+        <div class="jd-bts"><button type="button" class="btn secundario" id="jd-fechar">Fechar esta janela</button>
+        <button type="button" class="btn" id="jd-usar">Usar esta janela</button></div></div></div>`);
+      document.getElementById("jd-fechar").onclick=()=>{ window.close(); setTimeout(()=>toast("Feche esta aba pelo X do navegador."),300); };
+      document.getElementById("jd-usar").onclick=()=>{ canal.postMessage({tipo:"assumir",de:eu}); location.reload(); };
+    };
+    canal.onmessage=ev=>{
+      const d=ev.data||{}; if(d.de===eu)return;
+      if(d.tipo==="cheguei"||d.tipo==="assumir")bloquear();
+    };
+    canal.postMessage({tipo:"cheguei",de:eu});
+  }
+}catch(e){}
