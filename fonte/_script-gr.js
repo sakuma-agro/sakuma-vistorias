@@ -379,11 +379,13 @@ function ckMontarTela(){
    mouse). Ao confirmar, grava a imagem, o nome e a data e hora exatas. Elas
    ficam em estado.modelo.assinaturas, que vai congelado para a base junto do
    checklist (chkEnviarFotos copia o modelo) e saem no relatório. */
-function ckPapeis(){ return ["Técnico responsável pela verificação","Responsável pela área","Aprovação"]; }
+function ckPapeis(){ return ["Responsável pela verificação"]; }
 function ckAssinaturas(){
   const m=estado.modelo; if(!m)return [];
   if(!Array.isArray(m.assinaturas))m.assinaturas=[];
-  ckPapeis().forEach((p,i)=>{ if(!m.assinaturas[i])m.assinaturas[i]={papel:p,nome:"",img:"",em:""}; });
+  /* uma assinatura só (pedido de 21/09): rascunho antigo com três fica com a primeira */
+  if(m.assinaturas.length>ckPapeis().length)m.assinaturas=m.assinaturas.slice(0,ckPapeis().length);
+  ckPapeis().forEach((p,i)=>{ if(!m.assinaturas[i])m.assinaturas[i]={papel:p,nome:"",img:"",em:""}; else m.assinaturas[i].papel=p; });
   const a0=m.assinaturas[0];
   if(!a0.nome&&!a0.em&&estado.cab&&estado.cab.tecnico)a0.nome=estado.cab.tecnico;
   return m.assinaturas;
@@ -395,8 +397,8 @@ function ckQuando(iso){
 function ckRenderAssin(){
   const cx=$("#ck-assin"); if(!cx||!estado.modelo)return;
   const lista=ckAssinaturas();
-  cx.innerHTML=`<h3 class="ck-assin-tt">Assinaturas</h3>
-    <p class="ck-assin-ajuda">Assine com o dedo ou o mouse dentro do quadro e toque em <b>Assinar</b>. A data e a hora ficam gravadas junto da assinatura e saem no relatório.</p>
+  cx.innerHTML=`<h3 class="ck-assin-tt">Assinatura</h3>
+    <p class="ck-assin-ajuda">O responsável pela verificação assina com o dedo ou o mouse dentro do quadro e toca em <b>Assinar</b>. A data e a hora ficam gravadas junto da assinatura e saem no relatório.</p>
     <div class="ck-assin-grade">${lista.map((a,i)=>a.em?`
       <div class="ck-assin feita">
         <div class="ck-assin-papel">${esc(a.papel)}</div>
@@ -764,7 +766,7 @@ function pdoc(d){
   /* assinaturas do checklist pronto: feitas na tela, com data e hora; as que
      não foram feitas no app saem com a linha em branco para assinar no papel */
   if(d.assinaturas&&d.assinaturas.length)
-    partes.push(pdTopico(null,"Assinaturas",`<div class="pd-assin">${d.assinaturas.map(a=>`
+    partes.push(pdTopico(null,d.assinaturas.length>1?"Assinaturas":"Assinatura",`<div class="pd-assin${d.assinaturas.length===1?" um":""}">${d.assinaturas.map(a=>`
       <div class="pd-assin-cx">
         <div class="pd-assin-img">${a.img?`<img src="${a.img}" alt="Assinatura">`:""}</div>
         <div class="pd-assin-linha"></div>
@@ -830,8 +832,11 @@ function pdDados(c,m,blocos,apont,logo){
       ["Cargo",c.cargo||""],["Responsável do setor",c.responsavelTurma||""],
       ["Aprovado por",[c.aprovador,c.aprovadorCargo].filter(Boolean).join(" — ")]].filter(x=>x[1]);
   }
-  const assinaturas=m?(Array.isArray(m.assinaturas)&&m.assinaturas.length?m.assinaturas
-    :ckPapeis().map(p=>({papel:p,nome:"",img:"",em:""}))):null;
+  /* só a primeira assinatura, mais qualquer outra que tenha sido feita de fato
+     (checklist antigo salvo com três quadros) */
+  const assinaturas=m?(Array.isArray(m.assinaturas)&&m.assinaturas.length
+      ?m.assinaturas.filter((a,i)=>i===0||a.em)
+      :ckPapeis().map(p=>({papel:p,nome:"",img:"",em:""}))):null;
   return {titulo,subtitulo,codigo:c.codigo,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
 }
 

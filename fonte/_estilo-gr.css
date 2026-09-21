@@ -303,3 +303,7 @@ body.no-inicio .rodape-gr{display:none}
 .janela-dupla h3{margin:0 0 8px;color:#744F28;font-size:17px}
 .janela-dupla p{margin:0 0 16px;color:#51534A;font-size:14px;line-height:1.5}
 .jd-bts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* uma assinatura só */
+.ck-assin-grade{grid-template-columns:minmax(0,420px)}
+.pd-assin.um{grid-template-columns:minmax(0,260px)}
