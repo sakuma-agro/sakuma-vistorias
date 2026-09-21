@@ -515,6 +515,34 @@ dialog.ficha-dlg{max-width:760px}
   .chk-doc-fotos{grid-template-columns:1fr 1fr}
 }
 
+/* usuários */
+dialog#dlg-usuario{max-width:520px}
+.us-check{text-transform:none;letter-spacing:0;font-weight:400;display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--texto);cursor:pointer}
+.us-check input{margin-top:3px;width:auto;flex:none}
+.us-estado{font-size:13px;color:var(--medio);background:var(--medio-bg);border-radius:7px;padding:9px 11px}
+.us-senha{font-size:13px;color:var(--verde-esc);background:var(--verde-claro);border-radius:7px;padding:11px 12px;line-height:1.5}
+.us-senha.erro{color:var(--critico);background:var(--critico-bg)}
+.us-senha code{display:inline-block;font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:.04em;background:#fff;color:var(--texto);padding:4px 10px;border-radius:6px;margin:6px 8px 4px 0;user-select:all}
+.us-senha[hidden],.us-estado[hidden]{display:none}
+.us-rodape{flex-wrap:wrap}
+.us-esq{display:flex;gap:6px;flex-wrap:wrap;margin-right:auto}
+.us-esq [hidden]{display:none}
+.ct-nome{font-weight:600}
+.ct-email{font-size:12px;color:var(--texto-fraco)}
+.ct-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:1px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.ct-tag.adm{background:var(--verde-claro);color:var(--verde-esc)}
+.ct-tag.blq{background:var(--critico-bg);color:var(--critico)}
+tr.ct-bloqueado td{opacity:.6}
+.bt-editar{border:1px solid var(--linha);background:var(--superficie);color:var(--texto);cursor:pointer;font-size:12.5px;padding:4px 10px;border-radius:6px}
+.bt-editar:hover{border-color:var(--verde);color:var(--verde-esc)}
+.us-check b{font-weight:700}
+.ct-ult{display:none;font-size:11.5px;color:var(--texto-fraco);margin-top:2px}
+@media (max-width:560px){
+  #sec-contas th:nth-child(2),#sec-contas td:nth-child(2){display:none}
+  #sec-contas .ct-ult{display:block}
+  #sec-contas .ct-email{word-break:break-all}
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    Gestão Rápida (Vistorias e Segurança) — mesmo padrão dos outros
    Gestão Rápida (Pessoas, Manutenções, Programação Campo).
@@ -1103,22 +1131,17 @@ body.no-inicio .rodape-gr{display:none}
     </div>
 
     <div class="cfg-secao" id="sec-contas">
-      <h3>Contas e senhas <span class="cfg-trava" id="trava-contas" hidden>somente administradores</span></h3>
-      <p>Quando alguém esquecer a senha, defina uma nova aqui e passe para a pessoa. A senha antiga não aparece para ninguém — nem para você: ela fica guardada embaralhada. Quem receber a senha nova pode usá-la direto, sem confirmar e-mail.</p>
-      <div class="cfg-tabela-env" style="max-height:200px">
+      <h3>Usuários <span class="cfg-trava" id="trava-contas" hidden>somente administradores</span></h3>
+      <p>Quem entra no app. <b>Adicionar pessoa</b> cria o login já liberado e mostra a senha <b>uma única vez</b>. Anote ou copie e passe para a pessoa. Em <b>editar</b> dá para trocar o nome, gerar uma senha nova, marcar como administrador ou tirar o acesso. Tirar o acesso só bloqueia a entrada: as vistorias que a pessoa lançou continuam guardadas, e dá para devolver o acesso depois.</p>
+      <div class="cfg-tabela-env" style="max-height:260px">
         <table class="cfg-anomalias">
-          <thead><tr><th>E-mail</th><th style="width:170px">Último acesso</th><th style="width:120px"></th></tr></thead>
+          <thead><tr><th>Pessoa</th><th style="width:150px">Último acesso</th><th style="width:70px"></th></tr></thead>
           <tbody id="ct-corpo"><tr><td colspan="3" class="cfg-padrao">—</td></tr></tbody>
         </table>
       </div>
-      <div class="grade" style="padding:0;margin-top:12px">
-        <div class="campo"><label for="ct-alvo">Conta</label><select id="ct-alvo"></select></div>
-        <div class="campo"><label for="ct-senha">Senha nova</label><input type="text" id="ct-senha" placeholder="mínimo 8 caracteres" autocapitalize="off" spellcheck="false" autocomplete="off"></div>
-      </div>
       <div class="rodape-item" style="margin-top:12px">
-        <button class="bt bt-fantasma" type="button" id="ct-gerar">Sortear senha</button>
+        <button class="bt" type="button" id="ct-novo">＋ Adicionar pessoa</button>
         <button class="bt bt-fantasma" type="button" id="ct-recarregar">Atualizar lista</button>
-        <button class="bt" type="button" id="ct-definir">Definir senha</button>
         <span class="cfg-salvo" id="ct-aviso"></span>
       </div>
     </div>
@@ -1157,6 +1180,27 @@ body.no-inicio .rodape-gr{display:none}
     <select id="fd-status" style="margin-right:auto;width:auto;min-width:160px"></select>
     <button class="bt bt-fantasma" type="button" data-fechar-item>Fechar</button>
     <button class="bt bt-forte" type="button" id="fd-encerrar">Encerrar com evidência</button>
+  </div>
+</dialog>
+
+<!-- ────────── diálogo: pessoa (usuários) ────────── -->
+<dialog id="dlg-usuario">
+  <div class="dlg-topo"><h3 id="us-titulo">Adicionar pessoa</h3><button class="x" type="button" data-fechar-us>×</button></div>
+  <div class="dlg-corpo">
+    <div class="campo"><label for="us-email">E-mail</label><input type="email" id="us-email" placeholder="nome@exemplo.com" autocapitalize="off" spellcheck="false" autocomplete="off"></div>
+    <div class="campo"><label for="us-nome">Nome</label><input type="text" id="us-nome" placeholder="Nome da pessoa" autocomplete="off"></div>
+    <label class="us-check"><input type="checkbox" id="us-admin"> <span><b>Administrador</b>: mexe em Configurações, cadastra pessoas e vê as vistorias de toda a equipe.</span></label>
+    <div class="us-estado" id="us-estado" hidden></div>
+    <div class="us-senha" id="us-senha" hidden></div>
+  </div>
+  <div class="dlg-rodape us-rodape">
+    <span class="us-esq">
+      <button class="bt bt-fantasma bt-perigo" type="button" id="us-bloquear" hidden>Tirar o acesso</button>
+      <button class="bt bt-fantasma" type="button" id="us-liberar" hidden>Devolver o acesso</button>
+      <button class="bt bt-fantasma" type="button" id="us-nova-senha" hidden>Gerar nova senha</button>
+    </span>
+    <button class="bt bt-fantasma" type="button" data-fechar-us>Fechar</button>
+    <button class="bt bt-forte" type="button" id="us-salvar">Criar login</button>
   </div>
 </dialog>
 
@@ -3243,6 +3287,7 @@ function renderAdmins(){
         <td style="text-align:center"><input type="checkbox" data-ad-vetudo="${esc(a.email)}"${a.ve_tudo===false?"":" checked"}></td>
         <td><button class="bt-mini" type="button" data-ad-apagar="${esc(a.email)}" title="Remover">×</button></td></tr>`).join("")
     : '<tr><td colspan="4" class="cfg-padrao">Lista vazia — qualquer pessoa logada pode editar. Adicione o primeiro nome para fechar.</td></tr>';
+  if(contasBase)renderContas();
 }
 
 $("#ad-add").onclick=async()=>{
@@ -3354,8 +3399,14 @@ function aplicarTrava(){
   $("#cfg-restaurar").disabled=!souAdmin;
 }
 
-/* ─────────────── contas e senhas (só administrador) ─────────────── */
+/* ─────────────── usuários (só administrador) ───────────────
+   Mesmo desenho do Gestão Rápida – Pessoas: lista, "Adicionar pessoa",
+   senha mostrada uma única vez, "Gerar nova senha" e "Tirar o acesso".
+   Quem cria e bloqueia é a Edge Function "contas", que guarda a chave
+   service_role no servidor. Tirar o acesso BLOQUEIA a conta em vez de apagar:
+   apagar a conta apagaria junto as vistorias dela (on delete cascade). */
 let contasBase=null;
+let usEditando=null;
 
 async function chamarFuncao(nome,corpo){
   const h=await comToken();
@@ -3367,6 +3418,7 @@ async function chamarFuncao(nome,corpo){
   const txt=await r.text();
   let d=null; try{ d=txt?JSON.parse(txt):null; }catch(e){}
   if(!r.ok)throw new Error((d&&d.erro)||txt||("Erro "+r.status));
+  if(d&&d.erro)throw new Error(d.erro);
   return d;
 }
 
@@ -3377,81 +3429,206 @@ function quandoFoi(iso){
   return d.toLocaleDateString("pt-BR")+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 }
 
+const usMeuEmail=()=>((sessao&&sessao.email)||"").toLowerCase();
+const usEhAdmin=email=>administradores.some(a=>String(a.email).toLowerCase()===String(email||"").toLowerCase());
+
 function renderContas(){
-  const corpo=$("#ct-corpo"), sel=$("#ct-alvo");
-  if(!corpo||!sel)return;
+  const corpo=$("#ct-corpo"); if(!corpo)return;
   const lista=contasBase||[];
   corpo.innerHTML=lista.length
-    ? lista.map(c=>`<tr>
-        <td>${esc(c.email)}</td><td>${esc(quandoFoi(c.ultimo))}</td>
-        <td><button class="bt-mini" type="button" data-ct-alvo="${esc(c.id)}">Trocar senha</button></td></tr>`).join("")
+    ? lista.map(c=>{
+        const nome=c.nome||(administradores.find(a=>String(a.email).toLowerCase()===c.email.toLowerCase())||{}).nome||"";
+        return `<tr class="${c.bloqueado?"ct-bloqueado":""}">
+        <td><div class="ct-nome">${esc(nome||c.email)}${usEhAdmin(c.email)?'<span class="ct-tag adm">admin</span>':""}${c.bloqueado?'<span class="ct-tag blq">sem acesso</span>':""}</div>
+            ${nome?`<div class="ct-email">${esc(c.email)}</div>`:""}
+            <div class="ct-ult">Último acesso: ${esc(quandoFoi(c.ultimo))}</div></td>
+        <td>${esc(quandoFoi(c.ultimo))}</td>
+        <td><button class="bt-editar" type="button" data-ct-editar="${esc(c.id)}">editar</button></td></tr>`;}).join("")
     : '<tr><td colspan="3" class="cfg-padrao">Nenhuma conta lida.</td></tr>';
-  const antes=sel.value;
-  sel.innerHTML=lista.map(c=>`<option value="${esc(c.id)}">${esc(c.email)}</option>`).join("");
-  if(antes&&lista.some(c=>c.id===antes))sel.value=antes;
 }
 
 function recadoContas(txt){
-  const corpo=$("#ct-corpo"), sel=$("#ct-alvo");
+  const corpo=$("#ct-corpo");
   if(corpo)corpo.innerHTML=`<tr><td colspan="3" class="cfg-padrao">${esc(txt)}</td></tr>`;
-  if(sel)sel.innerHTML="";
 }
 
 async function carregarContas(forcar){
   if(!$("#ct-corpo"))return;
-  if(!conectado()){ contasBase=null; recadoContas("Entre na base para ver as contas."); return; }
-  if(!souAdmin){ contasBase=null; recadoContas("Só administradores mexem em contas."); return; }
+  const bt=$("#ct-novo"); if(bt)bt.disabled=!(conectado()&&souAdmin);
+  if(!conectado()){ contasBase=null; recadoContas("Entre na base para ver os usuários."); return; }
+  if(!souAdmin){ contasBase=null; recadoContas("Só administradores mexem nos usuários."); return; }
   if(contasBase&&!forcar){ renderContas(); return; }
-  recadoContas("Lendo as contas…");
+  recadoContas("Lendo os usuários…");
   try{
     const d=await chamarFuncao("contas",{acao:"listar"});
     contasBase=(d&&d.contas)||[];
     renderContas();
   }catch(e){
     contasBase=null;
-    recadoContas("Não deu para ler as contas: "+String(e.message).slice(0,120));
+    recadoContas("Não deu para ler os usuários: "+String(e.message).slice(0,120));
   }
 }
 
-function sortearSenha(){
-  const abc="abcdefghijkmnpqrstuvwxyz", ABC="ABCDEFGHJKLMNPQRSTUVWXYZ", num="23456789";
-  const tudo=abc+ABC+num, n=new Uint32Array(12);
-  crypto.getRandomValues(n);
-  let s=abc[n[0]%abc.length]+ABC[n[1]%ABC.length]+num[n[2]%num.length];
-  for(let i=3;i<11;i++)s+=tudo[n[i]%tudo.length];
-  return s;
+/* caixa verde com a senha, mostrada uma vez só */
+function usMostrarSenha(html,senha){
+  const cx=$("#us-senha");
+  cx.hidden=false; cx.className="us-senha";
+  cx.innerHTML=html+(senha?`<br><code id="us-senha-txt">${esc(senha)}</code><button class="bt bt-fantasma" type="button" id="us-copiar" style="padding:4px 10px;font-size:12.5px">Copiar</button>
+    <div style="margin-top:4px">Ela não fica guardada em lugar nenhum. Se perder, gere outra.</div>`:"");
+  const b=$("#us-copiar");
+  if(b)b.onclick=async()=>{
+    try{ await navigator.clipboard.writeText(senha); b.textContent="Copiada"; }
+    catch(e){ b.textContent="Selecione e copie"; }
+  };
+}
+function usErro(txt){
+  const cx=$("#us-senha");
+  cx.hidden=false; cx.className="us-senha erro"; cx.innerHTML=txt;
 }
 
-if($("#ct-gerar")){
-  $("#ct-gerar").onclick=()=>{ $("#ct-senha").value=sortearSenha(); $("#ct-aviso").textContent="Senha sorteada — copie antes de definir."; };
+function usDesenhar(){
+  const e=usEditando, novo=!e.id;
+  $("#us-titulo").textContent=novo?"Adicionar pessoa":"Editar pessoa";
+  $("#us-email").value=e.email||"";
+  $("#us-email").disabled=!novo;
+  $("#us-nome").value=e.nome||"";
+  $("#us-admin").checked=!!e.admin;
+  const eu=!novo&&e.email.toLowerCase()===usMeuEmail();
+  $("#us-bloquear").hidden=novo||e.bloqueado||eu;
+  $("#us-liberar").hidden=novo||!e.bloqueado;
+  $("#us-nova-senha").hidden=novo||e.bloqueado;
+  $("#us-salvar").textContent=novo?"Criar login":"Salvar";
+  const est=$("#us-estado");
+  est.hidden=!e.bloqueado;
+  est.textContent=e.bloqueado?"Esta pessoa está sem acesso: não consegue entrar no app. As vistorias dela continuam guardadas.":"";
+}
+
+function usAbrir(id){
+  const c=id?(contasBase||[]).find(x=>x.id===id):null;
+  usEditando=c
+    ? {id:c.id,email:c.email,nome:c.nome||(administradores.find(a=>String(a.email).toLowerCase()===c.email.toLowerCase())||{}).nome||"",
+       admin:usEhAdmin(c.email),bloqueado:!!c.bloqueado}
+    : {id:null,email:"",nome:"",admin:false,bloqueado:false};
+  $("#us-senha").hidden=true; $("#us-senha").innerHTML="";
+  usDesenhar();
+  $("#dlg-usuario").showModal();
+  (c?$("#us-nome"):$("#us-email")).focus();
+}
+
+/* grava ou tira da lista de administradores (mesma tabela da seção "Quem pode editar") */
+async function usAjustarAdmin(email,nome,quer){
+  const tem=usEhAdmin(email);
+  if(quer===tem){
+    if(quer&&nome){
+      const reg=administradores.find(a=>String(a.email).toLowerCase()===email.toLowerCase());
+      if(reg&&reg.nome!==nome){
+        await rest(`administradores?email=eq.${encodeURIComponent(reg.email)}`,
+          {method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify({nome})});
+        reg.nome=nome;
+      }
+    }
+    return;
+  }
+  if(quer){
+    await rest("administradores",{method:"POST",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify([{email,nome:nome||null,ve_tudo:true,criado_por:sessao.uid||null}])});
+    administradores.push({email,nome,ve_tudo:true});
+    administradores.sort((a,b)=>a.email.localeCompare(b.email));
+  }else{
+    const reg=administradores.find(a=>String(a.email).toLowerCase()===email.toLowerCase());
+    await rest(`administradores?email=eq.${encodeURIComponent(reg.email)}`,{method:"DELETE",headers:{"Prefer":"return=minimal"}});
+    administradores=administradores.filter(a=>a!==reg);
+  }
+  gravarJSON(K_ADMINS,administradores);
+  const meu=usMeuEmail();
+  souAdmin=administradores.length===0||administradores.some(a=>String(a.email).toLowerCase()===meu);
+  renderAdmins(); aplicarTrava();
+}
+
+if($("#ct-novo")){
+  $("#ct-novo").onclick=()=>{
+    if(!conectado()){toast("Entre na base para cadastrar pessoas.");return;}
+    if(!souAdmin){toast("Só administradores cadastram pessoas.");return;}
+    usAbrir(null);
+  };
   $("#ct-recarregar").onclick=()=>carregarContas(true);
   $("#ct-corpo").addEventListener("click",ev=>{
-    const b=ev.target.closest("[data-ct-alvo]"); if(!b)return;
-    $("#ct-alvo").value=b.dataset.ctAlvo;
-    if(!$("#ct-senha").value)$("#ct-senha").value=sortearSenha();
-    $("#ct-senha").focus();
-    $("#ct-aviso").textContent="";
+    const b=ev.target.closest("[data-ct-editar]"); if(b)usAbrir(b.dataset.ctEditar);
   });
-  $("#ct-definir").onclick=async()=>{
-    const bt=$("#ct-definir"), aviso=$("#ct-aviso");
-    const id=$("#ct-alvo").value, senha=($("#ct-senha").value||"").trim();
-    const conta=(contasBase||[]).find(c=>c.id===id);
-    aviso.textContent="";
-    if(!conectado()){ aviso.textContent="Sem conexão com a base."; return; }
-    if(!souAdmin){ aviso.textContent="Só administradores mexem em contas."; return; }
-    if(!id||!conta){ aviso.textContent="Escolha a conta."; return; }
-    if(senha.length<8){ aviso.textContent="A senha precisa de pelo menos 8 caracteres."; return; }
-    if(!confirm(`Definir a senha de ${conta.email} como "${senha}"?\n\nA senha antiga deixa de valer na hora.`))return;
-    bt.disabled=true; bt.textContent="Definindo…";
-    try{
-      await chamarFuncao("contas",{acao:"definir",id,senha});
-      aviso.textContent=`Senha de ${conta.email} trocada. Passe "${senha}" para a pessoa.`;
-      toast("Senha trocada.");
-    }catch(e){
-      aviso.textContent="A base recusou: "+String(e.message).slice(0,110);
-    }finally{
-      bt.disabled=false; bt.textContent="Definir senha";
+  document.querySelectorAll("[data-fechar-us]").forEach(b=>b.onclick=()=>$("#dlg-usuario").close());
+
+  $("#us-salvar").onclick=async()=>{
+    const e=usEditando; if(!e)return;
+    const bt=$("#us-salvar");
+    const email=($("#us-email").value||"").trim().toLowerCase();
+    const nome=($("#us-nome").value||"").trim();
+    const admin=$("#us-admin").checked;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){usErro("Informe um e-mail válido.");return;}
+    if(!e.id&&(contasBase||[]).some(c=>c.email.toLowerCase()===email)){
+      usErro("Esse e-mail já tem login. Feche e clique em <b>editar</b> na linha dele.");return;
     }
+    if(!admin&&usEhAdmin(email)&&administradores.length===1){
+      usErro("Esta é a única pessoa administradora. Marque outra pessoa como administradora antes; lista vazia libera Configurações para todo mundo.");return;
+    }
+    if(!admin&&usEhAdmin(email)&&email===usMeuEmail()&&!confirm("Tirar você mesmo de administrador? Você deixa de mexer em Configurações e nos usuários."))return;
+    bt.disabled=true; const rot=bt.textContent; bt.textContent="Gravando…";
+    try{
+      if(!e.id){
+        const d=await chamarFuncao("contas",{acao:"criar",email,nome});
+        e.id=d.id; e.email=email; e.nome=nome; e.bloqueado=false;
+        await usAjustarAdmin(email,nome,admin); e.admin=admin;
+        await carregarContas(true);
+        usDesenhar();
+        if(d.jaExistia)usMostrarSenha("<b>Esse e-mail já tinha login.</b> O acesso foi liberado e a senha continua a mesma. Se a pessoa não lembrar, use <b>Gerar nova senha</b>.");
+        else usMostrarSenha(`<b>Login criado para ${esc(email)}.</b> Anote a senha agora:`,d.senha);
+        toast("Pessoa cadastrada.");
+      }else{
+        if(nome!==e.nome){ await chamarFuncao("contas",{acao:"renomear",id:e.id,nome}); e.nome=nome; }
+        await usAjustarAdmin(e.email,nome,admin); e.admin=admin;
+        await carregarContas(true);
+        $("#dlg-usuario").close();
+        toast("Alterações gravadas.");
+      }
+    }catch(err){
+      usErro("<b>Não deu certo.</b> "+esc(String(err.message).slice(0,160)));
+    }finally{
+      bt.disabled=false; if(bt.textContent==="Gravando…")bt.textContent=usEditando&&usEditando.id?"Salvar":rot;
+    }
+  };
+
+  $("#us-nova-senha").onclick=async()=>{
+    const e=usEditando; if(!e||!e.id)return;
+    if(!confirm(`Gerar uma senha nova para ${e.email}?\n\nA senha atual deixa de funcionar na hora, e a nova aparece uma vez só.`))return;
+    try{
+      const d=await chamarFuncao("contas",{acao:"senha",id:e.id});
+      usMostrarSenha("<b>Senha nova.</b> Anote agora — a anterior já não funciona:",d.senha);
+    }catch(err){ usErro("<b>Não consegui trocar a senha.</b> "+esc(String(err.message).slice(0,160))); }
+  };
+
+  $("#us-bloquear").onclick=async()=>{
+    const e=usEditando; if(!e||!e.id)return;
+    if(e.admin&&administradores.length===1){usErro("Esta é a única pessoa administradora. Marque outra antes.");return;}
+    if(!confirm(`Tirar o acesso de ${e.email}?\n\nA pessoa não consegue mais entrar no app. As vistorias que ela lançou continuam guardadas, e dá para devolver o acesso depois.`))return;
+    try{
+      await chamarFuncao("contas",{acao:"bloquear",id:e.id});
+      if(e.admin){ await usAjustarAdmin(e.email,e.nome,false); e.admin=false; }
+      e.bloqueado=true;
+      await carregarContas(true);
+      usDesenhar();
+      toast("Acesso retirado.");
+    }catch(err){ usErro("<b>Não consegui tirar o acesso.</b> "+esc(String(err.message).slice(0,160))); }
+  };
+
+  $("#us-liberar").onclick=async()=>{
+    const e=usEditando; if(!e||!e.id)return;
+    try{
+      await chamarFuncao("contas",{acao:"liberar",id:e.id});
+      e.bloqueado=false;
+      await carregarContas(true);
+      usDesenhar();
+      usMostrarSenha("<b>Acesso devolvido.</b> A senha continua a de antes. Se a pessoa não lembrar, use <b>Gerar nova senha</b>.");
+      toast("Acesso devolvido.");
+    }catch(err){ usErro("<b>Não consegui devolver o acesso.</b> "+esc(String(err.message).slice(0,160))); }
   };
 }
 /* ═══════════════ Checklist por norma ═══════════════
