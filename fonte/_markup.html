@@ -319,22 +319,17 @@
     </div>
 
     <div class="cfg-secao" id="sec-contas">
-      <h3>Contas e senhas <span class="cfg-trava" id="trava-contas" hidden>somente administradores</span></h3>
-      <p>Quando alguém esquecer a senha, defina uma nova aqui e passe para a pessoa. A senha antiga não aparece para ninguém — nem para você: ela fica guardada embaralhada. Quem receber a senha nova pode usá-la direto, sem confirmar e-mail.</p>
-      <div class="cfg-tabela-env" style="max-height:200px">
+      <h3>Usuários <span class="cfg-trava" id="trava-contas" hidden>somente administradores</span></h3>
+      <p>Quem entra no app. <b>Adicionar pessoa</b> cria o login já liberado e mostra a senha <b>uma única vez</b>. Anote ou copie e passe para a pessoa. Em <b>editar</b> dá para trocar o nome, gerar uma senha nova, marcar como administrador ou tirar o acesso. Tirar o acesso só bloqueia a entrada: as vistorias que a pessoa lançou continuam guardadas, e dá para devolver o acesso depois.</p>
+      <div class="cfg-tabela-env" style="max-height:260px">
         <table class="cfg-anomalias">
-          <thead><tr><th>E-mail</th><th style="width:170px">Último acesso</th><th style="width:120px"></th></tr></thead>
+          <thead><tr><th>Pessoa</th><th style="width:150px">Último acesso</th><th style="width:70px"></th></tr></thead>
           <tbody id="ct-corpo"><tr><td colspan="3" class="cfg-padrao">—</td></tr></tbody>
         </table>
       </div>
-      <div class="grade" style="padding:0;margin-top:12px">
-        <div class="campo"><label for="ct-alvo">Conta</label><select id="ct-alvo"></select></div>
-        <div class="campo"><label for="ct-senha">Senha nova</label><input type="text" id="ct-senha" placeholder="mínimo 8 caracteres" autocapitalize="off" spellcheck="false" autocomplete="off"></div>
-      </div>
       <div class="rodape-item" style="margin-top:12px">
-        <button class="bt bt-fantasma" type="button" id="ct-gerar">Sortear senha</button>
+        <button class="bt" type="button" id="ct-novo">＋ Adicionar pessoa</button>
         <button class="bt bt-fantasma" type="button" id="ct-recarregar">Atualizar lista</button>
-        <button class="bt" type="button" id="ct-definir">Definir senha</button>
         <span class="cfg-salvo" id="ct-aviso"></span>
       </div>
     </div>
@@ -373,6 +368,27 @@
     <select id="fd-status" style="margin-right:auto;width:auto;min-width:160px"></select>
     <button class="bt bt-fantasma" type="button" data-fechar-item>Fechar</button>
     <button class="bt bt-forte" type="button" id="fd-encerrar">Encerrar com evidência</button>
+  </div>
+</dialog>
+
+<!-- ────────── diálogo: pessoa (usuários) ────────── -->
+<dialog id="dlg-usuario">
+  <div class="dlg-topo"><h3 id="us-titulo">Adicionar pessoa</h3><button class="x" type="button" data-fechar-us>×</button></div>
+  <div class="dlg-corpo">
+    <div class="campo"><label for="us-email">E-mail</label><input type="email" id="us-email" placeholder="nome@exemplo.com" autocapitalize="off" spellcheck="false" autocomplete="off"></div>
+    <div class="campo"><label for="us-nome">Nome</label><input type="text" id="us-nome" placeholder="Nome da pessoa" autocomplete="off"></div>
+    <label class="us-check"><input type="checkbox" id="us-admin"> <span><b>Administrador</b>: mexe em Configurações, cadastra pessoas e vê as vistorias de toda a equipe.</span></label>
+    <div class="us-estado" id="us-estado" hidden></div>
+    <div class="us-senha" id="us-senha" hidden></div>
+  </div>
+  <div class="dlg-rodape us-rodape">
+    <span class="us-esq">
+      <button class="bt bt-fantasma bt-perigo" type="button" id="us-bloquear" hidden>Tirar o acesso</button>
+      <button class="bt bt-fantasma" type="button" id="us-liberar" hidden>Devolver o acesso</button>
+      <button class="bt bt-fantasma" type="button" id="us-nova-senha" hidden>Gerar nova senha</button>
+    </span>
+    <button class="bt bt-fantasma" type="button" data-fechar-us>Fechar</button>
+    <button class="bt bt-forte" type="button" id="us-salvar">Criar login</button>
   </div>
 </dialog>
 

@@ -249,3 +249,31 @@ dialog.ficha-dlg{max-width:760px}
   .chk-doc-foto img{max-height:150px}
   .chk-doc-fotos{grid-template-columns:1fr 1fr}
 }
+
+/* usuários */
+dialog#dlg-usuario{max-width:520px}
+.us-check{text-transform:none;letter-spacing:0;font-weight:400;display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--texto);cursor:pointer}
+.us-check input{margin-top:3px;width:auto;flex:none}
+.us-estado{font-size:13px;color:var(--medio);background:var(--medio-bg);border-radius:7px;padding:9px 11px}
+.us-senha{font-size:13px;color:var(--verde-esc);background:var(--verde-claro);border-radius:7px;padding:11px 12px;line-height:1.5}
+.us-senha.erro{color:var(--critico);background:var(--critico-bg)}
+.us-senha code{display:inline-block;font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:.04em;background:#fff;color:var(--texto);padding:4px 10px;border-radius:6px;margin:6px 8px 4px 0;user-select:all}
+.us-senha[hidden],.us-estado[hidden]{display:none}
+.us-rodape{flex-wrap:wrap}
+.us-esq{display:flex;gap:6px;flex-wrap:wrap;margin-right:auto}
+.us-esq [hidden]{display:none}
+.ct-nome{font-weight:600}
+.ct-email{font-size:12px;color:var(--texto-fraco)}
+.ct-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:1px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.ct-tag.adm{background:var(--verde-claro);color:var(--verde-esc)}
+.ct-tag.blq{background:var(--critico-bg);color:var(--critico)}
+tr.ct-bloqueado td{opacity:.6}
+.bt-editar{border:1px solid var(--linha);background:var(--superficie);color:var(--texto);cursor:pointer;font-size:12.5px;padding:4px 10px;border-radius:6px}
+.bt-editar:hover{border-color:var(--verde);color:var(--verde-esc)}
+.us-check b{font-weight:700}
+.ct-ult{display:none;font-size:11.5px;color:var(--texto-fraco);margin-top:2px}
+@media (max-width:560px){
+  #sec-contas th:nth-child(2),#sec-contas td:nth-child(2){display:none}
+  #sec-contas .ct-ult{display:block}
+  #sec-contas .ct-email{word-break:break-all}
+}

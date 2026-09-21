@@ -1269,6 +1269,7 @@ function renderAdmins(){
         <td style="text-align:center"><input type="checkbox" data-ad-vetudo="${esc(a.email)}"${a.ve_tudo===false?"":" checked"}></td>
         <td><button class="bt-mini" type="button" data-ad-apagar="${esc(a.email)}" title="Remover">×</button></td></tr>`).join("")
     : '<tr><td colspan="4" class="cfg-padrao">Lista vazia — qualquer pessoa logada pode editar. Adicione o primeiro nome para fechar.</td></tr>';
+  if(contasBase)renderContas();
 }
 
 $("#ad-add").onclick=async()=>{
@@ -1380,8 +1381,14 @@ function aplicarTrava(){
   $("#cfg-restaurar").disabled=!souAdmin;
 }
 
-/* ─────────────── contas e senhas (só administrador) ─────────────── */
+/* ─────────────── usuários (só administrador) ───────────────
+   Mesmo desenho do Gestão Rápida – Pessoas: lista, "Adicionar pessoa",
+   senha mostrada uma única vez, "Gerar nova senha" e "Tirar o acesso".
+   Quem cria e bloqueia é a Edge Function "contas", que guarda a chave
+   service_role no servidor. Tirar o acesso BLOQUEIA a conta em vez de apagar:
+   apagar a conta apagaria junto as vistorias dela (on delete cascade). */
 let contasBase=null;
+let usEditando=null;
 
 async function chamarFuncao(nome,corpo){
   const h=await comToken();
@@ -1393,6 +1400,7 @@ async function chamarFuncao(nome,corpo){
   const txt=await r.text();
   let d=null; try{ d=txt?JSON.parse(txt):null; }catch(e){}
   if(!r.ok)throw new Error((d&&d.erro)||txt||("Erro "+r.status));
+  if(d&&d.erro)throw new Error(d.erro);
   return d;
 }
 
@@ -1403,81 +1411,206 @@ function quandoFoi(iso){
   return d.toLocaleDateString("pt-BR")+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 }
 
+const usMeuEmail=()=>((sessao&&sessao.email)||"").toLowerCase();
+const usEhAdmin=email=>administradores.some(a=>String(a.email).toLowerCase()===String(email||"").toLowerCase());
+
 function renderContas(){
-  const corpo=$("#ct-corpo"), sel=$("#ct-alvo");
-  if(!corpo||!sel)return;
+  const corpo=$("#ct-corpo"); if(!corpo)return;
   const lista=contasBase||[];
   corpo.innerHTML=lista.length
-    ? lista.map(c=>`<tr>
-        <td>${esc(c.email)}</td><td>${esc(quandoFoi(c.ultimo))}</td>
-        <td><button class="bt-mini" type="button" data-ct-alvo="${esc(c.id)}">Trocar senha</button></td></tr>`).join("")
+    ? lista.map(c=>{
+        const nome=c.nome||(administradores.find(a=>String(a.email).toLowerCase()===c.email.toLowerCase())||{}).nome||"";
+        return `<tr class="${c.bloqueado?"ct-bloqueado":""}">
+        <td><div class="ct-nome">${esc(nome||c.email)}${usEhAdmin(c.email)?'<span class="ct-tag adm">admin</span>':""}${c.bloqueado?'<span class="ct-tag blq">sem acesso</span>':""}</div>
+            ${nome?`<div class="ct-email">${esc(c.email)}</div>`:""}
+            <div class="ct-ult">Último acesso: ${esc(quandoFoi(c.ultimo))}</div></td>
+        <td>${esc(quandoFoi(c.ultimo))}</td>
+        <td><button class="bt-editar" type="button" data-ct-editar="${esc(c.id)}">editar</button></td></tr>`;}).join("")
     : '<tr><td colspan="3" class="cfg-padrao">Nenhuma conta lida.</td></tr>';
-  const antes=sel.value;
-  sel.innerHTML=lista.map(c=>`<option value="${esc(c.id)}">${esc(c.email)}</option>`).join("");
-  if(antes&&lista.some(c=>c.id===antes))sel.value=antes;
 }
 
 function recadoContas(txt){
-  const corpo=$("#ct-corpo"), sel=$("#ct-alvo");
+  const corpo=$("#ct-corpo");
   if(corpo)corpo.innerHTML=`<tr><td colspan="3" class="cfg-padrao">${esc(txt)}</td></tr>`;
-  if(sel)sel.innerHTML="";
 }
 
 async function carregarContas(forcar){
   if(!$("#ct-corpo"))return;
-  if(!conectado()){ contasBase=null; recadoContas("Entre na base para ver as contas."); return; }
-  if(!souAdmin){ contasBase=null; recadoContas("Só administradores mexem em contas."); return; }
+  const bt=$("#ct-novo"); if(bt)bt.disabled=!(conectado()&&souAdmin);
+  if(!conectado()){ contasBase=null; recadoContas("Entre na base para ver os usuários."); return; }
+  if(!souAdmin){ contasBase=null; recadoContas("Só administradores mexem nos usuários."); return; }
   if(contasBase&&!forcar){ renderContas(); return; }
-  recadoContas("Lendo as contas…");
+  recadoContas("Lendo os usuários…");
   try{
     const d=await chamarFuncao("contas",{acao:"listar"});
     contasBase=(d&&d.contas)||[];
     renderContas();
   }catch(e){
     contasBase=null;
-    recadoContas("Não deu para ler as contas: "+String(e.message).slice(0,120));
+    recadoContas("Não deu para ler os usuários: "+String(e.message).slice(0,120));
   }
 }
 
-function sortearSenha(){
-  const abc="abcdefghijkmnpqrstuvwxyz", ABC="ABCDEFGHJKLMNPQRSTUVWXYZ", num="23456789";
-  const tudo=abc+ABC+num, n=new Uint32Array(12);
-  crypto.getRandomValues(n);
-  let s=abc[n[0]%abc.length]+ABC[n[1]%ABC.length]+num[n[2]%num.length];
-  for(let i=3;i<11;i++)s+=tudo[n[i]%tudo.length];
-  return s;
+/* caixa verde com a senha, mostrada uma vez só */
+function usMostrarSenha(html,senha){
+  const cx=$("#us-senha");
+  cx.hidden=false; cx.className="us-senha";
+  cx.innerHTML=html+(senha?`<br><code id="us-senha-txt">${esc(senha)}</code><button class="bt bt-fantasma" type="button" id="us-copiar" style="padding:4px 10px;font-size:12.5px">Copiar</button>
+    <div style="margin-top:4px">Ela não fica guardada em lugar nenhum. Se perder, gere outra.</div>`:"");
+  const b=$("#us-copiar");
+  if(b)b.onclick=async()=>{
+    try{ await navigator.clipboard.writeText(senha); b.textContent="Copiada"; }
+    catch(e){ b.textContent="Selecione e copie"; }
+  };
+}
+function usErro(txt){
+  const cx=$("#us-senha");
+  cx.hidden=false; cx.className="us-senha erro"; cx.innerHTML=txt;
 }
 
-if($("#ct-gerar")){
-  $("#ct-gerar").onclick=()=>{ $("#ct-senha").value=sortearSenha(); $("#ct-aviso").textContent="Senha sorteada — copie antes de definir."; };
+function usDesenhar(){
+  const e=usEditando, novo=!e.id;
+  $("#us-titulo").textContent=novo?"Adicionar pessoa":"Editar pessoa";
+  $("#us-email").value=e.email||"";
+  $("#us-email").disabled=!novo;
+  $("#us-nome").value=e.nome||"";
+  $("#us-admin").checked=!!e.admin;
+  const eu=!novo&&e.email.toLowerCase()===usMeuEmail();
+  $("#us-bloquear").hidden=novo||e.bloqueado||eu;
+  $("#us-liberar").hidden=novo||!e.bloqueado;
+  $("#us-nova-senha").hidden=novo||e.bloqueado;
+  $("#us-salvar").textContent=novo?"Criar login":"Salvar";
+  const est=$("#us-estado");
+  est.hidden=!e.bloqueado;
+  est.textContent=e.bloqueado?"Esta pessoa está sem acesso: não consegue entrar no app. As vistorias dela continuam guardadas.":"";
+}
+
+function usAbrir(id){
+  const c=id?(contasBase||[]).find(x=>x.id===id):null;
+  usEditando=c
+    ? {id:c.id,email:c.email,nome:c.nome||(administradores.find(a=>String(a.email).toLowerCase()===c.email.toLowerCase())||{}).nome||"",
+       admin:usEhAdmin(c.email),bloqueado:!!c.bloqueado}
+    : {id:null,email:"",nome:"",admin:false,bloqueado:false};
+  $("#us-senha").hidden=true; $("#us-senha").innerHTML="";
+  usDesenhar();
+  $("#dlg-usuario").showModal();
+  (c?$("#us-nome"):$("#us-email")).focus();
+}
+
+/* grava ou tira da lista de administradores (mesma tabela da seção "Quem pode editar") */
+async function usAjustarAdmin(email,nome,quer){
+  const tem=usEhAdmin(email);
+  if(quer===tem){
+    if(quer&&nome){
+      const reg=administradores.find(a=>String(a.email).toLowerCase()===email.toLowerCase());
+      if(reg&&reg.nome!==nome){
+        await rest(`administradores?email=eq.${encodeURIComponent(reg.email)}`,
+          {method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify({nome})});
+        reg.nome=nome;
+      }
+    }
+    return;
+  }
+  if(quer){
+    await rest("administradores",{method:"POST",headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify([{email,nome:nome||null,ve_tudo:true,criado_por:sessao.uid||null}])});
+    administradores.push({email,nome,ve_tudo:true});
+    administradores.sort((a,b)=>a.email.localeCompare(b.email));
+  }else{
+    const reg=administradores.find(a=>String(a.email).toLowerCase()===email.toLowerCase());
+    await rest(`administradores?email=eq.${encodeURIComponent(reg.email)}`,{method:"DELETE",headers:{"Prefer":"return=minimal"}});
+    administradores=administradores.filter(a=>a!==reg);
+  }
+  gravarJSON(K_ADMINS,administradores);
+  const meu=usMeuEmail();
+  souAdmin=administradores.length===0||administradores.some(a=>String(a.email).toLowerCase()===meu);
+  renderAdmins(); aplicarTrava();
+}
+
+if($("#ct-novo")){
+  $("#ct-novo").onclick=()=>{
+    if(!conectado()){toast("Entre na base para cadastrar pessoas.");return;}
+    if(!souAdmin){toast("Só administradores cadastram pessoas.");return;}
+    usAbrir(null);
+  };
   $("#ct-recarregar").onclick=()=>carregarContas(true);
   $("#ct-corpo").addEventListener("click",ev=>{
-    const b=ev.target.closest("[data-ct-alvo]"); if(!b)return;
-    $("#ct-alvo").value=b.dataset.ctAlvo;
-    if(!$("#ct-senha").value)$("#ct-senha").value=sortearSenha();
-    $("#ct-senha").focus();
-    $("#ct-aviso").textContent="";
+    const b=ev.target.closest("[data-ct-editar]"); if(b)usAbrir(b.dataset.ctEditar);
   });
-  $("#ct-definir").onclick=async()=>{
-    const bt=$("#ct-definir"), aviso=$("#ct-aviso");
-    const id=$("#ct-alvo").value, senha=($("#ct-senha").value||"").trim();
-    const conta=(contasBase||[]).find(c=>c.id===id);
-    aviso.textContent="";
-    if(!conectado()){ aviso.textContent="Sem conexão com a base."; return; }
-    if(!souAdmin){ aviso.textContent="Só administradores mexem em contas."; return; }
-    if(!id||!conta){ aviso.textContent="Escolha a conta."; return; }
-    if(senha.length<8){ aviso.textContent="A senha precisa de pelo menos 8 caracteres."; return; }
-    if(!confirm(`Definir a senha de ${conta.email} como "${senha}"?\n\nA senha antiga deixa de valer na hora.`))return;
-    bt.disabled=true; bt.textContent="Definindo…";
-    try{
-      await chamarFuncao("contas",{acao:"definir",id,senha});
-      aviso.textContent=`Senha de ${conta.email} trocada. Passe "${senha}" para a pessoa.`;
-      toast("Senha trocada.");
-    }catch(e){
-      aviso.textContent="A base recusou: "+String(e.message).slice(0,110);
-    }finally{
-      bt.disabled=false; bt.textContent="Definir senha";
+  document.querySelectorAll("[data-fechar-us]").forEach(b=>b.onclick=()=>$("#dlg-usuario").close());
+
+  $("#us-salvar").onclick=async()=>{
+    const e=usEditando; if(!e)return;
+    const bt=$("#us-salvar");
+    const email=($("#us-email").value||"").trim().toLowerCase();
+    const nome=($("#us-nome").value||"").trim();
+    const admin=$("#us-admin").checked;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){usErro("Informe um e-mail válido.");return;}
+    if(!e.id&&(contasBase||[]).some(c=>c.email.toLowerCase()===email)){
+      usErro("Esse e-mail já tem login. Feche e clique em <b>editar</b> na linha dele.");return;
     }
+    if(!admin&&usEhAdmin(email)&&administradores.length===1){
+      usErro("Esta é a única pessoa administradora. Marque outra pessoa como administradora antes; lista vazia libera Configurações para todo mundo.");return;
+    }
+    if(!admin&&usEhAdmin(email)&&email===usMeuEmail()&&!confirm("Tirar você mesmo de administrador? Você deixa de mexer em Configurações e nos usuários."))return;
+    bt.disabled=true; const rot=bt.textContent; bt.textContent="Gravando…";
+    try{
+      if(!e.id){
+        const d=await chamarFuncao("contas",{acao:"criar",email,nome});
+        e.id=d.id; e.email=email; e.nome=nome; e.bloqueado=false;
+        await usAjustarAdmin(email,nome,admin); e.admin=admin;
+        await carregarContas(true);
+        usDesenhar();
+        if(d.jaExistia)usMostrarSenha("<b>Esse e-mail já tinha login.</b> O acesso foi liberado e a senha continua a mesma. Se a pessoa não lembrar, use <b>Gerar nova senha</b>.");
+        else usMostrarSenha(`<b>Login criado para ${esc(email)}.</b> Anote a senha agora:`,d.senha);
+        toast("Pessoa cadastrada.");
+      }else{
+        if(nome!==e.nome){ await chamarFuncao("contas",{acao:"renomear",id:e.id,nome}); e.nome=nome; }
+        await usAjustarAdmin(e.email,nome,admin); e.admin=admin;
+        await carregarContas(true);
+        $("#dlg-usuario").close();
+        toast("Alterações gravadas.");
+      }
+    }catch(err){
+      usErro("<b>Não deu certo.</b> "+esc(String(err.message).slice(0,160)));
+    }finally{
+      bt.disabled=false; if(bt.textContent==="Gravando…")bt.textContent=usEditando&&usEditando.id?"Salvar":rot;
+    }
+  };
+
+  $("#us-nova-senha").onclick=async()=>{
+    const e=usEditando; if(!e||!e.id)return;
+    if(!confirm(`Gerar uma senha nova para ${e.email}?\n\nA senha atual deixa de funcionar na hora, e a nova aparece uma vez só.`))return;
+    try{
+      const d=await chamarFuncao("contas",{acao:"senha",id:e.id});
+      usMostrarSenha("<b>Senha nova.</b> Anote agora — a anterior já não funciona:",d.senha);
+    }catch(err){ usErro("<b>Não consegui trocar a senha.</b> "+esc(String(err.message).slice(0,160))); }
+  };
+
+  $("#us-bloquear").onclick=async()=>{
+    const e=usEditando; if(!e||!e.id)return;
+    if(e.admin&&administradores.length===1){usErro("Esta é a única pessoa administradora. Marque outra antes.");return;}
+    if(!confirm(`Tirar o acesso de ${e.email}?\n\nA pessoa não consegue mais entrar no app. As vistorias que ela lançou continuam guardadas, e dá para devolver o acesso depois.`))return;
+    try{
+      await chamarFuncao("contas",{acao:"bloquear",id:e.id});
+      if(e.admin){ await usAjustarAdmin(e.email,e.nome,false); e.admin=false; }
+      e.bloqueado=true;
+      await carregarContas(true);
+      usDesenhar();
+      toast("Acesso retirado.");
+    }catch(err){ usErro("<b>Não consegui tirar o acesso.</b> "+esc(String(err.message).slice(0,160))); }
+  };
+
+  $("#us-liberar").onclick=async()=>{
+    const e=usEditando; if(!e||!e.id)return;
+    try{
+      await chamarFuncao("contas",{acao:"liberar",id:e.id});
+      e.bloqueado=false;
+      await carregarContas(true);
+      usDesenhar();
+      usMostrarSenha("<b>Acesso devolvido.</b> A senha continua a de antes. Se a pessoa não lembrar, use <b>Gerar nova senha</b>.");
+      toast("Acesso devolvido.");
+    }catch(err){ usErro("<b>Não consegui devolver o acesso.</b> "+esc(String(err.message).slice(0,160))); }
   };
 }
 /* ═══════════════ Checklist por norma ═══════════════
