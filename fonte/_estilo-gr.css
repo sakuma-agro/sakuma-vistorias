@@ -263,3 +263,36 @@ body.no-inicio .rodape-gr{display:none}
   .pd-tt,.pd-faixa{break-after:avoid;page-break-after:avoid}
   .pd-foto img{height:170px}
 }
+
+/* assinaturas — tela */
+.ck-assin-cx{padding:16px;margin-bottom:14px}
+.ck-assin-tt{font-size:15px;margin:0 0 4px;color:var(--marrom,#744F28)}
+.ck-assin-ajuda{font-size:12.5px;color:var(--texto-fraco);margin:0 0 12px;line-height:1.45}
+.ck-assin-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.ck-assin{border:1px solid var(--linha);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;background:var(--superficie)}
+.ck-assin-papel{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--verde-esc)}
+.ck-assin-tela{width:100%;height:140px;border:1.5px dashed #B9BDAE;border-radius:8px;background:#FCFDF8;touch-action:none;cursor:crosshair}
+.ck-assin-bts{display:flex;gap:8px;justify-content:flex-end}
+.ck-assin.feita{background:var(--verde-claro);border-color:#C9DD9A}
+.ck-assin.feita img{width:100%;height:110px;object-fit:contain;background:#fff;border-radius:6px}
+.ck-assin-nome{font-weight:700;font-size:13.5px}
+.ck-assin-quando{font-size:12px;color:var(--verde-esc);font-weight:600}
+.ck-assin.feita .bt{align-self:flex-end}
+/* assinaturas — relatório */
+.pd-assin{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:8px 2px 4px;break-inside:avoid;page-break-inside:avoid}
+.pd-assin-cx{text-align:center;font-size:10.5px;color:#51534A}
+.pd-assin-img{height:62px;display:flex;align-items:flex-end;justify-content:center}
+.pd-assin-img img{max-height:62px;max-width:100%;object-fit:contain}
+.pd-assin-linha{border-top:1px solid #51534A;margin:2px 6px 4px}
+.pd-assin-nome{font-weight:bold;font-size:11px}
+.pd-assin-papel{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#6A9800;font-weight:bold;margin-top:1px}
+.pd-assin-quando{font-size:9.5px;color:#744F28;margin-top:2px}
+@media (max-width:620px){.pd-assin{grid-template-columns:1fr}}
+
+/* acrescentar item / grupo no próprio checklist */
+.ck-add{display:flex;gap:8px;padding:10px 12px;border-top:1px dashed var(--linha);background:#FAFBF6}
+.ck-add input{flex:1;min-width:0}
+.ck-add .bt{white-space:nowrap}
+.ck-add-grupo{border:1px dashed #B9BDAE;border-radius:10px;margin:0 0 14px}
+@media (max-width:560px){.ck-add{flex-direction:column}}
+.ck-card .pe{flex-wrap:wrap;gap:8px}

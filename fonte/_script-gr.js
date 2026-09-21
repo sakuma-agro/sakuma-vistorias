@@ -300,6 +300,7 @@ function ckRenderLista(){
     <div class="secao-topo">
       <h2>Checklists prontos</h2>
       <span class="dica">Escolha o checklist, preencha no local e salve. O que for Não conforme vira apontamento com prazo.</span>
+      <button class="btn" type="button" data-ck-novo style="margin-left:auto">＋ Novo checklist</button>
     </div>
     ${andamento}
     ${chaves.length?`<div class="ck-modelos">${chaves.map(k=>{
@@ -311,6 +312,8 @@ function ckRenderLista(){
         <div class="grupos">${(m.grupos||[]).map(g=>`<span>${esc(g.titulo)}</span>`).join("")}</div>
         <div class="pe">
           <button class="btn" type="button" data-ck-iniciar="${esc(k)}">Preencher</button>
+          <button class="bt bt-fantasma" type="button" data-ck-editar="${esc(k)}">editar</button>
+          <button class="bt bt-fantasma" type="button" data-ck-duplicar="${esc(k)}">duplicar</button>
           ${m.arquivo?`<a href="${esc(m.arquivo)}" download>Planilha original</a>`:""}
         </div>
       </div>`;}).join("")}</div>`
@@ -361,13 +364,101 @@ function ckMontarTela(){
       <div class="campo largo"><label for="ck-observacoes">Observações</label>
         <textarea id="ck-observacoes" data-ck-cab="observacoes" rows="3" placeholder="Leitura geral da verificação.">${esc(c.observacoes||"")}</textarea></div>
     </div>
+    <div class="cartao ck-assin-cx" id="ck-assin"></div>
     <div class="ck-fim">
       <button class="bt" type="button" data-ck-voltar>Voltar</button>
       <button class="btn secundario" type="button" data-ck-imprimir>Imprimir / PDF</button>
       <button class="btn" type="button" data-ck-salvar>Salvar checklist</button>
     </div>`;
   ckRenderPreencher();
+  ckRenderAssin();
 }
+
+/* ─────────── assinaturas do checklist ───────────
+   Todo checklist pronto termina com três assinaturas feitas na tela (dedo ou
+   mouse). Ao confirmar, grava a imagem, o nome e a data e hora exatas. Elas
+   ficam em estado.modelo.assinaturas, que vai congelado para a base junto do
+   checklist (chkEnviarFotos copia o modelo) e saem no relatório. */
+function ckPapeis(){ return ["Técnico responsável pela verificação","Responsável pela área","Aprovação"]; }
+function ckAssinaturas(){
+  const m=estado.modelo; if(!m)return [];
+  if(!Array.isArray(m.assinaturas))m.assinaturas=[];
+  ckPapeis().forEach((p,i)=>{ if(!m.assinaturas[i])m.assinaturas[i]={papel:p,nome:"",img:"",em:""}; });
+  const a0=m.assinaturas[0];
+  if(!a0.nome&&!a0.em&&estado.cab&&estado.cab.tecnico)a0.nome=estado.cab.tecnico;
+  return m.assinaturas;
+}
+function ckQuando(iso){
+  const d=new Date(iso); if(isNaN(d))return "";
+  return d.toLocaleDateString("pt-BR")+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+function ckRenderAssin(){
+  const cx=$("#ck-assin"); if(!cx||!estado.modelo)return;
+  const lista=ckAssinaturas();
+  cx.innerHTML=`<h3 class="ck-assin-tt">Assinaturas</h3>
+    <p class="ck-assin-ajuda">Assine com o dedo ou o mouse dentro do quadro e toque em <b>Assinar</b>. A data e a hora ficam gravadas junto da assinatura e saem no relatório.</p>
+    <div class="ck-assin-grade">${lista.map((a,i)=>a.em?`
+      <div class="ck-assin feita">
+        <div class="ck-assin-papel">${esc(a.papel)}</div>
+        <img src="${a.img}" alt="Assinatura de ${esc(a.nome)}">
+        <div class="ck-assin-nome">${esc(a.nome)}</div>
+        <div class="ck-assin-quando">Assinado em ${esc(ckQuando(a.em))}</div>
+        <button type="button" class="bt bt-fantasma" data-as-refazer="${i}">Refazer</button>
+      </div>`:`
+      <div class="ck-assin">
+        <div class="ck-assin-papel">${esc(a.papel)}</div>
+        <input type="text" placeholder="Nome de quem assina" value="${esc(a.nome||"")}" data-as-nome="${i}">
+        <canvas class="ck-assin-tela" data-as-tela="${i}" aria-label="Quadro para assinar"></canvas>
+        <div class="ck-assin-bts">
+          <button type="button" class="bt bt-fantasma" data-as-limpar="${i}">Limpar</button>
+          <button type="button" class="btn" data-as-assinar="${i}">Assinar</button>
+        </div>
+      </div>`).join("")}</div>`;
+  cx.querySelectorAll("canvas[data-as-tela]").forEach(ckLigarTela);
+}
+function ckLigarTela(cv){
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth||300, h=cv.clientHeight||140;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  const ctx=cv.getContext("2d");
+  ctx.scale(dpr,dpr); ctx.lineWidth=2.2; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#2E3A1F";
+  cv._riscou=false;
+  let ant=null;
+  const ponto=ev=>{ const r=cv.getBoundingClientRect(); return [ev.clientX-r.left, ev.clientY-r.top]; };
+  cv.addEventListener("pointerdown",ev=>{ ev.preventDefault(); cv.setPointerCapture(ev.pointerId); ant=ponto(ev);
+    ctx.beginPath(); ctx.arc(ant[0],ant[1],1.1,0,Math.PI*2); ctx.fillStyle="#2E3A1F"; ctx.fill(); cv._riscou=true; });
+  cv.addEventListener("pointermove",ev=>{ if(!ant)return; ev.preventDefault(); const p=ponto(ev);
+    ctx.beginPath(); ctx.moveTo(ant[0],ant[1]); ctx.lineTo(p[0],p[1]); ctx.stroke(); ant=p; cv._riscou=true; });
+  const fim=()=>{ ant=null; };
+  cv.addEventListener("pointerup",fim); cv.addEventListener("pointercancel",fim); cv.addEventListener("pointerleave",fim);
+}
+$("#painel-checklists").addEventListener("click",ev=>{
+  const t=ev.target;
+  const lim=t.closest("[data-as-limpar]");
+  if(lim){ const cv=document.querySelector(`canvas[data-as-tela="${lim.dataset.asLimpar}"]`); if(cv)ckLigarTela(cv); return; }
+  const ass=t.closest("[data-as-assinar]");
+  if(ass){
+    const i=Number(ass.dataset.asAssinar), a=ckAssinaturas()[i];
+    const cv=document.querySelector(`canvas[data-as-tela="${i}"]`);
+    const nome=(document.querySelector(`[data-as-nome="${i}"]`)||{}).value||"";
+    if(!nome.trim()){ toast("Escreva o nome de quem está assinando."); return; }
+    if(!cv||!cv._riscou){ toast("Assine dentro do quadro antes de confirmar."); return; }
+    a.nome=nome.trim(); a.img=cv.toDataURL("image/png"); a.em=new Date().toISOString();
+    ckRenderAssin(); salvar(); renderDoc();
+    toast("Assinado em "+ckQuando(a.em)+".");
+    return;
+  }
+  const ref=t.closest("[data-as-refazer]");
+  if(ref){
+    const a=ckAssinaturas()[Number(ref.dataset.asRefazer)];
+    if(!confirm("Apagar esta assinatura para assinar de novo? A data e a hora serão as da nova assinatura."))return;
+    a.img=""; a.em="";
+    ckRenderAssin(); salvar(); renderDoc();
+  }
+});
+$("#painel-checklists").addEventListener("input",ev=>{
+  const el=ev.target.closest("[data-as-nome]"); if(!el)return;
+  const a=ckAssinaturas()[Number(el.dataset.asNome)]; if(a){ a.nome=el.value; salvar(); }
+});
 
 function ckContagem(blocos){
   const t={total:0,C:0,NC:0,NA:0,sem:0};
@@ -417,7 +508,55 @@ function ckRenderPreencher(){
           `<figure><img src="${esc(f.url||f.assinada||"")}" alt="Foto do item ${esc(it.cod||"")}">
            <button type="button" class="x" data-chk-tirar="${fi}" data-bloco="${esc(b.id)}" data-n="${it.n}" title="Tirar foto">×</button></figure>`).join("")}</div>`:""}
       </div>`;}).join("")}
-    </div>`;}).join("");
+      <div class="ck-add">
+        <input type="text" placeholder="Novo item deste grupo — ex.: Há lanterna no kit?" data-ck-add-txt="${esc(b.id)}">
+        <button type="button" class="bt" data-ck-add="${esc(b.id)}">＋ Acrescentar item</button>
+      </div>
+    </div>`;}).join("")+`
+    <div class="ck-add ck-add-grupo">
+      <input type="text" placeholder="Nome de um grupo novo — ex.: Equipamentos de emergência" data-ck-grupo-txt="1">
+      <button type="button" class="bt" data-ck-grupo="1">＋ Novo grupo</button>
+    </div>`;
+}
+
+/* ─────────── acrescentar itens e grupos no próprio checklist ───────────
+   O item entra no checklist que está sendo preenchido e, para administrador,
+   também no modelo — vale para os próximos e fica salvo na base. */
+function ckModeloAtual(){
+  const k=estado.modelo&&estado.modelo.chave; if(!k)return null;
+  const m=ckModelos()[k]; if(!m)return null;
+  delete m.chave; return {k,m};
+}
+function ckAcrescentarItem(bid,txt){
+  const blocos=chkLista(), gi=blocos.findIndex(b=>b.id===bid), b=blocos[gi]; if(!b)return;
+  const n=b.itens.reduce((x,i)=>Math.max(x,i.n),0)+1;
+  const cod=(gi+1)+"."+(b.itens.length+1);
+  b.itens.push({n,cod,txt,r:"",obs:"",fotos:[]});
+  const at=ckModeloAtual();
+  if(at&&at.m.grupos&&at.m.grupos[gi]){
+    at.m.grupos[gi].itens.push([cod,txt]);
+    chkCustom[at.k]=at.m;
+  }
+  ckRenderPreencher(); render(); salvar();
+  if(at)ckGravarNaBase("Item "+cod+" acrescentado.");
+}
+function ckAcrescentarGrupo(titulo){
+  const blocos=chkLista(), m=estado.modelo; if(!m)return;
+  const gi=blocos.length;
+  blocos.push({id:m.chave.replace(/^modelo:/,"")+"-"+(gi+1),ref:"",titulo,itens:[]});
+  const at=ckModeloAtual();
+  if(at){ (at.m.grupos=at.m.grupos||[]).push({titulo,itens:[]}); chkCustom[at.k]=at.m; }
+  ckRenderPreencher(); render(); salvar();
+  if(at)ckGravarNaBase("Grupo "+titulo+" criado.");
+  const cx=document.querySelector(`[data-ck-add-txt="${blocos[gi].id}"]`); if(cx)cx.focus();
+}
+function ckIrParaEditor(acao,k){
+  aba("config"); renderConfig();
+  setTimeout(()=>{
+    const bt=acao==="novo"?$("#md-novo"):document.querySelector(`[data-md-${acao}="${k}"]`);
+    if(bt)bt.click();
+    const alvo=$("#md-editor")||$("#sec-modelos"); if(alvo)alvo.scrollIntoView({block:"start",behavior:"smooth"});
+  },60);
 }
 
 /* Item de validade: qualquer item cujo texto fale em "validade" ganha o campo
@@ -441,6 +580,20 @@ function ckSeloValidade(iso){
 $("#painel-checklists").addEventListener("click",ev=>{
   const t=ev.target;
   const ini=t.closest("[data-ck-iniciar]"); if(ini){ckIniciar(ini.dataset.ckIniciar);return;}
+  if(t.closest("[data-ck-novo]")){ckIrParaEditor("novo");return;}
+  const ed=t.closest("[data-ck-editar]"); if(ed){ckIrParaEditor("editar",ed.dataset.ckEditar);return;}
+  const du=t.closest("[data-ck-duplicar]"); if(du){ckIrParaEditor("duplicar",du.dataset.ckDuplicar);return;}
+  const add=t.closest("[data-ck-add]");
+  if(add){
+    const cx=document.querySelector(`[data-ck-add-txt="${add.dataset.ckAdd}"]`), txt=(cx&&cx.value||"").trim();
+    if(!txt){toast("Escreva o item antes de acrescentar.");if(cx)cx.focus();return;}
+    ckAcrescentarItem(add.dataset.ckAdd,txt); return;
+  }
+  if(t.closest("[data-ck-grupo]")){
+    const cx=document.querySelector("[data-ck-grupo-txt]"), txt=(cx&&cx.value||"").trim();
+    if(!txt){toast("Escreva o nome do grupo.");if(cx)cx.focus();return;}
+    ckAcrescentarGrupo(txt); return;
+  }
   if(t.closest("[data-ck-continuar]")){ckMostrar("preencher");return;}
   if(t.closest("[data-ck-voltar]")){ckMostrar("lista");return;}
   if(t.closest("[data-ck-salvar]")){salvarVistoria().then(()=>{ if(estado.modelo)ckMontarTela(); });return;}
@@ -452,6 +605,12 @@ $("#painel-checklists").addEventListener("click",ev=>{
     chkRender(); render(); salvar();
     return;
   }
+});
+$("#painel-checklists").addEventListener("keydown",ev=>{
+  if(ev.key!=="Enter")return;
+  const el=ev.target;
+  if(el.dataset&&el.dataset.ckAddTxt){ev.preventDefault();const b=document.querySelector(`[data-ck-add="${el.dataset.ckAddTxt}"]`);if(b)b.click();}
+  if(el.dataset&&el.dataset.ckGrupoTxt){ev.preventDefault();const b=document.querySelector("[data-ck-grupo]");if(b)b.click();}
 });
 $("#painel-checklists").addEventListener("input",ev=>{
   const el=ev.target;
@@ -602,6 +761,18 @@ function pdoc(d){
     partes.push(pdTopico(null,"Técnico de segurança e responsável do setor",
       d.fecho.map(([r,v])=>pdLinha(esc(r),esc(v))).join(""),"pd-dados"));
 
+  /* assinaturas do checklist pronto: feitas na tela, com data e hora; as que
+     não foram feitas no app saem com a linha em branco para assinar no papel */
+  if(d.assinaturas&&d.assinaturas.length)
+    partes.push(pdTopico(null,"Assinaturas",`<div class="pd-assin">${d.assinaturas.map(a=>`
+      <div class="pd-assin-cx">
+        <div class="pd-assin-img">${a.img?`<img src="${a.img}" alt="Assinatura">`:""}</div>
+        <div class="pd-assin-linha"></div>
+        <div class="pd-assin-nome">${esc(a.nome||"")}</div>
+        <div class="pd-assin-papel">${esc(a.papel||"")}</div>
+        <div class="pd-assin-quando">${a.em?"Assinado em "+esc(ckQuando(a.em)):"Data: ____/____/______"}</div>
+      </div>`).join("")}</div>`));
+
   const quadro=(d.quadro||[]).filter(q=>q[1]);
   const rodapeTxt=`${d.codigo||"(sem número)"} · ${d.titulo} · SAKUMA Agronegócios`.replace(/["\\]/g,"");
   return `
@@ -659,7 +830,9 @@ function pdDados(c,m,blocos,apont,logo){
       ["Cargo",c.cargo||""],["Responsável do setor",c.responsavelTurma||""],
       ["Aprovado por",[c.aprovador,c.aprovadorCargo].filter(Boolean).join(" — ")]].filter(x=>x[1]);
   }
-  return {titulo,subtitulo,codigo:c.codigo,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho};
+  const assinaturas=m?(Array.isArray(m.assinaturas)&&m.assinaturas.length?m.assinaturas
+    :ckPapeis().map(p=>({papel:p,nome:"",img:"",em:""}))):null;
+  return {titulo,subtitulo,codigo:c.codigo,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
 }
 
 /* ─────────── vistoria salva na base (vistorias.js) ───────────
@@ -789,7 +962,7 @@ $("#md-corpo").addEventListener("click",ev=>{
 /* Guardar, duplicar e remover já gravam na base: antes era preciso lembrar de
    clicar em "Salvar regras", e o checklist ficava só no aparelho de quem editou. */
 async function ckGravarNaBase(msg){
-  if(!souAdmin){ toast(msg+" Só administradores gravam para a equipe."); return; }
+  if(!souAdmin){ toast(msg+" Vale só para este checklist: guardar no modelo é com um administrador."); return; }
   if(!conectado()){ toast(msg+" Ficou neste aparelho: entre na base para valer para a equipe."); return; }
   try{
     await salvarRegras();
