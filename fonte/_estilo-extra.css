@@ -277,3 +277,8 @@ tr.ct-bloqueado td{opacity:.6}
   #sec-contas .ct-ult{display:block}
   #sec-contas .ct-email{word-break:break-all}
 }
+
+/* checklists prontos: ações da linha */
+.md-acoes{white-space:nowrap;text-align:right}
+.md-acoes .bt-editar{margin-right:5px}
+@media (max-width:560px){ #sec-modelos th:nth-child(2),#sec-modelos td:nth-child(2){display:none} .md-acoes{white-space:normal} .md-acoes .bt-editar{margin:0 4px 4px 0} }

@@ -288,17 +288,17 @@
 
     <div class="cfg-secao" id="sec-modelos">
       <h3>Checklists prontos <span class="cfg-trava" id="trava-modelos" hidden>somente administradores</span></h3>
-      <p>Os checklists que aparecem prontos para preencher. Para cadastrar um novo, importe a planilha no mesmo formato do Checklist NR-24 (colunas Nº, Categoria, Item de verificação, C, NC, NA) ou escreva os itens aqui. Checklist já preenchido não muda quando o modelo muda: o enunciado fica gravado junto da resposta.</p>
-      <div class="cfg-tabela-env" style="max-height:260px">
+      <p>Os checklists que aparecem prontos para preencher. <b>editar</b> muda título, campos e itens; <b>duplicar</b> cria uma cópia para você ajustar (por exemplo, o mesmo checklist para outro local); <b>＋ Novo checklist</b> começa do zero; e <b>Importar planilha</b> lê uma planilha no formato do Checklist NR-24 (colunas Nº, Categoria, Item de verificação, C, NC, NA). Ao guardar, a mudança já vai para a base e vale para toda a equipe. Checklist já preenchido não muda quando o modelo muda: o enunciado fica gravado junto da resposta.</p>
+      <div class="cfg-tabela-env" style="max-height:460px">
         <table class="cfg-anomalias">
-          <thead><tr><th>Checklist</th><th style="width:60px">Itens</th><th style="width:70px"></th><th style="width:44px"></th></tr></thead>
+          <thead><tr><th>Checklist</th><th style="width:52px">Itens</th><th style="width:170px"></th></tr></thead>
           <tbody id="md-corpo"></tbody>
         </table>
       </div>
       <div id="md-editor"></div>
       <div class="rodape-item" style="margin-top:12px">
         <button class="bt" type="button" id="md-importar">Importar planilha (.xlsx)</button>
-        <button class="bt bt-fantasma" type="button" id="md-novo">＋ Escrever checklist</button>
+        <button class="bt bt-fantasma" type="button" id="md-novo">＋ Novo checklist</button>
         <span class="cfg-salvo" id="md-aviso"></span>
       </div>
     </div>

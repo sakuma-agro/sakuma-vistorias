@@ -149,6 +149,68 @@ const CK_PADRAO = {
       ["Não conformidade", "Todo item NC vira apontamento com prazo e aparece em Em aberto até ser encerrado com foto de evidência."],
       ["Outros pontos", "Use o último item de cada área para anotar o que a lista ainda não cobre."]
     ]
+  },
+  /* Primeiros socorros: pedido do Guilherme em 21/09/2026, com o conteúdo do
+     kit que ele passou. Cada item do kit é conferido em quantidade e, quando
+     vence, em validade (data anotada na observação do item). */
+  "modelo:primeiros-socorros": {
+    sigla:"1º SOCORROS", titulo:"Checklist do Kit de Primeiros Socorros", subtitulo:"Conferência de itens, validade e condição",
+    ref:"Kit de Primeiros Socorros",
+    arquivo:"",
+    campos:["Unidade", "Local do kit", "Data da verificação", "Responsável pelo kit", "Elaboração", "Aprovação"],
+    grupos:[
+      {titulo:"Itens do kit (quantidade)", itens:[
+        ["1.1", "1 esparadrapo impermeável (2,5 x 90 cm): presente na quantidade indicada?"],
+        ["1.2", "1 compressa de gaze estéril 13 fios (7,5 x 7,5 cm): presente na quantidade indicada?"],
+        ["1.3", "1 mini tesoura de aço: presente na quantidade indicada?"],
+        ["1.4", "1 caixa de curativo adesivo flexível: presente na quantidade indicada?"],
+        ["1.5", "1 antisséptico água oxigenada 10 volumes: presente na quantidade indicada?"],
+        ["1.6", "1 par de luvas descartáveis de látex estéreis: presente na quantidade indicada?"],
+        ["1.7", "1 pacote de algodão hidrófilo (25 g): presente na quantidade indicada?"],
+        ["1.8", "1 pacote de hastes flexíveis com algodão nas pontas: presente na quantidade indicada?"],
+        ["1.9", "1 rolo de atadura de crepom (6 x 1,80 m): presente na quantidade indicada?"],
+        ["1.10", "1 soro fisiológico 100 ml (cloreto de sódio 0,9%): presente na quantidade indicada?"],
+        ["1.11", "3 alfinetes de metal: presente na quantidade indicada?"],
+        ["1.12", "1 pinça metálica: presente na quantidade indicada?"],
+        ["1.13", "1 garrote: presente na quantidade indicada?"],
+        ["1.14", "2 abaixadores de língua de madeira: presente na quantidade indicada?"],
+        ["1.15", "2 sacos de lixo biológico para descarte dos materiais: presente na quantidade indicada?"]
+      ]},
+      {titulo:"Validade", itens:[
+        ["2.1", "Esparadrapo impermeável (2,5 x 90 cm): dentro da validade? (anote a data na observação)"],
+        ["2.2", "Compressa de gaze estéril 13 fios (7,5 x 7,5 cm): dentro da validade? (anote a data na observação)"],
+        ["2.3", "Caixa de curativo adesivo flexível: dentro da validade? (anote a data na observação)"],
+        ["2.4", "Antisséptico água oxigenada 10 volumes: dentro da validade? (anote a data na observação)"],
+        ["2.5", "Par de luvas descartáveis de látex estéreis: dentro da validade? (anote a data na observação)"],
+        ["2.6", "Pacote de algodão hidrófilo (25 g): dentro da validade? (anote a data na observação)"],
+        ["2.7", "Pacote de hastes flexíveis com algodão nas pontas: dentro da validade? (anote a data na observação)"],
+        ["2.8", "Rolo de atadura de crepom (6 x 1,80 m): dentro da validade? (anote a data na observação)"],
+        ["2.9", "Soro fisiológico 100 ml (cloreto de sódio 0,9%): dentro da validade? (anote a data na observação)"],
+        ["2.10", "Nenhum item vence nos próximos 30 dias?"]
+      ]},
+      {titulo:"Condição dos materiais", itens:[
+        ["3.1", "As embalagens estéreis (gaze, luvas, curativos) estão fechadas e íntegras?"],
+        ["3.2", "A tesoura, a pinça e os alfinetes estão limpos e sem ferrugem?"],
+        ["3.3", "O soro fisiológico e a água oxigenada estão lacrados e sem vazamento?"],
+        ["3.4", "Os materiais estão limpos, secos e sem sinais de uso?"]
+      ]},
+      {titulo:"Caixa e local", itens:[
+        ["4.1", "A caixa está limpa, fechada e em bom estado?"],
+        ["4.2", "A caixa está identificada como Primeiros Socorros?"],
+        ["4.3", "O local está sinalizado e o acesso livre?"],
+        ["4.4", "A lista do conteúdo está afixada na caixa?"],
+        ["4.5", "Há responsável definido pelo kit?"],
+        ["4.6", "O que foi usado desde a última verificação foi reposto?"],
+        ["4.7", "Outros pontos observados (descrever na observação)"]
+      ]}
+    ],
+    orientacoes:[
+      ["Classificação", "C = Conforme | NC = Não Conforme | NA = Não Aplicável"],
+      ["Quantidade", "Conferir cada item contra a quantidade da lista. Faltou ou está a menos: NC."],
+      ["Validade", "Anotar na observação a data de validade de cada item. Vencido: NC e trocar na hora. Vence em até 30 dias: programar a reposição."],
+      ["Reposição", "Todo item NC vira apontamento com prazo e aparece em Em aberto até ser encerrado com foto do kit completo."],
+      ["Frequência", "Conferir o kit todo mês e sempre depois de um uso."]
+    ]
   }
 };
 
@@ -602,9 +664,8 @@ function ckRenderConfig(){
   corpo.innerHTML=chaves.length?chaves.map(k=>`<tr>
       <td><b>${esc(ms[k].sigla||"")}</b>${ms[k].sigla?" · ":""}${esc(ms[k].titulo)}<div class="cfg-cat" style="text-transform:none">${esc(ms[k].subtitulo||"")}</div></td>
       <td style="text-align:center">${ckTotalItens(ms[k])}</td>
-      <td><button class="bt-mini" type="button" data-md-editar="${esc(k)}">editar</button></td>
-      <td><button class="bt-mini" type="button" data-md-apagar="${esc(k)}" title="Tirar da lista">×</button></td></tr>`).join("")
-    :'<tr><td colspan="4" class="cfg-padrao">Nenhum checklist. Importe uma planilha.</td></tr>';
+      <td class="md-acoes"><button class="bt-editar" type="button" data-md-editar="${esc(k)}">editar</button><button class="bt-editar" type="button" data-md-duplicar="${esc(k)}">duplicar</button><button class="bt-mini" type="button" data-md-apagar="${esc(k)}" title="Tirar da lista">×</button></td></tr>`).join("")
+    :'<tr><td colspan="3" class="cfg-padrao">Nenhum checklist. Clique em ＋ Novo checklist ou importe uma planilha.</td></tr>';
   const tv=$("#trava-modelos"); if(tv)tv.hidden=souAdmin;
   ckRenderEditor();
 }
@@ -659,7 +720,7 @@ function ckRenderEditor(){
     chkCustom[chave]=obj;
     ckEditando=null;
     ckRenderConfig(); ckAtualizarTelas();
-    toast("Checklist guardado. Clique em Salvar regras para valer para a equipe.");
+    ckGravarNaBase("Checklist guardado.");
   };
 }
 
@@ -677,11 +738,38 @@ $("#md-corpo").addEventListener("click",ev=>{
     chkCustom[k]=null;
     if(ckEditando&&ckEditando.chave===k)ckEditando=null;
     ckRenderConfig(); ckAtualizarTelas();
-    toast("Checklist removido. Clique em Salvar regras para valer para a equipe.");
+    ckGravarNaBase("Checklist removido.");
+    return;
+  }
+  const du=ev.target.closest("[data-md-duplicar]");
+  if(du){
+    const m=ckModelos()[du.dataset.mdDuplicar]; if(!m)return;
+    const copia=JSON.parse(JSON.stringify(m));
+    delete copia.chave;
+    copia.titulo=(copia.titulo||"Checklist")+" (cópia)";
+    copia.sigla=copia.sigla?copia.sigla+" 2":"";
+    copia.arquivo="";
+    ckEditando=copia; ckRenderEditor();
+    $("#md-aviso").textContent="Cópia aberta abaixo: ajuste título, sigla e itens e clique em Guardar checklist.";
+    $("#md-titulo").scrollIntoView({block:"center"}); $("#md-titulo").select();
   }
 });
+
+/* Guardar, duplicar e remover já gravam na base: antes era preciso lembrar de
+   clicar em "Salvar regras", e o checklist ficava só no aparelho de quem editou. */
+async function ckGravarNaBase(msg){
+  if(!souAdmin){ toast(msg+" Só administradores gravam para a equipe."); return; }
+  if(!conectado()){ toast(msg+" Ficou neste aparelho: entre na base para valer para a equipe."); return; }
+  try{
+    await salvarRegras();
+    const r=($("#cfg-salvo")||{}).textContent||"";
+    toast(/recusou/.test(r)?msg+" Ficou neste aparelho: "+r:msg+" Já vale para toda a equipe.");
+  }
+  catch(e){ toast(msg+" A base não respondeu — clique em Salvar regras."); }
+}
 $("#md-novo").onclick=()=>{
-  ckEditando={sigla:"",titulo:"",subtitulo:"",campos:["Fazenda","Data da verificação","Nº de trabalhadores","Responsável","Atividade/Talhão","Elaboração","Aprovação"],grupos:[],orientacoes:[]};
+  ckEditando={sigla:"",titulo:"",subtitulo:"",campos:["Unidade","Data da verificação","Responsável","Elaboração","Aprovação"],grupos:[],orientacoes:[]};
+  $("#md-aviso").textContent="";
   ckRenderEditor(); $("#md-sigla").focus();
 };
 
