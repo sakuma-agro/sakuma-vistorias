@@ -282,3 +282,12 @@ tr.ct-bloqueado td{opacity:.6}
 .md-acoes{white-space:nowrap;text-align:right}
 .md-acoes .bt-editar{margin-right:5px}
 @media (max-width:560px){ #sec-modelos th:nth-child(2),#sec-modelos td:nth-child(2){display:none} .md-acoes{white-space:normal} .md-acoes .bt-editar{margin:0 4px 4px 0} }
+
+/* data de validade ao lado de C / NC / NA */
+.ck-val{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 0 10px;font-size:12.5px;font-weight:600;color:var(--texto-fraco);text-transform:none;letter-spacing:0}
+.ck-val input{width:auto;min-width:150px;padding:6px 8px;font-size:14px}
+.ck-val-selo{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:20px}
+.ck-val-selo.venc{background:var(--critico-bg);color:var(--critico)}
+.ck-val-selo.perto{background:var(--alto-bg);color:var(--alto)}
+.ck-val-selo.ok{background:var(--verde-claro);color:var(--verde-esc)}
+@media (max-width:560px){.ck-val{margin:8px 0 0;width:100%}.ck-val input{flex:1}}

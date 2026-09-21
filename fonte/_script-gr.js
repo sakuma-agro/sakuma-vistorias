@@ -177,15 +177,15 @@ const CK_PADRAO = {
         ["1.15", "2 sacos de lixo biológico para descarte dos materiais: presente na quantidade indicada?"]
       ]},
       {titulo:"Validade", itens:[
-        ["2.1", "Esparadrapo impermeável (2,5 x 90 cm): dentro da validade? (anote a data na observação)"],
-        ["2.2", "Compressa de gaze estéril 13 fios (7,5 x 7,5 cm): dentro da validade? (anote a data na observação)"],
-        ["2.3", "Caixa de curativo adesivo flexível: dentro da validade? (anote a data na observação)"],
-        ["2.4", "Antisséptico água oxigenada 10 volumes: dentro da validade? (anote a data na observação)"],
-        ["2.5", "Par de luvas descartáveis de látex estéreis: dentro da validade? (anote a data na observação)"],
-        ["2.6", "Pacote de algodão hidrófilo (25 g): dentro da validade? (anote a data na observação)"],
-        ["2.7", "Pacote de hastes flexíveis com algodão nas pontas: dentro da validade? (anote a data na observação)"],
-        ["2.8", "Rolo de atadura de crepom (6 x 1,80 m): dentro da validade? (anote a data na observação)"],
-        ["2.9", "Soro fisiológico 100 ml (cloreto de sódio 0,9%): dentro da validade? (anote a data na observação)"],
+        ["2.1", "Esparadrapo impermeável (2,5 x 90 cm): dentro da validade?"],
+        ["2.2", "Compressa de gaze estéril 13 fios (7,5 x 7,5 cm): dentro da validade?"],
+        ["2.3", "Caixa de curativo adesivo flexível: dentro da validade?"],
+        ["2.4", "Antisséptico água oxigenada 10 volumes: dentro da validade?"],
+        ["2.5", "Par de luvas descartáveis de látex estéreis: dentro da validade?"],
+        ["2.6", "Pacote de algodão hidrófilo (25 g): dentro da validade?"],
+        ["2.7", "Pacote de hastes flexíveis com algodão nas pontas: dentro da validade?"],
+        ["2.8", "Rolo de atadura de crepom (6 x 1,80 m): dentro da validade?"],
+        ["2.9", "Soro fisiológico 100 ml (cloreto de sódio 0,9%): dentro da validade?"],
         ["2.10", "Nenhum item vence nos próximos 30 dias?"]
       ]},
       {titulo:"Condição dos materiais", itens:[
@@ -207,7 +207,7 @@ const CK_PADRAO = {
     orientacoes:[
       ["Classificação", "C = Conforme | NC = Não Conforme | NA = Não Aplicável"],
       ["Quantidade", "Conferir cada item contra a quantidade da lista. Faltou ou está a menos: NC."],
-      ["Validade", "Anotar na observação a data de validade de cada item. Vencido: NC e trocar na hora. Vence em até 30 dias: programar a reposição."],
+      ["Validade", "Preencher a data de validade ao lado de cada item. O app avisa se está vencido ou se vence em até 30 dias. Vencido: NC e trocar na hora. Vence em até 30 dias: programar a reposição."],
       ["Reposição", "Todo item NC vira apontamento com prazo e aparece em Em aberto até ser encerrado com foto do kit completo."],
       ["Frequência", "Conferir o kit todo mês e sempre depois de um uso."]
     ]
@@ -405,6 +405,9 @@ function ckRenderPreencher(){
         <div class="ck-resp">
           ${[["C","C","Conforme"],["NC","NC","Não conforme"],["NA","NA","Não se aplica"]].map(([v,rot,tit])=>
             `<button type="button" class="ck-bt r-${v}${it.r===v?" on":""}" title="${tit}" data-chk-r="${v}" data-bloco="${esc(b.id)}" data-n="${it.n}">${rot}</button>`).join("")}
+          ${ckTemValidade(it)?`<label class="ck-val">Data de validade
+            <input type="date" value="${esc(it.val||"")}" data-chk-val="1" data-bloco="${esc(b.id)}" data-n="${it.n}">
+            ${ckSeloValidade(it.val)}</label>`:""}
           <button type="button" class="ck-bt foto" data-chk-foto="1" data-bloco="${esc(b.id)}" data-n="${it.n}">＋ foto${it.fotos&&it.fotos.length?" ("+it.fotos.length+")":""}</button>
         </div>
         ${it.r==="NC"||it.obs?`<input type="text" class="ck-obs" placeholder="Ação necessária / prazo" value="${esc(it.obs||"")}"
@@ -415,6 +418,23 @@ function ckRenderPreencher(){
            <button type="button" class="x" data-chk-tirar="${fi}" data-bloco="${esc(b.id)}" data-n="${it.n}" title="Tirar foto">×</button></figure>`).join("")}</div>`:""}
       </div>`;}).join("")}
     </div>`;}).join("");
+}
+
+/* Item de validade: qualquer item cujo texto fale em "validade" ganha o campo
+   de data ao lado de C / NC / NA — vale também para checklist editado ou
+   importado pelos técnicos. A data vai junto da resposta e sai no relatório. */
+function ckTemValidade(it){ return /validade/i.test(String(it&&it.txt||"")); }
+function ckDiasAte(iso){
+  if(!iso)return null;
+  const [a,m,d]=String(iso).slice(0,10).split("-").map(Number); if(!a||!m||!d)return null;
+  const alvo=new Date(a,m-1,d), h=new Date(); const hoje=new Date(h.getFullYear(),h.getMonth(),h.getDate());
+  return Math.round((alvo-hoje)/86400000);
+}
+function ckSeloValidade(iso){
+  const n=ckDiasAte(iso); if(n==null)return "";
+  if(n<0)return `<span class="ck-val-selo venc">vencido</span>`;
+  if(n<=30)return `<span class="ck-val-selo perto">vence em ${n} dia${n===1?"":"s"}</span>`;
+  return `<span class="ck-val-selo ok">no prazo</span>`;
 }
 
 /* ─────────── eventos do módulo ─────────── */
@@ -440,6 +460,15 @@ $("#painel-checklists").addEventListener("input",ev=>{
     const espelho=document.querySelector(`#painel-vistoria [data-cab="${el.dataset.ckCab}"]`);
     if(espelho)espelho.value=el.value;
     salvar(); return;
+  }
+  if(el.dataset.chkVal){
+    const b=chkBloco(el.dataset.bloco); if(!b)return;
+    const it=b.itens.find(x=>x.n===Number(el.dataset.n)); if(!it)return;
+    it.val=el.value;
+    const lab=el.closest(".ck-val"), velho=lab&&lab.querySelector(".ck-val-selo");
+    if(velho)velho.remove();
+    if(lab&&el.value)lab.insertAdjacentHTML("beforeend",ckSeloValidade(el.value));
+    salvar(); renderDoc(); return;
   }
   if(el.dataset.ckVal!==undefined&&estado.modelo){
     (estado.modelo.valores=estado.modelo.valores||{})[el.dataset.ckVal]=el.value;
@@ -517,6 +546,8 @@ function pdoc(d){
       const cod=it.cod||`${n}.${k+1}`;
       const [rot,cls]=pdResp(it.r);
       const obs=[];
+      if(it.val){ const dv=ckDiasAte(it.val);
+        obs.push(`Data de validade: ${pdData(it.val)}${dv!=null&&dv<0?" (vencido)":dv!=null&&dv<=30?" (vence em "+dv+" dia"+(dv===1?"":"s")+")":""}`); }
       if(it.obs)obs.push(`${esc(it.obsRot||"Observação")}: ${esc(it.obs)}`);
       if(it.r==="NC"&&it.prazo)obs.push(`Prazo para correção: ${pdData(it.prazo)}`);
       return `<div class="pd-item${it.r==="NC"?" nc":""}"><div class="pd-q">${esc(cod)} - ${esc(it.txt)}</div>
@@ -592,7 +623,7 @@ function pdocRascunho(){
     titulo:(b.ref?b.ref+" ":"")+b.titulo,
     itens:b.itens.map(it=>{
       const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
-      return {cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",obsRot:m?"Ação necessária":"Observação",
+      return {cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",val:it.val||"",obsRot:m?"Ação necessária":"Observação",
         prazo:ap&&ap.prazoData||"",fotos:(it.fotos||[]).map(f=>f.url||f.assinada||"")};
     })
   }));
@@ -642,7 +673,7 @@ window.pdocSalvo=function(v,itens,logo,sit,normas){
     observacoes:v.observacoes,inicio:v.hora_inicio,fim:v.hora_fim,tecnicoRegistro:v.tecnico_registro,motivo:v.motivo};
   const blocos=blocosBase.map(b=>({
     titulo:(b.ref?b.ref+" ":"")+b.titulo,
-    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",
+    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",val:it.val||"",
       obsRot:m?"Ação necessária":"Observação",prazo:it.prazo||"",fotos:(it.fotos||[]).map(f=>f._url||"")}))
   }));
   const apont=(itens||[]).filter(it=>!(m&&m.sigla&&String(it.titulo||"").startsWith(m.sigla+" ")))

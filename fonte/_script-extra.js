@@ -1904,6 +1904,7 @@ async function chkEnviarFotos(){
       const o={n:it.n, txt:it.txt, r:it.r||"", obs:it.obs||"",
         fotos:(it.fotos||[]).filter(f=>f.path).map(f=>({path:f.path}))};
       if(it.cod)o.cod=it.cod;
+      if(it.val)o.val=it.val;
       if(it.r==="NC"){
         const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
         if(ap&&ap.prazoData)o.prazo=ap.prazoData;
