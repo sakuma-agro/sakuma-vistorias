@@ -228,6 +228,11 @@ function ckMontarTela(){
     ${m.orientacoes&&m.orientacoes.length?`<details class="ck-orient"><summary>Orientações para aplicação</summary>
       <dl>${m.orientacoes.map(o=>`<dt>${esc(o[0])}</dt><dd>${esc(o[1])}</dd>`).join("")}</dl></details>`:""}
     <div class="ck-kpis" id="ck-kpis"></div>
+    <div class="ck-legenda" aria-label="Legenda das respostas">
+      <span><b class="r-C">C</b> Conforme</span>
+      <span><b class="r-NC">NC</b> Não conforme</span>
+      <span><b class="r-NA">NA</b> Não se aplica</span>
+    </div>
     <div id="ck-corpo"></div>
     <div class="cartao" style="padding:14px;margin-bottom:14px">
       <div class="campo largo"><label for="ck-observacoes">Observações</label>

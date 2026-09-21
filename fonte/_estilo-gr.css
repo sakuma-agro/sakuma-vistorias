@@ -137,6 +137,11 @@ body.no-inicio .rodape-gr{display:none}
 .ck-kpi.c b{color:var(--verde-esc)} .ck-kpi.nc b{color:var(--critico)} .ck-kpi.na b{color:var(--cinza)} .ck-kpi.sr b{color:var(--marrom)}
 @media (max-width:560px){ .ck-kpis{grid-template-columns:repeat(3,1fr)} }
 
+/* legenda das respostas: sempre visível, sem depender de passar o mouse */
+.ck-legenda{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:-6px 0 14px;font-size:14px;color:var(--cinza)}
+.ck-legenda span{display:inline-flex;align-items:center;gap:7px}
+.ck-legenda b{min-width:34px;height:26px;padding:0 7px;border-radius:5px;color:#fff;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.ck-legenda b.r-C{background:var(--verde)} .ck-legenda b.r-NC{background:var(--critico)} .ck-legenda b.r-NA{background:var(--cinza)}
 .ck-grupo{background:#fff;border:1px solid var(--linha);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
 .ck-grupo-topo{display:flex;align-items:center;gap:10px;background:var(--verde);color:#fff;padding:9px 12px}
 .ck-grupo-topo .n{background:rgba(255,255,255,.25);border-radius:5px;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold}
