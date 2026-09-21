@@ -82,7 +82,7 @@ function pintarLista(){
   var alvo=document.querySelector("#vs-lista");
   var lista=cache.vistorias.filter(function(v){
     if(!b)return true;
-    return [v.codigo,v.unidade,v.setor,v.tecnico].join(" ").toLowerCase().indexOf(b)>=0;
+    return [v.codigo,v.unidade,v.setor,v.tecnico,v.motivo].join(" ").toLowerCase().indexOf(b)>=0;
   });
   if(!lista.length){
     alvo.innerHTML='<div class="vazio"><p>'+(cache.vistorias.length
@@ -101,7 +101,9 @@ function pintarLista(){
         : (r.abertos?'<span class="selo s-medio">'+r.abertos+' em aberto</span>'
                     :'<span class="selo s-baixo">tudo encerrado</span>');
       return '<tr>'+
-        '<td><b>'+E(v.codigo||"—")+'</b><div class="cfg-cat">'+E(v.unidade||"—")+
+        '<td><b>'+E(v.codigo||"—")+'</b>'+
+          (/^Checklist/.test(v.motivo||"")?' <span class="selo s-baixo">'+E(v.motivo)+'</span>':"")+
+          '<div class="cfg-cat">'+E(v.unidade||"—")+
           (v.setor?" · "+E(v.setor):"")+'</div></td>'+
         '<td>'+dia(v.data)+'</td>'+
         '<td>'+E(v.tecnico||"—")+'</td>'+
@@ -238,6 +240,9 @@ function checklistDoc(v){
 }
 
 function documento(v,itens){
+    /* relatório no modelo de visita técnica, montado pelo app (pdoc) */
+  if(typeof window.pdocSalvo==="function")
+    return window.pdocSalvo(v,itens,logo(),function(it){return situacao(it).txt;},normasDo);
   var g={"Crítico":0,"Alto":0,"Médio":0,"Baixo":0};
   itens.forEach(function(i){if(g[i.grau]!=null)g[i.grau]++;});
   var encerrados=itens.filter(function(i){return i.status==="Concluído";}).length;
@@ -326,7 +331,8 @@ function documento(v,itens){
       '<div style="text-align:right"><span>Feito por</span><b>'+(E(v.tecnico)||"—")+'</b><br>'+
         E(v.cargo||"")+(v.tecnico_registro?" · Registro "+E(v.tecnico_registro):"")+'</div>'+
     '</div>'+
-    '<div class="doc-cod">'+(E(v.codigo)||"VIST-001")+' · Relatório de Vistoria · SAKUMA Agronegócios</div>';
+    '<div class="doc-cod">'+(E(v.codigo)||"VIST-001")+' · Relatório de Vistoria · SAKUMA Agronegócios</div>'+
+    (typeof window.docLop==="function"?window.docLop():"");
 }
 
 /* ─────────────────────────── faixa de aviso no topo ─────────────────────────── */
@@ -343,7 +349,7 @@ function faixa(v){
     var doc=document.querySelector("#doc");
     doc.parentNode.insertBefore(f,doc);
   }
-  f.innerHTML='<b style="flex:1;min-width:200px">Vistoria '+E(v.codigo||"")+
+  f.innerHTML='<b style="flex:1;min-width:200px">'+(/^Checklist/.test(v.motivo||"")?E(v.motivo)+" ":"Vistoria ")+E(v.codigo||"")+
     ' · '+E(v.unidade||"")+' · '+dia(v.data)+' · '+E(v.tecnico||"")+'</b>'+
     '<button class="bt bt-forte" type="button" id="fx-imprimir">Imprimir / PDF</button>'+
     '<button class="bt bt-fantasma" type="button" id="fx-voltar">Voltar para a minha vistoria</button>';

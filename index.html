@@ -1,25 +1,22 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SAKUMA Vistorias</title>
-<meta name="description" content="Registro de não conformidades em campo, com a norma aplicável em cada apontamento e relatório em PDF no padrão SAKUMA.">
+<title>Gestão Rápida (Vistorias e Segurança) · SAKUMA</title>
+<meta name="description" content="Vistorias e checklists de segurança da SAKUMA Agronegócios: não conformidades com a norma citada, checklists prontos para preencher, pendências da equipe e relatório em PDF.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#FAFAF6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1A1C17" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#84BD00">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="icons/favicon-gr-vs.v1.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/gr-vs-32.v1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/gr-vs-192.v1.png">
+<link rel="apple-touch-icon" href="icons/gr-vs-apple-180.v1.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vistorias">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
 <style>
 /* ─────────────────────────────  tokens  ───────────────────────────── */
 :root{
@@ -517,6 +514,266 @@ dialog.ficha-dlg{max-width:760px}
   .chk-doc-foto img{max-height:150px}
   .chk-doc-fotos{grid-template-columns:1fr 1fr}
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Gestão Rápida (Vistorias e Segurança) — mesmo padrão dos outros
+   Gestão Rápida (Pessoas, Manutenções, Programação Campo).
+   Identidade SAKUMA: verde #84BD00, marrom #744F28, cinza #51534A, Arial,
+   sem preto. Topo branco com filete verde, SAKUMA no alto, LOP gravada a
+   laser só embaixo — as duas marcas nunca no mesmo lugar.
+   Este arquivo vem por último e sobrepõe o estilo antigo.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root,:root[data-theme="light"]{
+  --verde:#84BD00; --verde-esc:#6A9800; --verde-claro:#EEF6DA;
+  --marrom:#744F28; --marrom-claro:#F6F0E9;
+  --cinza:#51534A;
+  --fundo:#F6F7F3; --superficie:#FFFFFF; --superficie-2:#F2F3EE;
+  --linha:#DCDDD7; --linha-forte:#C9CBC2;
+  --texto:#51534A; --texto-fraco:#8A8C83;
+  --ui:Arial,Helvetica,sans-serif;
+  --mono:Arial,Helvetica,sans-serif;
+  --r:6px;
+  --toque:44px;
+}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--cinza)}
+h1,h2,h3,h4{font-weight:bold}
+
+/* ─────────── topo ─────────── */
+.topo{background:#fff;border-bottom:3px solid var(--verde);padding:10px 16px 0;gap:10px 14px;
+  padding-top:calc(10px + env(safe-area-inset-top))}
+.marca{gap:12px}
+.topo-inicio{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0;margin:0;
+  font:inherit;color:inherit;cursor:pointer;border-radius:10px;text-align:left}
+.topo-inicio img{height:34px;width:34px;border-radius:7px;display:block}
+.topo-inicio:hover h1{color:var(--verde-esc)}
+.topo-inicio:focus-visible{outline:3px solid var(--marrom);outline-offset:3px}
+.topo h1{font-size:16px;margin:0;font-weight:bold;letter-spacing:-.2px;color:var(--cinza);white-space:nowrap}
+.topo h1 .modulo,.portao-marca h1 span,.marca-inicio h2 span{
+  display:inline-block;margin-left:6px;padding:2px 8px;border-radius:20px;
+  background:rgba(132,189,0,.12);color:var(--verde-esc);
+  font-size:11px;font-weight:bold;letter-spacing:.4px;text-transform:uppercase;vertical-align:2px}
+.topo-divisor{width:1px;height:28px;background:var(--linha);margin:0 2px}
+.marca-logo{height:31px}
+.acoes{margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+
+/* a segunda linha do topo é o menu de módulos, igual aos outros GR */
+.abas{order:3;flex:1 1 100%;min-width:0;max-width:100%;margin:6px 0 0;padding:0;background:#fff;border-radius:0;
+  gap:2px;overflow-x:auto;border-top:1px solid var(--linha)}
+.aba{flex:1 0 auto;justify-content:center;min-height:var(--toque);padding:0 16px;border-radius:0;
+  border-bottom:3px solid transparent;margin-bottom:-3px;font-size:15px;font-weight:normal;color:var(--cinza);white-space:nowrap}
+.aba:hover{color:var(--verde-esc)}
+.aba[aria-selected="true"]{background:none;box-shadow:none;color:var(--verde-esc);font-weight:bold;border-bottom-color:var(--marrom)}
+.aba .n{font-family:Arial,Helvetica,sans-serif;background:rgba(132,189,0,.14);color:var(--verde-esc);font-weight:bold}
+
+/* botões no jeito GR: verde cheio para a ação principal, marrom para a
+   secundária, contorno para o resto. Alvo grande: usado de luva, no campo. */
+.bt{border-radius:var(--r);border-color:var(--linha);font-size:14px;min-height:38px;color:var(--cinza)}
+.bt:hover{border-color:var(--verde);color:var(--verde-esc)}
+.bt-forte,:root[data-theme="light"] .bt-forte{background:var(--verde);border-color:var(--verde);color:#fff;font-weight:bold}
+.bt-forte:hover{background:var(--verde-esc);border-color:var(--verde-esc);color:#fff}
+.bt-marrom{background:var(--marrom);border-color:var(--marrom);color:#fff;font-weight:bold}
+.bt-marrom:hover{background:#5E3F1F;border-color:#5E3F1F;color:#fff}
+.btn{min-height:48px;padding:0 20px;border:0;border-radius:var(--r);background:var(--verde);color:#fff;
+  font:inherit;font-size:16px;font-weight:bold;cursor:pointer;display:inline-flex;flex-direction:column;
+  align-items:center;justify-content:center;line-height:1.15}
+.btn:hover{background:var(--verde-esc)}
+.btn.secundario{background:var(--marrom)}
+.btn.secundario:hover{background:#5E3F1F}
+.btn small{font-size:12px;font-weight:normal;opacity:.92}
+.etapa{font-family:Arial,Helvetica,sans-serif;background:rgba(132,189,0,.14);color:var(--verde-esc)}
+label{font-weight:bold;letter-spacing:.03em}
+.cartao,.kpi,.item{box-shadow:none}
+.kpi .v{font-family:Arial,Helvetica,sans-serif;font-weight:bold}
+.toast{background:var(--cinza);color:#fff}
+
+/* ─────────── tela de entrada (portão) ─────────── */
+.portao{background:var(--fundo)}
+.portao-marca .pt-icone{width:56px;height:56px;border-radius:12px;background:none;padding:0}
+.portao-marca h1{font-size:20px;color:var(--cinza)}
+.portao-marca .pt-sakuma{height:44px;width:auto}
+.portao-rodape{display:grid;justify-items:center;gap:18px}
+.pt-lop{--lop:300px;width:var(--lop);height:auto;margin-left:calc(var(--lop) * -0.0429);margin-right:calc(var(--lop) * -0.455)}
+
+/* na tela inicial e nos checklists prontos os botões de vistoria do topo
+   saem: cada tela tem os seus */
+body[data-aba="inicio"] #bt-salvar,body[data-aba="inicio"] #bt-pdf,
+body[data-aba="checklists"] #bt-salvar,body[data-aba="checklists"] #bt-pdf{display:none}
+
+/* ─────────── tela inicial ─────────── */
+body.no-inicio .rodape-gr{display:none}
+.marca-inicio{overflow:hidden;min-height:min(62vh,500px);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:30px 16px 20px}
+.mi-sakuma{width:min(190px,46vw);height:auto}
+.marca-inicio h2{margin:26px 0 0;font-size:21px;font-weight:normal;color:var(--marrom);letter-spacing:.2px}
+.marca-inicio h2 span{letter-spacing:1px;vertical-align:middle;padding:3px 10px}
+.mi-dica{margin:10px 0 0;color:var(--texto-fraco);font-size:14px}
+.mi-atalhos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+.mi-atalhos .btn{min-width:180px}
+.mi-modelos{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:720px}
+.mi-modelos .rot{width:100%;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--texto-fraco);font-weight:bold}
+.mi-modelo{border:1px solid var(--verde);background:#fff;color:var(--verde-esc);border-radius:20px;
+  padding:8px 14px;font:inherit;font-size:14px;font-weight:bold;cursor:pointer}
+.mi-modelo:hover{background:var(--verde);color:#fff}
+.mi-lop{--lop:440px;width:var(--lop);height:auto;margin-top:44px;
+  margin-left:calc(var(--lop) * -0.0429);margin-right:calc(var(--lop) * -0.455)}
+@media (max-width:560px){ .mi-lop{--lop:300px} .mi-atalhos .btn{min-width:0;flex:1 1 100%} }
+
+/* ─────────── rodapé LOP (fora da tela inicial) ─────────── */
+.palco{padding-bottom:20px}
+.rodape-gr{display:flex;justify-content:center;padding:14px 8px 70px}
+.rodape-lop{--lop:300px;width:var(--lop);height:auto;display:block;opacity:.92;
+  margin-left:calc(var(--lop) * -0.0429);margin-right:calc(var(--lop) * -0.455)}
+@media (max-width:560px){ .rodape-lop{--lop:230px} }
+
+/* ─────────── checklists prontos: lista ─────────── */
+.ck-modelos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;align-items:start}
+.ck-card{background:#fff;border:1px solid var(--linha);border-top:4px solid var(--verde);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.ck-card .ref{font-size:11px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;color:var(--marrom)}
+.ck-card h3{font-size:17px;color:var(--cinza);line-height:1.3}
+.ck-card .info{font-size:13px;color:var(--texto-fraco)}
+.ck-card .grupos{display:flex;flex-wrap:wrap;gap:5px}
+.ck-card .grupos span{font-size:12px;background:var(--superficie-2);border:1px solid var(--linha);border-radius:20px;padding:2px 9px}
+.ck-card .pe{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ck-card .pe .btn{flex:1}
+.ck-card a{font-size:13px;color:var(--marrom)}
+.ck-andamento{background:#FAF2EC;border:1px solid var(--marrom);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.ck-andamento b{flex:1;min-width:220px}
+
+/* ─────────── checklists prontos: preenchimento ─────────── */
+.ck-barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.ck-barra h2{flex:1;min-width:220px;font-size:19px;color:var(--cinza)}
+.ck-barra h2 small{display:block;font-size:13px;font-weight:normal;color:var(--marrom);margin-top:2px}
+.ck-progresso{height:8px;background:var(--superficie-2);border:1px solid var(--linha);border-radius:10px;overflow:hidden;margin:4px 0 16px}
+.ck-progresso i{display:block;height:100%;background:var(--verde);transition:width .2s}
+.ck-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.ck-kpi{background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:9px 10px;text-align:center}
+.ck-kpi b{display:block;font-size:22px;line-height:1.1}
+.ck-kpi span{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--texto-fraco);font-weight:bold}
+.ck-kpi.c b{color:var(--verde-esc)} .ck-kpi.nc b{color:var(--critico)} .ck-kpi.na b{color:var(--cinza)} .ck-kpi.sr b{color:var(--marrom)}
+@media (max-width:560px){ .ck-kpis{grid-template-columns:repeat(3,1fr)} }
+
+.ck-grupo{background:#fff;border:1px solid var(--linha);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.ck-grupo-topo{display:flex;align-items:center;gap:10px;background:var(--verde);color:#fff;padding:9px 12px}
+.ck-grupo-topo .n{background:rgba(255,255,255,.25);border-radius:5px;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold}
+.ck-grupo-topo .tt{flex:1;font-weight:bold;font-size:15px}
+.ck-grupo-topo .ck-conta{font-size:12.5px;opacity:.95;white-space:nowrap}
+.ck-grupo-topo button{border:1px solid rgba(255,255,255,.7);background:transparent;color:#fff;border-radius:20px;
+  padding:4px 11px;font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.ck-grupo-topo button:hover{background:#fff;color:var(--verde-esc)}
+.ck-item{padding:12px;border-top:1px solid var(--linha)}
+.ck-item:nth-child(odd){background:#FBFCF7}
+.ck-item.r-C{box-shadow:inset 4px 0 0 var(--verde)}
+.ck-item.r-NC{background:var(--critico-bg);box-shadow:inset 4px 0 0 var(--critico)}
+.ck-item.r-NA{box-shadow:inset 4px 0 0 var(--linha-forte)}
+.ck-txt{font-size:15px;line-height:1.4;margin-bottom:9px;color:var(--cinza)}
+.ck-txt .cod{font-weight:bold;color:var(--marrom);margin-right:6px}
+.ck-resp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ck-bt{min-height:44px;min-width:64px;border:2px solid var(--linha);background:#fff;color:var(--cinza);border-radius:var(--r);
+  font:inherit;font-size:15px;font-weight:bold;cursor:pointer;padding:0 14px}
+.ck-bt:hover{border-color:var(--verde)}
+.ck-bt.on.r-C{background:var(--verde);border-color:var(--verde);color:#fff}
+.ck-bt.on.r-NC{background:var(--critico);border-color:var(--critico);color:#fff}
+.ck-bt.on.r-NA{background:var(--cinza);border-color:var(--cinza);color:#fff}
+.ck-bt.foto{font-weight:normal;font-size:14px;margin-left:auto}
+.ck-obs{margin-top:9px;width:100%;border:1px solid var(--linha-forte);border-radius:var(--r);padding:9px 10px;font:inherit;font-size:14px;background:#fff;color:var(--cinza)}
+.ck-apont{margin-top:7px;font-size:12.5px;color:var(--critico)}
+.ck-fim{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin:6px 0 18px}
+.ck-orient{background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:4px 14px;margin-bottom:14px}
+.ck-orient summary{cursor:pointer;font-weight:bold;padding:8px 0;color:var(--marrom)}
+.ck-orient dl{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin:4px 0 12px;font-size:13.5px}
+.ck-orient dt{font-weight:bold}
+.ck-orient dd{margin:0}
+.ck-nota{background:rgba(132,189,0,.10);border:1px solid var(--verde);border-radius:var(--r);padding:12px 14px;font-size:14px}
+
+/* ─────────── relatório no modelo de visita técnica (papel, cores fixas) ───────────
+   O documento é sempre claro. Verde SAKUMA nas faixas, cinza no texto, sem preto. */
+.doc{font-family:Arial,Helvetica,sans-serif;color:#51534A}
+.pd-cab{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:3px solid #84BD00;padding-bottom:10px}
+.pd-titulo h1{margin:0;font-size:24px;font-weight:bold;font-style:italic;letter-spacing:-.3px;color:#51534A;text-transform:uppercase}
+.pd-titulo p{margin:3px 0 0;font-size:12px;color:#744F28}
+.pd-cab img{height:48px;width:auto;display:block}
+.pd-quadro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 14px;margin:14px 0 6px}
+.pd-quadro div{display:grid;grid-template-columns:92px 1fr;align-items:stretch;font-size:11px}
+.pd-quadro span{background:#84BD00;color:#fff;font-weight:bold;text-transform:uppercase;padding:4px 7px;letter-spacing:.03em;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-quadro b{background:#F1F7DF;color:#51534A;font-weight:normal;padding:4px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.doc h2.pd-resultados{text-align:center;border:0;color:#51534A;font-size:16px;letter-spacing:.06em;margin:18px 0 10px;padding:0}
+.pd-resumo{display:flex;flex-wrap:wrap;border:1px solid #DCDDD7;margin:0 0 14px}
+.pd-resumo div{flex:1;min-width:80px;text-align:center;padding:6px 4px;border-right:1px solid #DCDDD7}
+.pd-resumo div:last-child{border-right:0}
+.pd-resumo b{display:block;font-size:16px;color:#51534A}
+.pd-resumo span{font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#8A8C83;font-weight:bold}
+.pd-resumo .c b{color:#4E8B1F} .pd-resumo .nc b{color:#C0392B} .pd-resumo .sr b{color:#744F28}
+.pd-resumo .pc{background:#F1F7DF;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-topico{margin:0 0 16px}
+.pd-tt{display:flex;align-items:center;gap:10px;background:#F1F7DF;border-left:0;margin-bottom:2px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-tt .n{background:#84BD00;color:#fff;font-weight:bold;min-width:30px;align-self:stretch;display:flex;align-items:center;justify-content:center;
+  padding:5px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-tt span:last-child{padding:5px 0;font-size:12.5px;color:#6A9800;font-weight:bold;text-transform:uppercase}
+.pd-item{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:2px 14px;padding:5px 2px;border-bottom:1px dashed #C9CBC2;font-size:11.5px;line-height:1.45}
+.pd-item.nc{background:#FBEDEB;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-q{color:#51534A}
+.pd-r{color:#51534A}
+.pd-r.r-c{color:#4E8B1F;font-weight:bold}
+.pd-r.r-nc{color:#C0392B;font-weight:bold}
+.pd-r.r-na{color:#8A8C83}
+.pd-r.r-sr{color:#744F28;font-style:italic}
+.pd-dados .pd-item{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pd-texto{grid-column:1/-1;font-size:11.5px;color:#51534A;padding:2px 0 4px;line-height:1.5}
+.pd-obs{grid-column:1/-1;font-size:10.5px;color:#744F28;padding-left:14px}
+.pd-grau{display:inline-block;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:10px;color:#fff;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-grau.g-c{background:#A32015} .pd-grau.g-a{background:#C06A00} .pd-grau.g-m{background:#87761C} .pd-grau.g-b{background:#4F6E7B}
+.pd-faixa{background:#84BD00;color:#fff;font-weight:bold;text-align:center;font-size:11.5px;padding:5px 8px;margin:10px 0 8px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-fotos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pd-foto{margin:0;border:1px solid #C9CBC2;padding:8px;text-align:center;break-inside:avoid;page-break-inside:avoid}
+.pd-foto figcaption{font-size:10px;color:#51534A;text-align:left;margin-bottom:6px;line-height:1.35}
+.pd-foto img{max-width:100%;height:190px;object-fit:contain;display:block;margin:0 auto}
+.pd-sub{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:#6A9800;margin:12px 0 5px}
+.pd-plano{width:100%;border-collapse:collapse;font-size:10.5px}
+.pd-plano th{background:#84BD00;color:#fff;text-align:left;padding:5px 6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-plano td{border:1px solid #DCDDD7;padding:5px 6px;vertical-align:top}
+.pd-plano tbody tr:nth-child(even) td{background:#F1F7DF;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@media (max-width:620px){
+  .pd-quadro{grid-template-columns:1fr}
+  .pd-item{grid-template-columns:minmax(0,1fr) 100px}
+  .pd-titulo h1{font-size:18px}
+}
+.doc-lop{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:22px}
+.doc-lop img{height:22px;width:auto;display:block}
+.doc-lop span{font:11px Arial,Helvetica,sans-serif;color:#51534A;letter-spacing:.02em}
+
+@media (max-width:760px){
+  .topo{padding:8px 12px 0}
+  .topo-divisor{display:none}
+  .marca-logo{height:22px}
+  .topo-inicio img{height:30px;width:30px}
+  .topo h1{font-size:15px}
+  .topo h1 .modulo{font-size:10px;padding:1px 6px;margin-left:4px}
+  .abas{margin:6px 0 0}
+  #bt-pdf{display:none}
+  .acoes{flex-wrap:nowrap}
+  .conta b{max-width:70px}
+  .aba{flex:1 0 auto;padding:0 12px;font-size:14px}
+  .ck-bt{min-width:56px;padding:0 10px}
+  .ck-orient dl{grid-template-columns:1fr}
+}
+@media (max-width:460px){
+  .topo h1 .modulo{display:none}
+}
+
+@media print{
+  .rodape-gr,#painel-inicio,#painel-checklists{display:none!important}
+  @page{margin:12mm 12mm 16mm;
+    @bottom-right{content:"Página " counter(page) " de " counter(pages);font:9px Arial,Helvetica,sans-serif;color:#8A8C83}
+    @bottom-left{font:9px Arial,Helvetica,sans-serif;color:#8A8C83}}
+  .pd-item,.pd-quadro,.pd-resumo,.doc-lop,.pd-plano tr{break-inside:avoid;page-break-inside:avoid}
+  .pd-tt,.pd-faixa{break-after:avoid;page-break-after:avoid}
+  .pd-foto img{height:170px}
+}
 </style>
 </head>
 <body>
@@ -524,8 +781,9 @@ dialog.ficha-dlg{max-width:760px}
 <section class="portao" id="portao">
   <div class="portao-caixa">
     <div class="portao-marca">
-      <img id="portao-logo" alt="SAKUMA Agronegócios">
-      <h1>Vistorias &amp; Segurança</h1>
+      <img class="pt-icone" src="icons/gr-vs-192.v1.png" alt="">
+      <h1>Gestão Rápida <span>Vistorias e Segurança</span></h1>
+      <img id="portao-logo" class="pt-sakuma" alt="SAKUMA Agronegócios">
       <p>Entre com a conta que o administrador criou para você.</p>
     </div>
     <div class="portao-form">
@@ -537,21 +795,27 @@ dialog.ficha-dlg{max-width:760px}
       <button class="bt bt-forte" type="button" id="pt-entrar">Entrar</button>
     </div>
     <div class="portao-rodape">
-      <b>SAKUMA Agronegócios</b><br>
       Não tem conta? Fale com o administrador do sistema.
+      <img class="pt-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
     </div>
   </div>
 </section>
 
+<!-- TOPO — mesmo padrão dos outros Gestão Rápida (Pessoas, Manutenções,
+     Programação Campo): ícone e nome voltam ao início, SAKUMA no alto,
+     LOP gravada a laser só no rodapé. As duas marcas nunca no mesmo lugar. -->
 <header class="topo">
   <div class="marca">
+    <button type="button" class="topo-inicio" id="bt-inicio" title="Voltar ao início">
+      <img src="icons/gr-vs-192.v1.png" alt="">
+      <h1>Gestão Rápida <span class="modulo">Vistorias e Segurança</span></h1>
+    </button>
+    <span class="topo-divisor"></span>
     <img id="logo-img" class="marca-logo" alt="SAKUMA Agronegócios">
-    <div class="marca-texto">
-      <strong>Vistorias &amp; Segurança</strong>
-      <span>SAKUMA Agronegócios</span>
-    </div>
   </div>
   <div class="abas" role="tablist">
+    <button class="aba" id="t-inicio" role="tab" aria-selected="false" aria-controls="painel-inicio" hidden>Início</button>
+    <button class="aba" id="t-checklists" role="tab" aria-selected="false" aria-controls="painel-checklists">Checklists prontos</button>
     <button class="aba" id="t-vistoria" role="tab" aria-selected="true" aria-controls="painel-vistoria">Vistoria <b class="n" id="cont-itens">0</b></button>
     <button class="aba" id="t-aberto" role="tab" aria-selected="false" aria-controls="painel-aberto">Em aberto <b class="n" id="cont-aberto">0</b></button>
     <button class="aba" id="t-relatorio" role="tab" aria-selected="false" aria-controls="painel-relatorio">Relatório</button>
@@ -560,13 +824,35 @@ dialog.ficha-dlg{max-width:760px}
   <div class="acoes">
     <button class="conta off" id="bt-conta" type="button"><span class="bola">—</span><b>Entrar</b></button>
     <button class="bt bt-fantasma" id="bt-instalar" type="button" hidden title="Instalar no aparelho">⤓ Instalar</button>
-    <button class="bt bt-fantasma" id="bt-tema" type="button" title="Alternar tema">◐</button>
+    <button class="bt bt-fantasma" id="bt-tema" type="button" title="Alternar tema" hidden>◐</button>
     <button class="bt" id="bt-salvar" type="button">Salvar vistoria</button>
     <button class="bt bt-forte" id="bt-pdf" type="button">Imprimir / PDF</button>
   </div>
 </header>
 
 <main class="palco">
+
+  <!-- ────────── tela inicial ────────── -->
+  <section class="painel" id="painel-inicio" role="tabpanel" hidden>
+    <div class="marca-inicio">
+      <img class="mi-sakuma" src="img/sakuma-marca-vertical.png" alt="SAKUMA Agronegócios">
+      <h2>Gestão Rápida <span>Vistorias e Segurança</span></h2>
+      <p class="mi-dica" id="mi-dica"></p>
+      <div class="mi-atalhos">
+        <button type="button" class="btn" data-ir="checklists">Checklists prontos</button>
+        <button type="button" class="btn secundario" data-ir="vistoria">Vistoria</button>
+        <button type="button" class="btn secundario" data-ir="aberto">Em aberto <small id="mi-aberto"></small></button>
+      </div>
+      <div class="mi-modelos" id="mi-modelos"></div>
+      <img class="mi-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
+    </div>
+  </section>
+
+  <!-- ────────── checklists prontos ────────── -->
+  <section class="painel" id="painel-checklists" role="tabpanel" aria-labelledby="t-checklists" hidden>
+    <div id="ck-lista"></div>
+    <div id="ck-preencher" hidden></div>
+  </section>
 
   <!-- ────────── painel vistoria ────────── -->
   <section class="painel" id="painel-vistoria" role="tabpanel" aria-labelledby="t-vistoria">
@@ -779,6 +1065,23 @@ dialog.ficha-dlg{max-width:760px}
       </div>
     </div>
 
+    <div class="cfg-secao" id="sec-modelos">
+      <h3>Checklists prontos <span class="cfg-trava" id="trava-modelos" hidden>somente administradores</span></h3>
+      <p>Os checklists que aparecem prontos para preencher. Para cadastrar um novo, importe a planilha no mesmo formato do Checklist NR-24 (colunas Nº, Categoria, Item de verificação, C, NC, NA) ou escreva os itens aqui. Checklist já preenchido não muda quando o modelo muda: o enunciado fica gravado junto da resposta.</p>
+      <div class="cfg-tabela-env" style="max-height:260px">
+        <table class="cfg-anomalias">
+          <thead><tr><th>Checklist</th><th style="width:60px">Itens</th><th style="width:70px"></th><th style="width:44px"></th></tr></thead>
+          <tbody id="md-corpo"></tbody>
+        </table>
+      </div>
+      <div id="md-editor"></div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="md-importar">Importar planilha (.xlsx)</button>
+        <button class="bt bt-fantasma" type="button" id="md-novo">＋ Escrever checklist</button>
+        <span class="cfg-salvo" id="md-aviso"></span>
+      </div>
+    </div>
+
     <div class="cfg-secao" id="sec-checklists">
       <h3>Blocos de checklist <span class="cfg-trava" id="trava-checklists" hidden>somente administradores</span></h3>
       <p>Cada bloco é uma norma com seus itens. Na vistoria o técnico escolhe quais blocos se aplicam à visita. Vistoria já salva não muda quando o bloco muda: o enunciado do item fica gravado junto da resposta.</p>
@@ -822,6 +1125,10 @@ dialog.ficha-dlg{max-width:760px}
     </div>
   </section>
 </main>
+
+<footer class="rodape-gr">
+  <img class="rodape-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
+</footer>
 
 <div class="status">
   <span id="status-txt">Rascunho automático ativo neste aparelho.</span>
@@ -1375,6 +1682,10 @@ function renderKpis(){
 
 /* ══════════════════════════ render: relatório ══════════════════════════ */
 function renderDoc(){
+  /* checklist pronto tem relatório próprio, no formato da planilha */
+  /* todos os relatórios saem no modelo de visita técnica (tópicos numerados,
+     resposta por item e fotos agrupadas por tópico) — ver pdoc no _script-gr.js */
+  if(typeof pdocRascunho==="function"){$("#doc").innerHTML=pdocRascunho();return;}
   const c=estado.cab;
   const g={"Crítico":0,"Alto":0,"Médio":0,"Baixo":0};
   estado.itens.forEach(i=>{if(g[i.grau]!=null)g[i.grau]++;});
@@ -1485,7 +1796,8 @@ function renderDoc(){
       <div><span>Responsável do setor</span><b>${esc(c.responsavelTurma)||"—"}</b></div>
       <div style="text-align:right"><span>Feito por</span><b>${esc(c.tecnico)||"—"}</b><br>${esc(c.cargo)||""}${c.tecnicoRegistro?" · Registro "+esc(c.tecnicoRegistro):""}</div>
     </div>
-    <div class="doc-cod">${esc(c.codigo)||"(sem número)"} · Relatório de Vistoria · SAKUMA Agronegócios</div>`;
+    <div class="doc-cod">${esc(c.codigo)||"(sem número)"} · Relatório de Vistoria · SAKUMA Agronegócios</div>
+    ${typeof docLop==="function"?docLop():""}`;
 }
 
 /* ══════════════════════════ eventos ══════════════════════════ */
@@ -1611,7 +1923,7 @@ document.addEventListener("paste",ev=>{
 });
 
 /* abas */
-const PAINEIS=["vistoria","aberto","relatorio","config"];
+const PAINEIS=["inicio","checklists","vistoria","aberto","relatorio","config"];
 function aba(qual){
   PAINEIS.forEach(p=>{
     $("#painel-"+p).hidden = p!==qual;
@@ -2006,8 +2318,13 @@ async function codigoDaBase(){
 
 /* ══════════════════════════ salvar a vistoria ══════════════════════════ */
 async function salvarVistoria(){
-  if(!estado.itens.length){toast("Adicione ao menos uma não conformidade antes de salvar.");return;}
-  if(!estado.cab.unidade){toast("Informe a unidade antes de salvar.");$("#f-unidade").focus();return;}
+  const temChecklist=chkLista().some(b=>(b.itens||[]).some(i=>i.r));
+  if(!estado.itens.length&&!temChecklist){toast(estado.modelo?"Responda ao menos um item do checklist antes de salvar.":"Adicione ao menos uma não conformidade antes de salvar.");return;}
+  if(!estado.cab.unidade){
+    toast(estado.modelo?"Informe a fazenda antes de salvar.":"Informe a unidade antes de salvar.");
+    const f=estado.modelo?$("[data-ck-cab='unidade']"):$("#f-unidade"); if(f)f.focus();
+    return;
+  }
   if(!estado.id)estado.id=uuid();
   estado.itens.forEach(it=>{
     if(!it.uid)it.uid=uuid();
@@ -2055,7 +2372,7 @@ async function salvarVistoria(){
         it.fotoRPath=await enviarFoto(`${estado.id}/${it.uid}-requerida.jpg`,it.fotoR);
     }
 
-    await rest("itens",{
+    if(estado.itens.length)await rest("itens",{
       method:"POST",
       headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
       body:JSON.stringify(estado.itens.map((it,i)=>({
@@ -2424,7 +2741,9 @@ $("#lg-senha").addEventListener("keydown",ev=>{if(ev.key==="Enter")confirmarCont
 
 $("#bt-nova-vistoria").onclick=()=>{
   if(estado.itens.length&&!estado.salvoEm&&!confirm("A vistoria atual ainda não foi salva. Começar uma nova mesmo assim?"))return;
-  estado={cab:{...estado.cab,setor:"",codigo:"",data:new Date().toISOString().slice(0,10)},
+  if(estado.modelo&&!estado.salvoEm&&chkLista().some(b=>b.itens.some(i=>i.r))&&!estado.itens.length&&!confirm("O checklist atual ainda não foi salvo. Começar uma vistoria nova mesmo assim?"))return;
+  estado={cab:{...estado.cab,setor:"",codigo:"",data:new Date().toISOString().slice(0,10),
+          motivo:String(estado.cab.motivo||"").startsWith("Checklist")?"Vistoria de rotina":estado.cab.motivo},
           id:uuid(),salvoEm:null,itens:[]};
   proximoId=1;preencherCabecalho();render();salvar();
   aba("vistoria");toast("Nova vistoria começada.");
@@ -3193,6 +3512,7 @@ function chkBiblioteca(){
   const b = {};
   Object.entries(CHK_PADRAO).forEach(([k,v])=>{ b[k]={...v, itens:v.itens.slice()}; });
   Object.entries(chkCustom||{}).forEach(([k,v])=>{
+    if(k.startsWith("modelo:"))return;   /* checklists prontos moram na mesma coluna */
     if(v===null){ delete b[k]; return; }
     b[k] = {ref:v.ref||"", titulo:v.titulo||"", itens:Array.isArray(v.itens)?v.itens.slice():[]};
   });
@@ -3220,6 +3540,14 @@ function chkRenderEscolha(){
 }
 
 function chkRender(){
+  if(estado.modelo&&typeof ckRenderPreencher==="function"){
+    const e=$("#chk-escolha"), c=$("#chk-corpo");
+    if(e)e.innerHTML=`<div class="ck-nota">Esta vistoria é o checklist pronto <b>${esc(estado.modelo.titulo)}</b>. Responda os itens na aba <b>Checklists prontos</b>; o que for Não conforme aparece aqui embaixo como apontamento.
+      <div style="margin-top:10px"><button class="bt" type="button" data-gr-nova>Começar uma vistoria comum</button></div></div>`;
+    if(c)c.innerHTML="";
+    ckRenderPreencher();
+    return;
+  }
   chkRenderEscolha();
   const alvo=$("#chk-corpo"); if(!alvo)return;
   const blocos=chkLista();
@@ -3278,6 +3606,15 @@ function chkAbrirApontamento(b,it){
   item.prazo = GRAUS["Médio"].prazo;
   item.prazoData = calcularPrazoData(estado.cab.data,"Médio","outro");
   item.normasTexto = b.ref ? [{ref:b.ref, item:String(it.n), txt:it.txt, ok:true}] : [];
+  if(estado.modelo){
+    const m=estado.modelo, cod=it.cod||String(it.n);
+    item.titulo = (m.sigla? m.sigla+" "+cod+" — " : cod+" — ") + (it.txt.length>70? it.txt.slice(0,70)+"…" : it.txt);
+    item.requerida = it.txt;
+    item.acao = it.obs || "Corrigir o item "+cod+" do checklist ("+b.titulo+").";
+    item.encontrada = "Item "+cod+" ("+b.titulo+") verificado em campo e considerado não conforme.";
+    item.normasTexto = [{ref:m.ref||m.titulo, item:cod, txt:it.txt, ok:true}];
+    item.local = estado.cab.setor||estado.cab.unidade||"";
+  }
   item.origemChk = b.id+":"+it.n;
   if(it.fotos&&it.fotos.length&&it.fotos[0].url)item.fotoE=it.fotos[0].url;
   estado.itens.push(item);
@@ -3346,15 +3683,14 @@ document.addEventListener("click",ev=>{
   const ft=ev.target.closest("[data-chk-foto]");
   if(ft){
     const inp=document.createElement("input");
-    inp.type="file"; inp.accept="image/*";
+    inp.type="file"; inp.accept="image/*"; inp.multiple=true;   /* várias fotos do mesmo item de uma vez */
     inp.onchange=()=>{
-      const f=inp.files&&inp.files[0]; if(!f)return;
-      comprimir(f,url=>{
+      Array.from(inp.files||[]).forEach(f=>comprimir(f,url=>{
         const b=chkBloco(ft.dataset.bloco); if(!b)return;
         const it=b.itens.find(x=>x.n===Number(ft.dataset.n)); if(!it)return;
         (it.fotos=it.fotos||[]).push({url,path:""});
         chkRender(); salvar(); renderDoc();
-      });
+      }));
     };
     inp.click(); return;
   }
@@ -3373,6 +3709,12 @@ document.addEventListener("input",ev=>{
   const b=chkBloco(o.dataset.bloco); if(!b)return;
   const it=b.itens.find(x=>x.n===Number(o.dataset.n)); if(!it)return;
   it.obs=o.value;
+  /* checklist pronto: o texto do item é a "Ação necessária / Prazo" da
+     planilha — vira a ação corretiva do apontamento aberto */
+  if(it.r==="NC"){
+    const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
+    if(ap&&o.value.trim()){ if(estado.modelo)ap.acao=o.value.trim(); else ap.encontrada=o.value.trim(); }
+  }
   salvar(); renderDoc();
 });
 
@@ -3388,13 +3730,23 @@ async function chkEnviarFotos(){
       }
     }
   }
-  return blocos.map(b=>({
+  const saida = blocos.map(b=>({
     id:b.id, ref:b.ref||"", titulo:b.titulo||"",
-    itens:(b.itens||[]).map(it=>({
-      n:it.n, txt:it.txt, r:it.r||"", obs:it.obs||"",
-      fotos:(it.fotos||[]).filter(f=>f.path).map(f=>({path:f.path}))
-    }))
+    itens:(b.itens||[]).map(it=>{
+      const o={n:it.n, txt:it.txt, r:it.r||"", obs:it.obs||"",
+        fotos:(it.fotos||[]).filter(f=>f.path).map(f=>({path:f.path}))};
+      if(it.cod)o.cod=it.cod;
+      if(it.r==="NC"){
+        const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
+        if(ap&&ap.prazoData)o.prazo=ap.prazoData;
+      }
+      return o;
+    })
   }));
+  /* checklist pronto: o modelo e o cabeçalho próprio vão congelados no
+     primeiro bloco — o relatório de uma vistoria antiga sai igual depois. */
+  if(estado.modelo&&saida.length)saida[0].modelo=JSON.parse(JSON.stringify(estado.modelo));
+  return saida;
 }
 
 /* ─────────────── biblioteca de checklists em Configurações ─────────────── */
@@ -3488,6 +3840,765 @@ chkRender();
   const antes=el.onclick;
   el.onclick=function(ev){ if(antes)antes.call(this,ev); setTimeout(chkRender,0); };
 });
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Gestão Rápida (Vistorias e Segurança)
+   Tela inicial no padrão dos outros Gestão Rápida, assinatura da LOP nos
+   relatórios e o módulo de CHECKLISTS PRONTOS: o técnico escolhe um modelo
+   já cadastrado, preenche C / NC / NA item a item e o relatório sai no
+   formato da planilha. Por baixo, o checklist pronto é uma vistoria como
+   outra qualquer — salva na mesma tabela, e o que for Não conforme abre
+   apontamento com prazo na aba Em aberto.
+   Nomes deste arquivo começam com ck, gr ou lop para não colidir com os
+   dos outros dois scripts (armadilha que já custou caro).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────── assinatura da LOP nos relatórios ───────────
+   Igual aos relatórios do Gestão Rápida (Pessoas): no pé do documento, à
+   direita, a marca pequena da LOP (o mesmo arquivo img/lop-marca.png dos
+   outros apps, só reduzido) e ao lado "Inteligência para o agronegócio".
+   Embutida para sair também no arquivo exportado e no PDF sem internet. */
+function lopMarca(){ return "data:image/png;base64,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"; }
+function docLop(){
+  return `<div class="doc-lop"><img src="${lopMarca()}" alt="LOP"><span>Inteligência para o agronegócio</span></div>`;
+}
+window.docLop=docLop;
+
+/* ─────────── modelos de checklist que já vêm cadastrados ─────────── */
+const CK_PADRAO = {
+  "modelo:nr24-1590": {
+    sigla:"NR-24", titulo:"Checklist de Verificação – NR-24", subtitulo:"Portaria MTE nº 1.590/2026",
+    ref:"NR-24 · Portaria MTE nº 1.590/2026",
+    arquivo:"arquivos/Checklist_NR24_Portaria_MTE_1590_2026.xlsx",
+    campos:["Fazenda", "Data da verificação", "Nº de trabalhadores", "Responsável", "Atividade/Talhão", "Identificação", "Revisão", "Elaboração", "Aprovação", "Data"],
+    grupos:[
+      {titulo:"Instalações sanitárias", itens:[
+        ["1.1", "Há instalação sanitária disponível aos trabalhadores?"],
+        ["1.2", "Quando utilizado banheiro móvel, existe justificativa para a inviabilidade técnica de instalação fixa?"],
+        ["1.3", "O banheiro está localizado, preferencialmente, a até 150 m do posto de trabalho?"],
+        ["1.4", "Quando ultrapassa 150 m, existe meio de transporte disponível para deslocamento dos trabalhadores?"],
+        ["1.5", "O banheiro garante privacidade aos usuários?"],
+        ["1.6", "A porta possui sistema de fechamento interno?"],
+        ["1.7", "O local possui ventilação adequada?"],
+        ["1.8", "Possui iluminação adequada, inclusive para utilização no período noturno, quando aplicável?"],
+        ["1.9", "O banheiro está instalado em local plano, estável e com acesso seguro?"],
+        ["1.10", "Há proteção contra exposição excessiva ao sol/calor?"]
+      ]},
+      {titulo:"Higiene e limpeza", itens:[
+        ["2.1", "O banheiro é higienizado no mínimo diariamente?"],
+        ["2.2", "Existem registros da limpeza realizada?"],
+        ["2.3", "O reservatório de dejetos é esvaziado/sugado conforme a necessidade?"],
+        ["2.4", "Existem comprovantes dos serviços de sucção/esvaziamento?"],
+        ["2.5", "Os comprovantes estão disponíveis para consulta?"],
+        ["2.6", "O banheiro encontra-se em condições adequadas de higiene e utilização?"]
+      ]},
+      {titulo:"Lavatório e higiene das mãos", itens:[
+        ["3.1", "Existe lavatório disponível para higienização das mãos?"],
+        ["3.2", "Há água disponível para lavagem das mãos?"],
+        ["3.3", "Há sabonete líquido ou produto adequado para higienização?"],
+        ["3.4", "Não é utilizado sabonete em barra?"],
+        ["3.5", "Há papel-toalha ou outro meio adequado para secagem das mãos?"],
+        ["3.6", "Não são utilizadas toalhas coletivas?"]
+      ]},
+      {titulo:"Papel higiênico e descarte", itens:[
+        ["4.1", "Há papel higiênico disponível?"],
+        ["4.2", "Existe suporte adequado para o papel?"],
+        ["4.3", "Quando o papel não pode ser descartado na bacia, existe recipiente adequado com tampa?"]
+      ]},
+      {titulo:"Água potável", itens:[
+        ["5.1", "É disponibilizada água potável, filtrada e fresca?"],
+        ["5.2", "A quantidade de água é suficiente para os trabalhadores durante a jornada?"],
+        ["5.3", "A água é armazenada em recipientes adequados e higienizados?"],
+        ["5.4", "Quando fornecida em recipientes portáteis, estes permanecem fechados e adequadamente acondicionados?"],
+        ["5.5", "Não são utilizados copos coletivos?"]
+      ]},
+      {titulo:"Controles e evidências", itens:[
+        ["6.1", "Existe controle periódico de inspeção dos banheiros?"],
+        ["6.2", "Existem registros de limpeza/higienização?"],
+        ["6.3", "Existem comprovantes de sucção/esvaziamento dos banheiros químicos?"],
+        ["6.4", "Os registros estão disponíveis e organizados para apresentação em auditorias?"],
+        ["6.5", "As não conformidades identificadas possuem plano de ação/correção?"]
+      ]}
+    ],
+    orientacoes:[
+      ["Classificação", "C = Conforme | NC = Não Conforme | NA = Não Aplicável"],
+      ["Evidências", "Registrar fotos, registros de limpeza, comprovantes de sucção/esvaziamento e demais documentos aplicáveis."],
+      ["Distância", "Verificar a distância entre o posto de trabalho/frente de serviço e a instalação sanitária."],
+      ["Banheiro móvel", "Verificar justificativa de inviabilidade técnica quando houver uso de instalação sanitária móvel."],
+      ["Higiene", "A limpeza deve ocorrer, no mínimo, diariamente."],
+      ["Lavatório", "Disponibilizar água e produto adequado para higienização das mãos; não utilizar sabonete em barra ou toalhas coletivas."],
+      ["Água", "Verificar disponibilidade de água potável, filtrada e fresca, em quantidade suficiente."],
+      ["Registros", "Manter evidências organizadas para apresentação em auditorias."]
+    ]
+  }
+};
+
+function ckModelos(){
+  const m={};
+  Object.entries(CK_PADRAO).forEach(([k,v])=>{ m[k]=JSON.parse(JSON.stringify(v)); });
+  Object.entries(chkCustom||{}).forEach(([k,v])=>{
+    if(!k.startsWith("modelo:"))return;
+    if(v===null){ delete m[k]; return; }
+    m[k]=JSON.parse(JSON.stringify(v));
+  });
+  return m;
+}
+const ckTotalItens=m=>(m.grupos||[]).reduce((s,g)=>s+(g.itens||[]).length,0);
+
+/* Os campos do cabeçalho de cada planilha que já existem na vistoria
+   vão para o mesmo lugar — assim a aba Em aberto, a lista de vistorias
+   salvas e o número VIST-xxx continuam funcionando sem mudar o banco. */
+function ckCampoCab(rotulo){
+  const r=String(rotulo||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[:.]/g,"").trim();
+  if(/^(fazenda|unidade|propriedade)/.test(r))return "unidade";
+  if(/^data da (verificacao|vistoria|inspecao)/.test(r))return "data";
+  if(/(trabalhadores|colaboradores)/.test(r))return "colaboradores";
+  if(r==="responsavel"||/^responsavel (pela|do|da) (turma|setor|area)/.test(r))return "responsavelTurma";
+  if(/^(atividade|talhao|setor|local)/.test(r))return "setor";
+  if(/^(elaboracao|elaborado|tecnico|inspetor|verificado por)/.test(r))return "tecnico";
+  if(/^(aprovacao|aprovado)/.test(r))return "aprovador";
+  return null;
+}
+function ckTipo(rotulo){
+  const r=String(rotulo||"").toLowerCase();
+  if(/^data/.test(r))return "date";
+  if(/^n[º°o]\s/.test(r)||/^numero/.test(r))return "number";
+  return "text";
+}
+function ckValor(rotulo,cab,modelo){
+  const k=ckCampoCab(rotulo);
+  if(k)return cab[k]||"";
+  return (modelo.valores||{})[rotulo]||"";
+}
+
+/* ─────────── começar um checklist ─────────── */
+function ckTemRascunho(){
+  const respondido=chkLista().some(b=>(b.itens||[]).some(i=>i.r));
+  return !estado.salvoEm && (estado.itens.length>0 || respondido);
+}
+
+function ckIniciar(chave){
+  const m=ckModelos()[chave];
+  if(!m){toast("Esse checklist não está mais na lista.");return;}
+  if(ckTemRascunho()&&!confirm("Há uma vistoria ou checklist em andamento que ainda não foi salvo. Começar este checklist mesmo assim?"))return;
+  const ant=estado.cab||{};
+  const hoje=new Date().toISOString().slice(0,10);
+  estado={
+    cab:{unidade:"",setor:"",data:hoje,tecnico:ant.tecnico||"",cargo:ant.cargo||"Técnico de Segurança do Trabalho",
+         motivo:"Checklist "+(m.sigla||m.titulo),aprovador:"",aprovadorCargo:"",codigo:"",
+         tecnicoRegistro:ant.tecnicoRegistro||""},
+    id:uuid(),salvoEm:null,itens:[],
+    modelo:{chave,sigla:m.sigla||"",titulo:m.titulo||"",subtitulo:m.subtitulo||"",ref:m.ref||"",
+            campos:(m.campos||[]).slice(),orientacoes:(m.orientacoes||[]).slice(),valores:{}},
+    chk:(m.grupos||[]).map((g,gi)=>({
+      id:chave.replace(/^modelo:/,"")+"-"+(gi+1), ref:"", titulo:g.titulo||("Grupo "+(gi+1)),
+      itens:(g.itens||[]).map((x,k)=>({n:k+1,cod:String(x[0]||""),txt:String(x[1]||""),r:"",obs:"",fotos:[]}))
+    }))
+  };
+  /* "Data" solta no cabeçalho da planilha é a data do documento */
+  estado.modelo.campos.forEach(c=>{ if(!ckCampoCab(c)&&ckTipo(c)==="date")estado.modelo.valores[c]=hoje; });
+  proximoId=1;
+  preencherCabecalho(); render(); chkRender(); salvar();
+  ckMostrar("preencher");
+  window.scrollTo({top:0});
+}
+
+/* ─────────── tela: lista de checklists ─────────── */
+function ckRenderLista(){
+  const alvo=$("#ck-lista"); if(!alvo)return;
+  const ms=ckModelos(), chaves=Object.keys(ms);
+  let andamento="";
+  if(estado.modelo){
+    const tot=chkLista().reduce((s,b)=>s+b.itens.length,0);
+    const resp=chkLista().reduce((s,b)=>s+b.itens.filter(i=>i.r).length,0);
+    andamento=`<div class="ck-andamento">
+      <b>${estado.salvoEm?"Último checklist salvo":"Checklist em andamento"}: ${esc(estado.modelo.titulo)} — ${resp} de ${tot} itens respondidos${estado.cab.unidade?" · "+esc(estado.cab.unidade):""}</b>
+      <button class="btn" type="button" data-ck-continuar>${estado.salvoEm?"Abrir":"Continuar"}</button></div>`;
+  }
+  alvo.innerHTML=`
+    <div class="secao-topo">
+      <h2>Checklists prontos</h2>
+      <span class="dica">Escolha o checklist, preencha no local e salve. O que for Não conforme vira apontamento com prazo.</span>
+    </div>
+    ${andamento}
+    ${chaves.length?`<div class="ck-modelos">${chaves.map(k=>{
+      const m=ms[k];
+      return `<div class="ck-card">
+        <span class="ref">${esc(m.ref||m.sigla||"Checklist")}</span>
+        <h3>${esc(m.titulo)}</h3>
+        <span class="info">${ckTotalItens(m)} itens · ${(m.grupos||[]).length} grupos</span>
+        <div class="grupos">${(m.grupos||[]).map(g=>`<span>${esc(g.titulo)}</span>`).join("")}</div>
+        <div class="pe">
+          <button class="btn" type="button" data-ck-iniciar="${esc(k)}">Preencher</button>
+          ${m.arquivo?`<a href="${esc(m.arquivo)}" download>Planilha original</a>`:""}
+        </div>
+      </div>`;}).join("")}</div>`
+    :`<div class="vazio"><p>Nenhum checklist cadastrado. Cadastre em Configurações → Checklists prontos.</p></div>`}`;
+}
+
+/* ─────────── tela: preenchimento ─────────── */
+function ckMostrar(qual){
+  const lista=$("#ck-lista"), prep=$("#ck-preencher");
+  if(qual==="preencher"&&estado.modelo){
+    lista.hidden=true; prep.hidden=false; ckMontarTela();
+  }else{
+    prep.hidden=true; lista.hidden=false; ckRenderLista();
+  }
+  aba("checklists");
+}
+
+function ckMontarTela(){
+  const alvo=$("#ck-preencher"); if(!alvo||!estado.modelo)return;
+  const m=estado.modelo, c=estado.cab;
+  const campo=rot=>{
+    const k=ckCampoCab(rot), tipo=ckTipo(rot), id="ckf-"+chkSlug(rot);
+    const val=ckValor(rot,c,m);
+    const extra=k?`data-ck-cab="${k}"`:`data-ck-val="${esc(rot)}"`;
+    const ph=k==="unidade"?"Fazenda Morro Branco":(k==="setor"?"Frente de trabalho, talhão":"");
+    return `<div class="campo"><label for="${id}">${esc(rot)}</label>
+      <input type="${tipo}" id="${id}" ${extra} value="${esc(val)}" ${tipo==="number"?'min="0" step="1"':""} placeholder="${esc(ph)}"></div>`;
+  };
+  alvo.innerHTML=`
+    <div class="ck-barra">
+      <button class="bt" type="button" data-ck-voltar>← Checklists</button>
+      <h2>${esc(m.titulo)}<small>${esc(m.subtitulo||m.ref||"")}${c.codigo?" · "+esc(c.codigo):""}</small></h2>
+    </div>
+    <div class="ck-progresso"><i id="ck-barra-prog" style="width:0"></i></div>
+    <div class="cartao" style="margin-bottom:16px">
+      <div class="grade">${m.campos.map(campo).join("")}</div>
+    </div>
+    ${m.orientacoes&&m.orientacoes.length?`<details class="ck-orient"><summary>Orientações para aplicação</summary>
+      <dl>${m.orientacoes.map(o=>`<dt>${esc(o[0])}</dt><dd>${esc(o[1])}</dd>`).join("")}</dl></details>`:""}
+    <div class="ck-kpis" id="ck-kpis"></div>
+    <div id="ck-corpo"></div>
+    <div class="cartao" style="padding:14px;margin-bottom:14px">
+      <div class="campo largo"><label for="ck-observacoes">Observações</label>
+        <textarea id="ck-observacoes" data-ck-cab="observacoes" rows="3" placeholder="Leitura geral da verificação.">${esc(c.observacoes||"")}</textarea></div>
+    </div>
+    <div class="ck-fim">
+      <button class="bt" type="button" data-ck-voltar>Voltar</button>
+      <button class="btn secundario" type="button" data-ck-imprimir>Imprimir / PDF</button>
+      <button class="btn" type="button" data-ck-salvar>Salvar checklist</button>
+    </div>`;
+  ckRenderPreencher();
+}
+
+function ckContagem(blocos){
+  const t={total:0,C:0,NC:0,NA:0,sem:0};
+  (blocos||[]).forEach(b=>(b.itens||[]).forEach(i=>{
+    t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;
+  }));
+  t.pc=(t.C+t.NC)?Math.round(t.C*100/(t.C+t.NC)):null;
+  return t;
+}
+
+function ckRenderPreencher(){
+  const corpo=$("#ck-corpo"); if(!corpo||!estado.modelo)return;
+  const blocos=chkLista(), t=ckContagem(blocos);
+  const k=$("#ck-kpis");
+  if(k)k.innerHTML=`
+    <div class="ck-kpi"><b>${t.total}</b><span>Itens</span></div>
+    <div class="ck-kpi c"><b>${t.C}</b><span>Conformes</span></div>
+    <div class="ck-kpi nc"><b>${t.NC}</b><span>Não conformes</span></div>
+    <div class="ck-kpi na"><b>${t.NA}</b><span>Não aplicáveis</span></div>
+    <div class="ck-kpi sr"><b>${t.sem}</b><span>Sem resposta</span></div>`;
+  const p=$("#ck-barra-prog"); if(p)p.style.width=(t.total?Math.round((t.total-t.sem)*100/t.total):0)+"%";
+
+  corpo.innerHTML=blocos.map((b,bi)=>{
+    const nc=b.itens.filter(i=>i.r==="NC").length, feitos=b.itens.filter(i=>i.r).length;
+    return `<div class="ck-grupo">
+      <div class="ck-grupo-topo">
+        <span class="n">${bi+1}</span><span class="tt">${esc(b.titulo)}</span>
+        <span class="ck-conta">${feitos}/${b.itens.length}${nc?` · ${nc} NC`:""}</span>
+        ${feitos<b.itens.length?`<button type="button" data-ck-todos="${esc(b.id)}" title="Marca como Conforme os itens ainda sem resposta">Restantes conformes</button>`:""}
+      </div>
+      ${b.itens.map(it=>{
+        const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
+        return `<div class="ck-item${it.r?" r-"+it.r:""}">
+        <div class="ck-txt"><span class="cod">${esc(it.cod||(bi+1)+"."+it.n)}</span>${esc(it.txt)}</div>
+        <div class="ck-resp">
+          ${[["C","C","Conforme"],["NC","NC","Não conforme"],["NA","NA","Não se aplica"]].map(([v,rot,tit])=>
+            `<button type="button" class="ck-bt r-${v}${it.r===v?" on":""}" title="${tit}" data-chk-r="${v}" data-bloco="${esc(b.id)}" data-n="${it.n}">${rot}</button>`).join("")}
+          <button type="button" class="ck-bt foto" data-chk-foto="1" data-bloco="${esc(b.id)}" data-n="${it.n}">＋ foto${it.fotos&&it.fotos.length?" ("+it.fotos.length+")":""}</button>
+        </div>
+        ${it.r==="NC"||it.obs?`<input type="text" class="ck-obs" placeholder="Ação necessária / prazo" value="${esc(it.obs||"")}"
+               data-chk-obs="1" data-bloco="${esc(b.id)}" data-n="${it.n}">`:""}
+        ${ap?`<div class="ck-apont">Apontamento aberto na aba Vistoria · prazo ${esc(ap.prazo||"")}${ap.prazoData?" (até "+dataBR(ap.prazoData)+")":""}</div>`:""}
+        ${(it.fotos&&it.fotos.length)?`<div class="chk-fotos">${it.fotos.map((f,fi)=>
+          `<figure><img src="${esc(f.url||f.assinada||"")}" alt="Foto do item ${esc(it.cod||"")}">
+           <button type="button" class="x" data-chk-tirar="${fi}" data-bloco="${esc(b.id)}" data-n="${it.n}" title="Tirar foto">×</button></figure>`).join("")}</div>`:""}
+      </div>`;}).join("")}
+    </div>`;}).join("");
+}
+
+/* ─────────── eventos do módulo ─────────── */
+$("#painel-checklists").addEventListener("click",ev=>{
+  const t=ev.target;
+  const ini=t.closest("[data-ck-iniciar]"); if(ini){ckIniciar(ini.dataset.ckIniciar);return;}
+  if(t.closest("[data-ck-continuar]")){ckMostrar("preencher");return;}
+  if(t.closest("[data-ck-voltar]")){ckMostrar("lista");return;}
+  if(t.closest("[data-ck-salvar]")){salvarVistoria().then(()=>{ if(estado.modelo)ckMontarTela(); });return;}
+  if(t.closest("[data-ck-imprimir]")){imprimir();return;}
+  const todos=t.closest("[data-ck-todos]");
+  if(todos){
+    const b=chkBloco(todos.dataset.ckTodos); if(!b)return;
+    b.itens.forEach(i=>{ if(!i.r)i.r="C"; });
+    chkRender(); render(); salvar();
+    return;
+  }
+});
+$("#painel-checklists").addEventListener("input",ev=>{
+  const el=ev.target;
+  if(el.dataset.ckCab){
+    estado.cab[el.dataset.ckCab]=el.value;
+    const espelho=document.querySelector(`#painel-vistoria [data-cab="${el.dataset.ckCab}"]`);
+    if(espelho)espelho.value=el.value;
+    salvar(); return;
+  }
+  if(el.dataset.ckVal!==undefined&&estado.modelo){
+    (estado.modelo.valores=estado.modelo.valores||{})[el.dataset.ckVal]=el.value;
+    salvar(); return;
+  }
+});
+
+/* ═══════════ Relatório no modelo "visita técnica de campo" ═══════════
+   Um só desenho para tudo o que o app imprime — vistoria, checklist da
+   norma, checklist pronto e vistoria antiga aberta pela base:
+     cabeçalho em quadro (data, início, fim, avaliador, avaliado)
+     RESULTADOS em tópicos numerados, cada item com a resposta à direita
+       e a observação logo abaixo
+     depois de cada tópico, "Fotos das questões do tópico N", duas por
+       linha, cada foto com o texto do item — um item pode ter várias
+     observações do técnico e o fecho com técnico, registro e responsável
+   Numeração de página e código do documento no rodapé de cada folha. */
+
+const PD_RESP={C:["Conforme","c"],NC:["Não conforme","nc"],NA:["Não se aplica","na"],"":["Sem resposta","sr"]};
+
+function pdData(iso){ return iso?dataBR(String(iso).slice(0,10)):""; }
+
+function pdLinha(rot,val){
+  return `<div class="pd-item"><div class="pd-q">${rot}</div><div class="pd-r">${val||"—"}</div></div>`;
+}
+
+function pdFotos(titulo,fotos){
+  if(!fotos.length)return "";
+  return `<div class="pd-faixa">${titulo}</div>
+    <div class="pd-fotos">${fotos.map(f=>`<figure class="pd-foto"><figcaption>${esc(f.leg)}</figcaption>
+      <img src="${esc(f.src)}" alt=""></figure>`).join("")}</div>`;
+}
+
+function pdTopico(num,titulo,corpo,cls){
+  return `<section class="pd-topico${cls?" "+cls:""}">
+    <div class="pd-tt"><span class="n">${num==null?"":num}</span><span>${titulo}</span></div>
+    ${corpo}</section>`;
+}
+
+/* d = {titulo, subtitulo, codigo, logo, quadro:[[rot,val]...], ident:[[rot,val]...],
+        blocos:[{titulo, itens:[{cod,txt,r,obs,obsRot,prazo,fotos:[src]}]}],
+        apont:[{titulo,grau,local,encontrada,risco,normas:[{ref,item,txt,ok}],requerida,acao,
+                prazo,prazoData,responsavel,evidencia,situacao,encerramento,fotos:[{src,leg}]}],
+        observacoes, fecho:[[rot,val]...], resumo:bool} */
+function pdoc(d){
+  let n=0;
+  const partes=[];
+
+  /* identificação */
+  if(d.ident&&d.ident.length)
+    partes.push(pdTopico(null,"Identificação",d.ident.map(([r,v])=>pdLinha(esc(r),esc(v))).join(""),"pd-dados"));
+
+  /* resumo do checklist */
+  const t={total:0,C:0,NC:0,NA:0,sem:0};
+  (d.blocos||[]).forEach(b=>b.itens.forEach(i=>{t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;}));
+  const pc=(t.C+t.NC)?Math.round(t.C*100/(t.C+t.NC)):null;
+  if(t.total)partes.push(`<div class="pd-resumo">
+      <div><b>${t.total}</b><span>Itens verificados</span></div>
+      <div class="c"><b>${t.C}</b><span>Conformes</span></div>
+      <div class="nc"><b>${t.NC}</b><span>Não conformes</span></div>
+      <div><b>${t.NA}</b><span>Não se aplica</span></div>
+      ${t.sem?`<div class="sr"><b>${t.sem}</b><span>Sem resposta</span></div>`:""}
+      <div class="pc"><b>${pc==null?"—":pc+"%"}</b><span>Conformidade</span></div></div>`);
+
+  /* um tópico por bloco do checklist, com as fotos logo depois */
+  (d.blocos||[]).forEach(b=>{
+    n++;
+    const titulo=esc(b.titulo);
+    const linhas=b.itens.map((it,k)=>{
+      const cod=it.cod||`${n}.${k+1}`;
+      const [rot,cls]=PD_RESP[it.r||""]||PD_RESP[""];
+      const obs=[];
+      if(it.obs)obs.push(`${esc(it.obsRot||"Observação")}: ${esc(it.obs)}`);
+      if(it.r==="NC"&&it.prazo)obs.push(`Prazo para correção: ${pdData(it.prazo)}`);
+      return `<div class="pd-item${it.r==="NC"?" nc":""}"><div class="pd-q">${esc(cod)} - ${esc(it.txt)}</div>
+        <div class="pd-r r-${cls}">${rot}</div>
+        ${obs.length?`<div class="pd-obs">${obs.join("<br>")}</div>`:""}</div>`;
+    }).join("");
+    const fotos=[];
+    b.itens.forEach((it,k)=>(it.fotos||[]).forEach(src=>{ if(src)fotos.push({src,leg:`${it.cod||n+"."+(k+1)} - ${it.txt}`}); }));
+    partes.push(pdTopico(n,titulo,linhas+pdFotos(`Fotos das questões do tópico ${n} - ${titulo}`,fotos)));
+  });
+
+  /* não conformidades registradas na vistoria */
+  const ap=d.apont||[];
+  if(ap.length){
+    n++;
+    const num=n;
+    const linhas=ap.map((a,i)=>{
+      const g=(GRAUS[a.grau]||GRAUS["Médio"]).doc;
+      const normas=(a.normas||[]).map(x=>`${esc(x.ref)}${x.item&&x.item!=="—"?", item "+esc(x.item):""}${x.ok===false?" (confirmar item)":""} — ${esc(x.txt)}`).join("<br>");
+      const obs=[
+        a.local&&`Local: ${esc(a.local)}`,
+        a.encontrada&&`Situação encontrada: ${nl(a.encontrada)}`,
+        a.risco&&`Risco: ${nl(a.risco)}`,
+        normas&&`Requisito: ${normas}`,
+        a.requerida&&`Situação requerida: ${nl(a.requerida)}`,
+        a.acao&&`Ação corretiva: ${nl(a.acao)}`,
+        (a.prazo||a.prazoData)&&`Prazo: ${esc(a.prazo||"")}${a.prazoData?" · até "+pdData(a.prazoData):""}`,
+        a.responsavel&&`Responsável: ${esc(a.responsavel)}`,
+        a.evidencia&&`Evidência para encerrar: ${nl(a.evidencia)}`,
+        a.situacao&&`Situação atual: ${esc(a.situacao)}`,
+        a.encerramento&&`Encerramento: ${esc(a.encerramento)}`
+      ].filter(Boolean).join("<br>");
+      return `<div class="pd-item nc"><div class="pd-q">${num}.${i+1} - ${esc(a.titulo)}</div>
+        <div class="pd-r"><span class="pd-grau g-${g}">${esc(a.grau||"")}</span></div>
+        <div class="pd-obs">${obs}</div></div>`;
+    }).join("");
+    const fotos=[];
+    ap.forEach((a,i)=>(a.fotos||[]).forEach(f=>{ if(f.src)fotos.push({src:f.src,leg:`${num}.${i+1} - ${a.titulo} · ${f.leg}`}); }));
+    const plano=`<table class="pd-plano"><thead><tr><th style="width:40px">Nº</th><th>Ação corretiva</th><th style="width:110px">Responsável</th><th style="width:78px">Prazo</th>${ap.some(a=>a.situacao)?'<th style="width:100px">Situação</th>':""}</tr></thead>
+      <tbody>${ap.map((a,i)=>`<tr><td>${num}.${i+1}</td><td>${esc(a.acao)||"—"}</td><td>${esc(a.responsavel)||"—"}</td>
+        <td>${a.prazoData?pdData(a.prazoData):esc(a.prazo)||"—"}</td>${ap.some(x=>x.situacao)?`<td>${esc(a.situacao||"")}</td>`:""}</tr>`).join("")}</tbody></table>`;
+    partes.push(pdTopico(num,"Não conformidades e plano de ação",
+      linhas+pdFotos(`Fotos das questões do tópico ${num} - Não conformidades`,fotos)+
+      `<div class="pd-sub">Plano de ação</div>`+plano));
+  }
+
+  if(d.observacoes&&String(d.observacoes).trim())
+    partes.push(pdTopico(null,"Observações do técnico",
+      `<div class="pd-item"><div class="pd-texto">${nl(d.observacoes)}</div></div>`));
+
+  if(d.fecho&&d.fecho.length)
+    partes.push(pdTopico(null,"Técnico de segurança e responsável do setor",
+      d.fecho.map(([r,v])=>pdLinha(esc(r),esc(v))).join(""),"pd-dados"));
+
+  const quadro=(d.quadro||[]).filter(q=>q[1]);
+  const rodapeTxt=`${d.codigo||"(sem número)"} · ${d.titulo} · SAKUMA Agronegócios`.replace(/["\\]/g,"");
+  return `
+    <style>@media print{@page{@bottom-left{content:"${rodapeTxt}"}}}</style>
+    <div class="pd-cab">
+      <div class="pd-titulo"><h1>${esc(d.titulo)}</h1>${d.subtitulo?`<p>${esc(d.subtitulo)}</p>`:""}</div>
+      <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios">
+    </div>
+    <div class="pd-quadro">${quadro.map(([r,v])=>`<div><span>${esc(r)}</span><b>${esc(v)}</b></div>`).join("")}</div>
+    <h2 class="pd-resultados">Resultados</h2>
+    ${partes.join("")}
+    ${docLop()}`;
+}
+
+/* ─────────── montar os dados: rascunho deste aparelho ─────────── */
+function pdocRascunho(){
+  const c=estado.cab, m=estado.modelo;
+  const blocos=chkLista().map(b=>({
+    titulo:(b.ref?b.ref+" ":"")+b.titulo,
+    itens:b.itens.map(it=>{
+      const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
+      return {cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",obsRot:m?"Ação necessária":"Observação",
+        prazo:ap&&ap.prazoData||"",fotos:(it.fotos||[]).map(f=>f.url||f.assinada||"")};
+    })
+  }));
+  /* no checklist pronto os itens NC já aparecem no tópico dele — os
+     apontamentos entram de novo só quando foram lançados à parte */
+  const apont=estado.itens.filter(it=>!(m&&it.origemChk)).map(it=>({
+    titulo:it.titulo,grau:it.grau,local:it.local,encontrada:it.encontrada,risco:it.risco,
+    normas:typeof normasDoItem==="function"?normasDoItem(it):[],requerida:it.requerida,acao:it.acao,
+    prazo:it.prazo,prazoData:it.prazoData,responsavel:it.responsavel,evidencia:it.evidencia,
+    fotos:[{src:it.fotoE,leg:"Situação encontrada"},{src:it.fotoR,leg:"Situação requerida"}]
+  }));
+  return pdoc(pdDados(c,m,blocos,apont,null));
+}
+
+/* cabeçalho, identificação e fecho — iguais para rascunho e para vistoria salva */
+function pdDados(c,m,blocos,apont,logo){
+  const quadro=[["Data",pdData(c.data)],["Início",c.inicio||""],["Avaliador",[c.tecnico,c.cargo].filter(Boolean).join(" — ")],
+    ["Fim",c.fim||""],["Avaliado",[c.unidade,c.proprietario].filter(Boolean).join(" · ")],["Código",c.codigo||""]];
+  let ident, fecho, titulo, subtitulo;
+  if(m){
+    titulo=m.titulo||"Checklist de verificação"; subtitulo=m.subtitulo||m.ref||"";
+    ident=(m.campos||[]).map(rot=>{
+      let v=ckValor(rot,c,m); if(ckTipo(rot)==="date"&&v)v=pdData(v); return [rot,v];
+    });
+    fecho=[["Elaboração",[c.tecnico,c.cargo].filter(Boolean).join(" — ")+(c.tecnicoRegistro?" · Registro: "+c.tecnicoRegistro:"")],
+      ["Responsável",c.responsavelTurma||""],["Aprovação",[ckValor("Aprovação",c,m)||c.aprovador,c.aprovadorCargo].filter(Boolean).join(" — ")]];
+  }else{
+    titulo="Visita Técnica de Campo"; subtitulo=c.motivo||"Relatório de vistoria de conformidade";
+    ident=[["Fazenda / unidade",c.unidade],["Setor ou área",c.setor],["Proprietário",c.proprietario],
+      ["Responsável pela turma",c.responsavelTurma],["Nº de colaboradores na frente de trabalho",c.colaboradores]]
+      .filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="").map(x=>[x[0],String(x[1])]);
+    fecho=[["Técnico de segurança do trabalho",(c.tecnico||"")+(c.tecnicoRegistro?" · Registro: "+c.tecnicoRegistro:"")],
+      ["Cargo",c.cargo||""],["Responsável do setor",c.responsavelTurma||""],
+      ["Aprovado por",[c.aprovador,c.aprovadorCargo].filter(Boolean).join(" — ")]].filter(x=>x[1]);
+  }
+  return {titulo,subtitulo,codigo:c.codigo,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho};
+}
+
+/* ─────────── vistoria salva na base (vistorias.js) ───────────
+   sit(it) devolve o texto da situação atual; normas(it) o texto congelado. */
+window.pdocSalvo=function(v,itens,logo,sit,normas){
+  const blocosBase=Array.isArray(v.checklist)?v.checklist:[];
+  const m=blocosBase.length&&blocosBase[0].modelo?blocosBase[0].modelo:null;
+  const c={unidade:v.unidade,setor:v.setor,data:v.data,tecnico:v.tecnico,cargo:v.cargo,
+    aprovador:v.aprovador,aprovadorCargo:v.aprovador_cargo,colaboradores:v.colaboradores,
+    responsavelTurma:v.responsavel_turma,proprietario:v.proprietario,codigo:v.codigo,
+    observacoes:v.observacoes,inicio:v.hora_inicio,fim:v.hora_fim,tecnicoRegistro:v.tecnico_registro,motivo:v.motivo};
+  const blocos=blocosBase.map(b=>({
+    titulo:(b.ref?b.ref+" ":"")+b.titulo,
+    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",
+      obsRot:m?"Ação necessária":"Observação",prazo:it.prazo||"",fotos:(it.fotos||[]).map(f=>f._url||"")}))
+  }));
+  const apont=(itens||[]).filter(it=>!(m&&m.sigla&&String(it.titulo||"").startsWith(m.sigla+" ")))
+    .map(it=>({titulo:it.titulo,grau:it.grau,local:it.local,encontrada:it.encontrada,risco:it.risco,
+      normas:normas?normas(it):[],requerida:it.requerida,acao:it.acao,prazo:it.prazo,prazoData:it.prazo_data,
+      responsavel:it.responsavel,evidencia:it.evidencia,situacao:sit?sit(it):"",
+      encerramento:it.status==="Concluído"?(pdData(it.encerrado_em)+(it.encerrado_obs?" — "+it.encerrado_obs:"")):"",
+      fotos:[{src:it._fotoE,leg:"Situação encontrada"},{src:it._fotoR,leg:"Situação requerida"},{src:it._fotoC,leg:"Evidência do encerramento"}]}));
+  return pdoc(pdDados(c,m,blocos,apont,logo));
+};
+
+
+/* ─────────── Configurações: cadastro dos checklists prontos ─────────── */
+let ckEditando=null;
+
+function ckRenderConfig(){
+  const corpo=$("#md-corpo"); if(!corpo)return;
+  const ms=ckModelos(), chaves=Object.keys(ms);
+  corpo.innerHTML=chaves.length?chaves.map(k=>`<tr>
+      <td><b>${esc(ms[k].sigla||"")}</b>${ms[k].sigla?" · ":""}${esc(ms[k].titulo)}<div class="cfg-cat" style="text-transform:none">${esc(ms[k].subtitulo||"")}</div></td>
+      <td style="text-align:center">${ckTotalItens(ms[k])}</td>
+      <td><button class="bt-mini" type="button" data-md-editar="${esc(k)}">editar</button></td>
+      <td><button class="bt-mini" type="button" data-md-apagar="${esc(k)}" title="Tirar da lista">×</button></td></tr>`).join("")
+    :'<tr><td colspan="4" class="cfg-padrao">Nenhum checklist. Importe uma planilha.</td></tr>';
+  const tv=$("#trava-modelos"); if(tv)tv.hidden=souAdmin;
+  ckRenderEditor();
+}
+
+function ckTextoItens(m){
+  return (m.grupos||[]).flatMap(g=>(g.itens||[]).map(x=>`${x[0]} | ${g.titulo} | ${x[1]}`)).join("\n");
+}
+
+function ckRenderEditor(){
+  const cx=$("#md-editor"); if(!cx)return;
+  if(!ckEditando){cx.innerHTML="";return;}
+  const m=ckEditando;
+  cx.innerHTML=`
+    <div class="grade" style="padding:0;margin-top:14px">
+      <div class="campo"><label for="md-sigla">Sigla</label><input type="text" id="md-sigla" value="${esc(m.sigla||"")}" placeholder="NR-24"></div>
+      <div class="campo largo"><label for="md-titulo">Título</label><input type="text" id="md-titulo" value="${esc(m.titulo||"")}" placeholder="Checklist de Verificação – NR-24"></div>
+      <div class="campo largo"><label for="md-sub">Subtítulo / norma</label><input type="text" id="md-sub" value="${esc(m.subtitulo||"")}" placeholder="Portaria MTE nº 1.590/2026"></div>
+    </div>
+    <div class="campo largo" style="margin-top:10px"><label for="md-campos">Campos do cabeçalho — um por linha</label>
+      <textarea id="md-campos" rows="5" spellcheck="false">${esc((m.campos||[]).join("\n"))}</textarea></div>
+    <div class="campo largo" style="margin-top:10px"><label for="md-itens">Itens — um por linha: Nº | Categoria | Item de verificação</label>
+      <textarea id="md-itens" rows="12" spellcheck="false">${esc(ckTextoItens(m))}</textarea></div>
+    <div class="campo largo" style="margin-top:10px"><label for="md-orient">Orientações — uma por linha: Assunto | Orientação</label>
+      <textarea id="md-orient" rows="4" spellcheck="false">${esc((m.orientacoes||[]).map(o=>o[0]+" | "+o[1]).join("\n"))}</textarea></div>
+    <div class="rodape-item" style="margin-top:10px">
+      <button class="bt bt-fantasma" type="button" id="md-cancelar">Cancelar</button>
+      <button class="bt bt-forte" type="button" id="md-guardar">Guardar checklist</button>
+    </div>`;
+  $("#md-cancelar").onclick=()=>{ckEditando=null;ckRenderEditor();};
+  $("#md-guardar").onclick=()=>{
+    const titulo=$("#md-titulo").value.trim();
+    if(!titulo){toast("O checklist precisa de um título.");return;}
+    const grupos=[], idx={};
+    $("#md-itens").value.split("\n").map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{
+      const p=l.split("|").map(x=>x.trim());
+      let cod,cat,txt;
+      if(p.length>=3){[cod,cat,txt]=[p[0],p[1],p.slice(2).join(" | ")];}
+      else if(p.length===2){[cod,cat,txt]=[p[0],"Itens",p[1]];}
+      else {[cod,cat,txt]=[String(i+1),"Itens",p[0]];}
+      if(!(cat in idx)){idx[cat]=grupos.length;grupos.push({titulo:cat,itens:[]});}
+      grupos[idx[cat]].itens.push([cod,txt]);
+    });
+    if(!grupos.length){toast("O checklist precisa de pelo menos um item.");return;}
+    const obj={sigla:$("#md-sigla").value.trim(),titulo,subtitulo:$("#md-sub").value.trim(),
+      ref:[$("#md-sigla").value.trim(),$("#md-sub").value.trim()].filter(Boolean).join(" · "),
+      arquivo:m.arquivo||"",
+      campos:$("#md-campos").value.split("\n").map(l=>l.trim().replace(/:$/,"")).filter(Boolean),
+      grupos,
+      orientacoes:$("#md-orient").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{
+        const i=l.indexOf("|"); return i<0?["",l]:[l.slice(0,i).trim(),l.slice(i+1).trim()];})};
+    const chave=m.chave||("modelo:"+chkSlug(obj.sigla||titulo)+"-"+Date.now().toString(36).slice(-4));
+    chkCustom[chave]=obj;
+    ckEditando=null;
+    ckRenderConfig(); ckAtualizarTelas();
+    toast("Checklist guardado. Clique em Salvar regras para valer para a equipe.");
+  };
+}
+
+$("#md-corpo").addEventListener("click",ev=>{
+  const ed=ev.target.closest("[data-md-editar]");
+  if(ed){
+    const k=ed.dataset.mdEditar, m=ckModelos()[k]; if(!m)return;
+    ckEditando={...m,chave:k}; ckRenderEditor();
+    $("#md-titulo").scrollIntoView({block:"center"}); return;
+  }
+  const ap=ev.target.closest("[data-md-apagar]");
+  if(ap){
+    const k=ap.dataset.mdApagar;
+    if(!confirm("Tirar esse checklist da lista? Os checklists já preenchidos não mudam."))return;
+    chkCustom[k]=null;
+    if(ckEditando&&ckEditando.chave===k)ckEditando=null;
+    ckRenderConfig(); ckAtualizarTelas();
+    toast("Checklist removido. Clique em Salvar regras para valer para a equipe.");
+  }
+});
+$("#md-novo").onclick=()=>{
+  ckEditando={sigla:"",titulo:"",subtitulo:"",campos:["Fazenda","Data da verificação","Nº de trabalhadores","Responsável","Atividade/Talhão","Elaboração","Aprovação"],grupos:[],orientacoes:[]};
+  ckRenderEditor(); $("#md-sigla").focus();
+};
+
+/* Importar planilha: lê a planilha no formato do checklist NR-24 — título na
+   primeira linha, campos "Rótulo:" no cabeçalho, depois a tabela Nº /
+   Categoria / Item de verificação / C / NC / NA. A leitura do Excel usa a
+   biblioteca SheetJS, baixada só na hora de importar (precisa de internet). */
+function ckCarregarSheetJS(){
+  if(window.XLSX)return Promise.resolve(window.XLSX);
+  return new Promise((ok,erro)=>{
+    const s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+    s.onload=()=>ok(window.XLSX); s.onerror=()=>erro(new Error("sem-internet"));
+    document.head.appendChild(s);
+  });
+}
+
+function ckLerPlanilha(wb,nomeArquivo){
+  const norm=v=>String(v==null?"":v).trim();
+  const semAc=v=>norm(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  let achado=null;
+  for(const nome of wb.SheetNames){
+    const lin=XLSX.utils.sheet_to_json(wb.Sheets[nome],{header:1,defval:""});
+    const h=lin.findIndex(r=>r.some(c=>/^item/.test(semAc(c)))&&r.some(c=>semAc(c)==="nc"));
+    if(h>=0){achado={nome,lin,h};break;}
+  }
+  if(!achado)throw new Error("Não achei a tabela do checklist (colunas Nº, Categoria, Item de verificação, C, NC, NA).");
+  const {lin,h}=achado, cab=lin[h].map(semAc);
+  const iN=cab.findIndex(c=>/^n[º°o]?$|^numero|^item n/.test(c));
+  const iCat=cab.findIndex(c=>/^categoria|^grupo|^bloco|^secao/.test(c));
+  const iTxt=cab.findIndex(c=>/^item/.test(c)&&!/^item n/.test(c));
+  const titulo=norm(lin[0].find(c=>norm(c)))||nomeArquivo.replace(/\.xlsx?$/i,"");
+  const campos=[];
+  for(let r=1;r<h;r++)lin[r].forEach(c=>{const v=norm(c);if(/:$/.test(v))campos.push(v.replace(/:$/,"").trim());});
+  const grupos=[], idx={};
+  let catAtual="Itens";
+  for(let r=h+1;r<lin.length;r++){
+    const txt=norm(lin[r][iTxt]); if(!txt)continue;
+    const cod=iN>=0?norm(lin[r][iN]):String(r-h);
+    if(iCat>=0&&norm(lin[r][iCat]))catAtual=norm(lin[r][iCat]);
+    if(!(catAtual in idx)){idx[catAtual]=grupos.length;grupos.push({titulo:catAtual,itens:[]});}
+    grupos[idx[catAtual]].itens.push([cod,txt]);
+  }
+  if(!grupos.length)throw new Error("A tabela do checklist está vazia.");
+  /* orientações: outra aba com duas colunas (assunto | orientação) */
+  let orientacoes=[];
+  for(const nome of wb.SheetNames){
+    if(nome===achado.nome||!/orienta/i.test(nome))continue;
+    const l=XLSX.utils.sheet_to_json(wb.Sheets[nome],{header:1,defval:""});
+    orientacoes=l.slice(1).filter(r=>norm(r[0])&&norm(r[1])).map(r=>[norm(r[0]),norm(r[1])]);
+  }
+  const partes=titulo.split("|").map(x=>x.trim());
+  const principal=partes[0], sub=partes.slice(1).join(" · ");
+  const sigla=(/\b(NR[\s-]?\d+)/i.exec(titulo)||[])[1]||"";
+  return {sigla:sigla.toUpperCase().replace(/\s/,"-"),
+    titulo:principal.replace(/^CHECKLIST/i,"Checklist").replace(/\bDE VERIFICAÇÃO\b/i,"de Verificação"),
+    subtitulo:sub, ref:[sigla,sub].filter(Boolean).join(" · "),
+    campos, grupos, orientacoes, arquivo:""};
+}
+
+$("#md-importar").onclick=()=>{
+  const inp=document.createElement("input");
+  inp.type="file"; inp.accept=".xlsx,.xls";
+  inp.onchange=async()=>{
+    const f=inp.files&&inp.files[0]; if(!f)return;
+    const aviso=$("#md-aviso"); aviso.textContent="Lendo a planilha…";
+    try{
+      await ckCarregarSheetJS();
+      const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});
+      const m=ckLerPlanilha(wb,f.name);
+      ckEditando=m; ckRenderEditor();
+      aviso.textContent=`Planilha lida: ${ckTotalItens(m)} itens em ${m.grupos.length} grupos. Confira e clique em Guardar checklist.`;
+      $("#md-titulo").scrollIntoView({block:"center"});
+    }catch(e){
+      aviso.textContent=e.message==="sem-internet"
+        ?"Para importar planilha é preciso internet (o leitor de Excel é baixado na hora)."
+        :e.message;
+    }
+  };
+  inp.click();
+};
+
+/* ─────────── tela inicial ─────────── */
+function grRenderInicio(){
+  const d=new Date();
+  const dias=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+  const abertos=Number(($("#cont-aberto")||{}).textContent||0);
+  const dica=$("#mi-dica");
+  if(dica)dica.innerHTML=`Hoje é ${dias[d.getDay()]}, ${d.toLocaleDateString("pt-BR")}`+
+    (abertos?` — <strong>${abertos} apontamento${abertos>1?"s":""} em aberto</strong>.`:".");
+  const n=$("#mi-aberto"); if(n)n.textContent=abertos?abertos+" pendente"+(abertos>1?"s":""):"";
+  const ms=ckModelos(), chaves=Object.keys(ms);
+  const alvo=$("#mi-modelos");
+  if(alvo)alvo.innerHTML=chaves.length?`<span class="rot">Preencher agora</span>`+
+    chaves.map(k=>`<button type="button" class="mi-modelo" data-ck-iniciar-inicio="${esc(k)}">${esc(ms[k].sigla||ms[k].titulo)}</button>`).join(""):"";
+}
+
+function ckAtualizarTelas(){
+  grRenderInicio();
+  if($("#ck-lista")&&!$("#ck-lista").hidden)ckRenderLista();
+}
+
+/* ─────────── ligações com o resto do app ─────────── */
+const _abaGR=aba;
+aba=function(qual){
+  _abaGR(qual);
+  document.body.classList.toggle("no-inicio",qual==="inicio");
+  document.body.dataset.aba=qual;
+  if(qual==="inicio")grRenderInicio();
+  if(qual==="checklists"&&!$("#ck-lista").hidden)ckRenderLista();
+};
+$("#t-inicio").onclick=()=>aba("inicio");
+$("#bt-inicio").onclick=()=>aba("inicio");
+$("#t-checklists").onclick=()=>ckMostrar(estado.modelo&&!estado.salvoEm?"preencher":"lista");
+$("#painel-inicio").addEventListener("click",ev=>{
+  const m=ev.target.closest("[data-ck-iniciar-inicio]");
+  if(m){ckIniciar(m.dataset.ckIniciarInicio);return;}
+  const ir=ev.target.closest("[data-ir]"); if(!ir)return;
+  const q=ir.dataset.ir;
+  if(q==="checklists")ckMostrar("lista");
+  else if(q==="aberto"){carregarPendencias();aba("aberto");}
+  else aba(q);
+});
+
+/* botão do aviso na aba Vistoria: sair do checklist pronto e começar uma vistoria comum */
+document.addEventListener("click",ev=>{
+  if(ev.target.closest("[data-gr-nova]")){const b=$("#bt-nova-vistoria");if(b)b.click();}
+});
+const _renderConfigGR=renderConfig;
+renderConfig=function(){ _renderConfigGR.apply(this,arguments); ckRenderConfig(); };
+const _aplicarRegrasGR=aplicarRegras;
+aplicarRegras=function(){ const r=_aplicarRegrasGR.apply(this,arguments); ckAtualizarTelas(); return r; };
+const _renderAbertoGR=renderAberto;
+renderAberto=function(){ const r=_renderAbertoGR.apply(this,arguments); grRenderInicio(); return r; };
+const _abrirAppGR=abrirApp;
+abrirApp=async function(){ const r=await _abrirAppGR.apply(this,arguments); if(!grParametroAba)aba("inicio"); return r; };
+
+/* abre na tela inicial, como os outros Gestão Rápida — a não ser que o
+   atalho do app peça outra coisa */
+const grParametroAba=new URLSearchParams(location.search).get("aba")||
+  (new URLSearchParams(location.search).get("acao")==="nova"?"vistoria":"");
+if(grParametroAba==="checklists")ckMostrar("lista");
+else if(grParametroAba)aba(grParametroAba);
+else aba("inicio");
+ckRenderConfig();
 
 </script>
 <script src="vistorias.js"></script>
