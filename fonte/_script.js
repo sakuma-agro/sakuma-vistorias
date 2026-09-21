@@ -505,7 +505,11 @@ function renderDoc(){
   /* checklist pronto tem relatório próprio, no formato da planilha */
   /* todos os relatórios saem no modelo de visita técnica (tópicos numerados,
      resposta por item e fotos agrupadas por tópico) — ver pdoc no _script-gr.js */
-  if(typeof pdocRascunho==="function"){$("#doc").innerHTML=pdocRascunho();return;}
+  /* Na carga, render() roda antes do resto do script existir: o relatório
+     novo só é desenhado quando tudo estiver pronto (window.__vsPronto, ligado
+     no fim do _script-gr.js). Sem essa trava, um rascunho de checklist no
+     aparelho derrubava o app inteiro na tela de login. */
+  if(typeof pdocRascunho==="function"){ if(window.__vsPronto)$("#doc").innerHTML=pdocRascunho(); return; }
   const c=estado.cab;
   const g={"Crítico":0,"Alto":0,"Médio":0,"Baixo":0};
   estado.itens.forEach(i=>{if(g[i.grau]!=null)g[i.grau]++;});

@@ -923,7 +923,11 @@ $("#bt-sair").onclick=()=>{
 
 /* quem já entrou neste aparelho entra direto, com ou sem sinal */
 preencherCargos();
-if(sessao&&sessao.token){ abrirApp(); } else { mostrarPortao(); }
+/* A decisão (entrar direto ou mostrar o portão) roda só no fim da carga, depois
+   que todo o script foi declarado — ver window.__vsIniciar no fim do
+   _script-gr.js. Chamar abrirApp() aqui fazia carregarRegras() mexer em
+   chkCustom antes de ele existir e derrubava o app de quem já estava logado. */
+window.__vsIniciar=()=>{ if(sessao&&sessao.token){ abrirApp(); } else { mostrarPortao(); } };
 
 
 /* ══════════════════════════ aba Configurações ══════════════════════════ */

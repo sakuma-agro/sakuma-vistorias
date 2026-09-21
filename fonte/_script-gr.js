@@ -88,6 +88,67 @@ const CK_PADRAO = {
       ["Água", "Verificar disponibilidade de água potável, filtrada e fresca, em quantidade suficiente."],
       ["Registros", "Manter evidências organizadas para apresentação em auditorias."]
     ]
+  },
+  /* Organização e Segurança – Sede: pedido do Guilherme em 21/09/2026.
+     Primeira versão; os técnicos completam os itens em Configurações →
+     Checklists prontos → editar. O último item de cada área ("Outros pontos")
+     é o espaço para anotar o que a lista ainda não cobre. */
+  "modelo:sede-org-seg": {
+    sigla:"SEDE", titulo:"Checklist de Organização e Segurança – Sede", subtitulo:"Áreas de apoio da sede",
+    ref:"Organização e Segurança · Sede",
+    arquivo:"",
+    campos:["Unidade", "Data da verificação", "Responsável pela área", "Elaboração", "Aprovação"],
+    grupos:[
+      {titulo:"Pista de abastecimento de diesel", itens:[
+        ["1.1", "A pista está sem vazamentos de diesel?"],
+        ["1.2", "A pista está limpa?"],
+        ["1.3", "O tanque está limpo?"],
+        ["1.4", "A mangueira está armazenada corretamente?"],
+        ["1.5", "As placas de segurança estão instaladas e legíveis?"],
+        ["1.6", "A estrutura (portões, paredes e parte elétrica) está em bom estado?"],
+        ["1.7", "O tanque está em bom estado, sem danos e sem corrosão?"],
+        ["1.8", "A bomba de diesel está em bom estado e funcionando?"],
+        ["1.9", "Outros pontos observados (descrever na observação)"]
+      ]},
+      {titulo:"Cômodo de lubrificantes", itens:[
+        ["2.1", "O cômodo está limpo?"],
+        ["2.2", "O cômodo está sem vazamentos?"],
+        ["2.3", "Os produtos estão organizados, cada um em seu lugar?"],
+        ["2.4", "As embalagens vazias estão no local correto?"],
+        ["2.5", "A estrutura (portões, paredes e parte elétrica) está em bom estado?"],
+        ["2.6", "Outros pontos observados (descrever na observação)"]
+      ]},
+      {titulo:"Pista de calda", itens:[
+        ["3.1", "A pista de calda está limpa?"],
+        ["3.2", "As embalagens de defensivos estão no local correto?"],
+        ["3.3", "As placas de segurança estão instaladas e legíveis?"],
+        ["3.4", "Outros pontos observados (descrever na observação)"]
+      ]},
+      {titulo:"Cômodo de defensivos", itens:[
+        ["4.1", "O piso está limpo?"],
+        ["4.2", "As prateleiras estão limpas?"],
+        ["4.3", "O cômodo está sem vazamentos?"],
+        ["4.4", "Os produtos estão organizados?"],
+        ["4.5", "As placas de segurança estão instaladas e legíveis?"],
+        ["4.6", "A estrutura (portões, paredes e parte elétrica) está em bom estado?"],
+        ["4.7", "Outros pontos observados (descrever na observação)"]
+      ]},
+      {titulo:"Cômodo de embalagens vazias", itens:[
+        ["5.1", "O cômodo está limpo?"],
+        ["5.2", "O cômodo está sem vazamentos?"],
+        ["5.3", "As embalagens estão armazenadas corretamente?"],
+        ["5.4", "As embalagens estão lavadas e perfuradas?"],
+        ["5.5", "A estrutura (portões, paredes e parte elétrica) está em bom estado?"],
+        ["5.6", "As placas de segurança estão instaladas e legíveis?"],
+        ["5.7", "Outros pontos observados (descrever na observação)"]
+      ]}
+    ],
+    orientacoes:[
+      ["Classificação", "C = Conforme | NC = Não Conforme | NA = Não Aplicável"],
+      ["Fotos", "Fotografar todo item marcado como NC e anexar no próprio item."],
+      ["Não conformidade", "Todo item NC vira apontamento com prazo e aparece em Em aberto até ser encerrado com foto de evidência."],
+      ["Outros pontos", "Use o último item de cada área para anotar o que a lista ainda não cobre."]
+    ]
   }
 };
 
@@ -335,7 +396,12 @@ $("#painel-checklists").addEventListener("input",ev=>{
      observações do técnico e o fecho com técnico, registro e responsável
    Numeração de página e código do documento no rodapé de cada folha. */
 
-const PD_RESP={C:["Conforme","c"],NC:["Não conforme","nc"],NA:["Não se aplica","na"],"":["Sem resposta","sr"]};
+/* Função (e não const) de propósito: o relatório é desenhado já na carga,
+   antes desta parte do script rodar. Uma const aqui dava "Cannot access
+   before initialization" e travava o app inteiro com rascunho de checklist. */
+function pdResp(r){
+  return ({C:["Conforme","c"],NC:["Não conforme","nc"],NA:["Não se aplica","na"]})[r||""]||["Sem resposta","sr"];
+}
 
 function pdData(iso){ return iso?dataBR(String(iso).slice(0,10)):""; }
 
@@ -387,7 +453,7 @@ function pdoc(d){
     const titulo=esc(b.titulo);
     const linhas=b.itens.map((it,k)=>{
       const cod=it.cod||`${n}.${k+1}`;
-      const [rot,cls]=PD_RESP[it.r||""]||PD_RESP[""];
+      const [rot,cls]=pdResp(it.r);
       const obs=[];
       if(it.obs)obs.push(`${esc(it.obsRot||"Observação")}: ${esc(it.obs)}`);
       if(it.r==="NC"&&it.prazo)obs.push(`Prazo para correção: ${pdData(it.prazo)}`);
@@ -761,3 +827,9 @@ if(grParametroAba==="checklists")ckMostrar("lista");
 else if(grParametroAba)aba(grParametroAba);
 else aba("inicio");
 ckRenderConfig();
+
+/* ─────────── fim da carga ───────────
+   Daqui em diante tudo está declarado: libera o relatório e desenha. */
+window.__vsPronto=true;
+try{ renderDoc(); }catch(e){ console.error("relatório:",e); }
+window.__vsIniciar();
