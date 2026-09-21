@@ -22,7 +22,7 @@ troca("""function aba(qual){
 }
 $("#t-vistoria").onclick=()=>aba("vistoria");
 $("#t-relatorio").onclick=()=>{renderDoc();aba("relatorio");};""",
-"""const PAINEIS=["vistoria","aberto","relatorio","config"];
+"""const PAINEIS=["inicio","checklists","vistoria","aberto","relatorio","config"];
 function aba(qual){
   PAINEIS.forEach(p=>{
     $("#painel-"+p).hidden = p!==qual;
@@ -57,34 +57,31 @@ troca("""function opcoesAnomalia(sel){
     const opts=Object.entries(ANOMALIAS).filter(([k,a])=>a.cat===c.id&&(k===sel||!a.oculta))""",'anomalias ocultas')
 
 
-extra  = open('_script-extra.js', encoding='utf-8').read()
-estilo = open('_estilo.css', encoding='utf-8').read() + open('_estilo-extra.css', encoding='utf-8').read()
+extra  = open('_script-extra.js', encoding='utf-8').read() + '\n' + open('_script-gr.js', encoding='utf-8').read()
+estilo = open('_estilo.css', encoding='utf-8').read() + open('_estilo-extra.css', encoding='utf-8').read() + open('_estilo-gr.css', encoding='utf-8').read()
 markup = open('_markup.html', encoding='utf-8').read()
 
 CABECA = '''<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SAKUMA Vistorias</title>
-<meta name="description" content="Registro de não conformidades em campo, com a norma aplicável em cada apontamento e relatório em PDF no padrão SAKUMA.">
+<title>Gestão Rápida (Vistorias e Segurança) · SAKUMA</title>
+<meta name="description" content="Vistorias e checklists de segurança da SAKUMA Agronegócios: não conformidades com a norma citada, checklists prontos para preencher, pendências da equipe e relatório em PDF.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#FAFAF6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1A1C17" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#84BD00">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="icons/favicon-gr-vs.v1.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/gr-vs-32.v1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/gr-vs-192.v1.png">
+<link rel="apple-touch-icon" href="icons/gr-vs-apple-180.v1.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vistorias">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">'''
+'''
 
 corpo = (markup + '\n<script src="config.js"></script>\n<script>\n' + script + '\n' + extra
          + '\n</script>\n<script src="vistorias.js"></script>\n')
-open('sakuma-vistorias/index.html','w',encoding='utf-8').write(
- f'<!doctype html>\n<html lang="pt-BR">\n<head>\n{CABECA}\n<style>{estilo}</style>\n</head>\n<body>\n{corpo}</body>\n</html>\n')
+open('../index.html','w',encoding='utf-8').write(
+ f'<!doctype html>\n<html lang="pt-BR" data-theme="light">\n<head>\n{CABECA}\n<style>{estilo}</style>\n</head>\n<body>\n{corpo}</body>\n</html>\n')
 open('vistoria-body.html','w',encoding='utf-8').write(
  '<title>SAKUMA Vistorias</title>\n'
  '<link rel="preconnect" href="https://fonts.googleapis.com">\n'

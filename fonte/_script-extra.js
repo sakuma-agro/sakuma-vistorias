@@ -1,4 +1,3 @@
-
 /* ══════════════════════════════════════════════════════════════════════════
    Base de dados, contas e pendências
    Sem SDK: só fetch contra a API REST do Supabase. Assim o app continua
@@ -350,8 +349,13 @@ async function codigoDaBase(){
 
 /* ══════════════════════════ salvar a vistoria ══════════════════════════ */
 async function salvarVistoria(){
-  if(!estado.itens.length){toast("Adicione ao menos uma não conformidade antes de salvar.");return;}
-  if(!estado.cab.unidade){toast("Informe a unidade antes de salvar.");$("#f-unidade").focus();return;}
+  const temChecklist=chkLista().some(b=>(b.itens||[]).some(i=>i.r));
+  if(!estado.itens.length&&!temChecklist){toast(estado.modelo?"Responda ao menos um item do checklist antes de salvar.":"Adicione ao menos uma não conformidade antes de salvar.");return;}
+  if(!estado.cab.unidade){
+    toast(estado.modelo?"Informe a fazenda antes de salvar.":"Informe a unidade antes de salvar.");
+    const f=estado.modelo?$("[data-ck-cab='unidade']"):$("#f-unidade"); if(f)f.focus();
+    return;
+  }
   if(!estado.id)estado.id=uuid();
   estado.itens.forEach(it=>{
     if(!it.uid)it.uid=uuid();
@@ -384,7 +388,12 @@ async function salvarVistoria(){
       headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
       body:JSON.stringify([{id:estado.id,codigo:c.codigo||"",unidade:c.unidade,setor:c.setor,
         data:c.data||null,tecnico:c.tecnico,cargo:c.cargo,motivo:c.motivo,
-        aprovador:c.aprovador,aprovador_cargo:c.aprovadorCargo}])
+        aprovador:c.aprovador,aprovador_cargo:c.aprovadorCargo,
+        proprietario:c.proprietario||null,responsavel_turma:c.responsavelTurma||null,
+        colaboradores:c.colaboradores?Number(c.colaboradores):null,
+        hora_inicio:c.inicio||null,hora_fim:c.fim||null,
+        tecnico_registro:c.tecnicoRegistro||null,observacoes:c.observacoes||null,
+        checklist:await chkEnviarFotos()}])
     });
 
     for(const it of estado.itens){
@@ -394,7 +403,7 @@ async function salvarVistoria(){
         it.fotoRPath=await enviarFoto(`${estado.id}/${it.uid}-requerida.jpg`,it.fotoR);
     }
 
-    await rest("itens",{
+    if(estado.itens.length)await rest("itens",{
       method:"POST",
       headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
       body:JSON.stringify(estado.itens.map((it,i)=>({
@@ -449,12 +458,12 @@ async function carregarRegras(){
   const local=lerJSON(K_REGRAS);
   if(local)regras={...REGRAS_PADRAO,...local,dias:{...REGRAS_PADRAO.dias,...(local.dias||{})},anomalias:local.anomalias||{}};
   const bib=lerJSON(K_BIBLIO);
-  if(bib){normasCustom=bib.normas||{};anomaliasCustom=bib.anomalias||{};}
+  if(bib){normasCustom=bib.normas||{};anomaliasCustom=bib.anomalias||{};chkCustom=bib.checklists||{};}
   administradores=lerJSON(K_ADMINS)||[];
 
   if(conectado()){
     try{
-      const d=await rest("configuracoes?select=regras,normas,anomalias&id=eq.1");
+      const d=await rest("configuracoes?select=regras,normas,anomalias,checklists&id=eq.1");
       const c=(d&&d[0])||{};
       const r=c.regras;
       if(r&&Object.keys(r).length){
@@ -463,7 +472,8 @@ async function carregarRegras(){
       }
       normasCustom=c.normas||{};
       anomaliasCustom=c.anomalias||{};
-      gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom});
+      chkCustom=c.checklists||{};
+      gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom,checklists:chkCustom});
 
       const ad=await rest("administradores?select=email,nome,ve_tudo&order=email.asc");
       administradores=ad||[];
@@ -488,7 +498,7 @@ async function salvarRegras(){
   const bt=$("#cfg-salvar"), aviso=$("#cfg-salvo");
   aviso.textContent="";
   gravarJSON(K_REGRAS,regras);
-  gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom});
+  gravarJSON(K_BIBLIO,{normas:normasCustom,anomalias:anomaliasCustom,checklists:chkCustom});
   aplicarBiblioteca();
   aplicarRegras();
   if(!souAdmin){
@@ -503,7 +513,7 @@ async function salvarRegras(){
   try{
     await rest("configuracoes?id=eq.1",{
       method:"PATCH",headers:{"Prefer":"return=minimal"},
-      body:JSON.stringify({regras,normas:normasCustom,anomalias:anomaliasCustom,atualizado_por:sessao.uid||null})
+      body:JSON.stringify({regras,normas:normasCustom,anomalias:anomaliasCustom,checklists:chkCustom,atualizado_por:sessao.uid||null})
     });
     aviso.textContent="Salvo. Vale para toda a equipe.";
   }catch(e){
@@ -762,7 +772,9 @@ $("#lg-senha").addEventListener("keydown",ev=>{if(ev.key==="Enter")confirmarCont
 
 $("#bt-nova-vistoria").onclick=()=>{
   if(estado.itens.length&&!estado.salvoEm&&!confirm("A vistoria atual ainda não foi salva. Começar uma nova mesmo assim?"))return;
-  estado={cab:{...estado.cab,setor:"",codigo:"",data:new Date().toISOString().slice(0,10)},
+  if(estado.modelo&&!estado.salvoEm&&chkLista().some(b=>b.itens.some(i=>i.r))&&!estado.itens.length&&!confirm("O checklist atual ainda não foi salvo. Começar uma vistoria nova mesmo assim?"))return;
+  estado={cab:{...estado.cab,setor:"",codigo:"",data:new Date().toISOString().slice(0,10),
+          motivo:String(estado.cab.motivo||"").startsWith("Checklist")?"Vistoria de rotina":estado.cab.motivo},
           id:uuid(),salvoEm:null,itens:[]};
   proximoId=1;preencherCabecalho();render();salvar();
   aba("vistoria");toast("Nova vistoria começada.");
@@ -970,6 +982,7 @@ function renderConfig(){
   renderAnomLista();
   renderAnomEditor();
   renderAdmins();
+  chkRenderConfig();
   aplicarTrava();
   carregarContas(false);
 }
@@ -1362,6 +1375,7 @@ function aplicarTrava(){
   $("#trava-anomalias").hidden=souAdmin;
   const tc=$("#trava-cargos"); if(tc)tc.hidden=souAdmin;
   const tct=$("#trava-contas"); if(tct)tct.hidden=souAdmin;
+  const tcb=$("#trava-checklists"); if(tcb)tcb.hidden=souAdmin;
   $("#cfg-salvar").disabled=!souAdmin;
   $("#cfg-restaurar").disabled=!souAdmin;
 }
@@ -1466,3 +1480,394 @@ if($("#ct-gerar")){
     }
   };
 }
+/* ═══════════════ Checklist por norma ═══════════════
+   Biblioteca padrão. O que o administrador editar em Configurações fica em
+   configuracoes.checklists e se sobrepõe a isto, do mesmo jeito que a
+   biblioteca de normas e anomalias. */
+
+const CHK_PADRAO = {
+  sanitarias: {
+    ref: "NR 31.17.3.3",
+    titulo: "As instalações sanitárias devem",
+    itens: [
+      "Ter portas de acesso que impeçam o devassamento, construídas de modo a manter o resguardo",
+      "Ser separadas por sexo",
+      "Estar situadas em locais de fácil e seguro acesso",
+      "Dispor de água limpa, sabão ou sabonete e papel toalha",
+      "Estar ligadas a sistema de esgoto, fossa séptica ou sistema equivalente",
+      "Dispor de papel higiênico e possuir recipiente para coleta de lixo",
+      "Nas frentes de trabalho, devem ser disponibilizadas instalações sanitárias, fixas ou móveis, compostas por vaso sanitário e lavatório, na proporção de um conjunto para cada grupo de quarenta trabalhadores ou fração",
+      "As instalações sanitárias móveis devem atender ao subitem 31.17.3.3, sendo permitido o uso de fossa seca",
+      "Ser mantidas em condições de conservação, limpeza e higiene",
+      "Ter fechamento lateral e cobertura que garantam condições estruturais seguras",
+      "Ser ancoradas e fixadas de forma que garantam estabilidade e resistência às condições climáticas",
+      "Ser providas de iluminação e ventilação adequadas"
+    ]
+  },
+  refeicao: {
+    ref: "NR 31.17.4.1",
+    titulo: "Os locais para refeição devem atender aos seguintes requisitos",
+    itens: [
+      "Ter condições de higiene e conforto",
+      "Ter capacidade para atender aos trabalhadores, com assentos em número suficiente, observadas as escalas de intervalos para refeição",
+      "Dispor de água limpa para higienização",
+      "Ter mesas com superfícies ou coberturas lisas, laváveis ou descartáveis",
+      "Dispor de água potável em condições higiênicas, sendo proibido o uso de copo coletivo",
+      "Ter recipientes para lixo, com tampas",
+      "Dispor de local ou recipiente para guarda e conservação de refeições em condições higiênicas",
+      "Nas frentes de trabalho, os locais para refeição e descanso devem oferecer proteção para todos os trabalhadores contra as intempéries",
+      "Nas frentes de trabalho em terrenos alagadiços, as instalações sanitárias e os locais para refeição devem ser instalados em local seco, fora da área alagada, com acesso garantido aos trabalhadores"
+    ]
+  },
+  epi: {
+    ref: "",
+    titulo: "Distribuição de equipamentos de proteção individual e demais itens a serem observados",
+    itens: [
+      "Luvas",
+      "Óculos",
+      "Bonés tipo árabe",
+      "Botina de segurança",
+      "Capa de chuva",
+      "Caixa de primeiros socorros",
+      "Protetor solar",
+      "Uniforme",
+      "Garrafa térmica",
+      "Marmita térmica"
+    ]
+  }
+};
+
+let chkCustom = {};
+
+function chkBiblioteca(){
+  const b = {};
+  Object.entries(CHK_PADRAO).forEach(([k,v])=>{ b[k]={...v, itens:v.itens.slice()}; });
+  Object.entries(chkCustom||{}).forEach(([k,v])=>{
+    if(k.startsWith("modelo:"))return;   /* checklists prontos moram na mesma coluna */
+    if(v===null){ delete b[k]; return; }
+    b[k] = {ref:v.ref||"", titulo:v.titulo||"", itens:Array.isArray(v.itens)?v.itens.slice():[]};
+  });
+  return b;
+}
+
+function chkLista(){
+  if(!Array.isArray(estado.chk))estado.chk=[];
+  return estado.chk;
+}
+
+function chkBloco(id){ return chkLista().find(b=>b.id===id); }
+
+function chkRenderEscolha(){
+  const alvo=$("#chk-escolha"); if(!alvo)return;
+  const bib=chkBiblioteca();
+  const chaves=Object.keys(bib);
+  alvo.innerHTML = chaves.length
+    ? chaves.map(k=>{
+        const b=bib[k], ligado=!!chkBloco(k);
+        return `<button type="button" class="chk-chip${ligado?" on":""}" data-chk-bloco="${esc(k)}">
+          ${b.ref?`<b>${esc(b.ref)}</b> `:""}${esc(b.titulo)}<span class="q">${b.itens.length}</span></button>`;
+      }).join("")
+    : `<span class="dica">Nenhum bloco na biblioteca. Monte os blocos em Configurações.</span>`;
+}
+
+function chkRender(){
+  if(estado.modelo&&typeof ckRenderPreencher==="function"){
+    const e=$("#chk-escolha"), c=$("#chk-corpo");
+    if(e)e.innerHTML=`<div class="ck-nota">Esta vistoria é o checklist pronto <b>${esc(estado.modelo.titulo)}</b>. Responda os itens na aba <b>Checklists prontos</b>; o que for Não conforme aparece aqui embaixo como apontamento.
+      <div style="margin-top:10px"><button class="bt" type="button" data-gr-nova>Começar uma vistoria comum</button></div></div>`;
+    if(c)c.innerHTML="";
+    ckRenderPreencher();
+    return;
+  }
+  chkRenderEscolha();
+  const alvo=$("#chk-corpo"); if(!alvo)return;
+  const blocos=chkLista();
+  if(!blocos.length){ alvo.innerHTML=""; return; }
+
+  alvo.innerHTML = blocos.map((b,bi)=>`
+    <div class="cartao chk-bloco" data-bloco="${esc(b.id)}">
+      <div class="chk-topo">
+        <span class="n">${bi+1}</span>
+        <div class="tt">${b.ref?`<b>${esc(b.ref)}</b> · `:""}${esc(b.titulo)}</div>
+        <span class="chk-conta">${b.itens.filter(i=>i.r==="NC").length} não conforme(s)</span>
+      </div>
+      ${b.itens.map(it=>`
+        <div class="chk-item${it.r==="NC"?" nc":""}">
+          <div class="chk-txt"><span class="cod">${bi+1}.${it.n}</span> ${esc(it.txt)}</div>
+          <div class="chk-resp">
+            ${[["C","Conforme"],["NC","Não conforme"],["NA","Não se aplica"]].map(([v,rot])=>
+              `<button type="button" class="chk-bt r-${v}${it.r===v?" on":""}" data-chk-r="${v}" data-bloco="${esc(b.id)}" data-n="${it.n}">${rot}</button>`).join("")}
+            <button type="button" class="chk-bt foto" data-chk-foto="1" data-bloco="${esc(b.id)}" data-n="${it.n}">＋ foto</button>
+          </div>
+          <input type="text" class="chk-obs" placeholder="Observação (opcional)" value="${esc(it.obs||"")}"
+                 data-chk-obs="1" data-bloco="${esc(b.id)}" data-n="${it.n}">
+          ${(it.fotos&&it.fotos.length)?`<div class="chk-fotos">${it.fotos.map((f,fi)=>
+            `<figure><img src="${esc(f.url||f.assinada||"")}" alt="Foto do item ${bi+1}.${it.n}">
+             <button type="button" class="x" data-chk-tirar="${fi}" data-bloco="${esc(b.id)}" data-n="${it.n}" title="Tirar foto">×</button></figure>`).join("")}</div>`:""}
+        </div>`).join("")}
+    </div>`).join("");
+}
+
+function chkAlternar(id){
+  const bib=chkBiblioteca(), b=bib[id];
+  if(!b)return;
+  const lista=chkLista();
+  const i=lista.findIndex(x=>x.id===id);
+  if(i>=0){
+    const temResposta=lista[i].itens.some(it=>it.r);
+    if(temResposta&&!confirm(`Tirar o bloco "${b.titulo}" apaga as respostas dele. Tirar mesmo assim?`))return;
+    lista[i].itens.forEach(it=>{ if(it.r==="NC")chkFecharApontamento(id,it.n,true); });
+    lista.splice(i,1);
+  }else{
+    /* O enunciado vai congelado junto da resposta: mexer na biblioteca depois
+       não altera vistoria que já existe. */
+    lista.push({id, ref:b.ref||"", titulo:b.titulo||"",
+      itens:b.itens.map((txt,k)=>({n:k+1, txt, r:"", obs:"", fotos:[]}))});
+  }
+  chkRender(); render(); salvar(); renderDoc();
+}
+
+function chkAbrirApontamento(b,it){
+  const item=novoItem("outro");
+  item.titulo = (b.ref? b.ref+" — ":"") + (it.txt.length>70? it.txt.slice(0,70)+"…" : it.txt);
+  item.local = estado.cab.setor||"";
+  item.encontrada = it.obs || "Item verificado em campo e considerado não conforme.";
+  item.requerida = it.txt;
+  item.grau = "Médio";
+  item.prazo = GRAUS["Médio"].prazo;
+  item.prazoData = calcularPrazoData(estado.cab.data,"Médio","outro");
+  item.normasTexto = b.ref ? [{ref:b.ref, item:String(it.n), txt:it.txt, ok:true}] : [];
+  if(estado.modelo){
+    const m=estado.modelo, cod=it.cod||String(it.n);
+    item.titulo = (m.sigla? m.sigla+" "+cod+" — " : cod+" — ") + (it.txt.length>70? it.txt.slice(0,70)+"…" : it.txt);
+    item.requerida = it.txt;
+    item.acao = it.obs || "Corrigir o item "+cod+" do checklist ("+b.titulo+").";
+    item.encontrada = "Item "+cod+" ("+b.titulo+") verificado em campo e considerado não conforme.";
+    item.normasTexto = [{ref:m.ref||m.titulo, item:cod, txt:it.txt, ok:true}];
+    item.local = estado.cab.setor||estado.cab.unidade||"";
+  }
+  item.origemChk = b.id+":"+it.n;
+  if(it.fotos&&it.fotos.length&&it.fotos[0].url)item.fotoE=it.fotos[0].url;
+  estado.itens.push(item);
+  return item;
+}
+
+function chkFecharApontamento(blocoId,n,silencioso){
+  const marca=blocoId+":"+n;
+  const i=estado.itens.findIndex(x=>x.origemChk===marca);
+  if(i<0)return;
+  if(!silencioso&&!confirm("Esse item tinha aberto um apontamento. Apagar o apontamento também?"))return;
+  estado.itens.splice(i,1);
+}
+
+function chkResponder(blocoId,n,valor){
+  const b=chkBloco(blocoId); if(!b)return;
+  const it=b.itens.find(x=>x.n===n); if(!it)return;
+  const antes=it.r;
+  it.r = (antes===valor) ? "" : valor;
+  if(antes==="NC" && it.r!=="NC") chkFecharApontamento(blocoId,n);
+  if(it.r==="NC" && antes!=="NC"){
+    const novo=chkAbrirApontamento(b,it);
+    toast("Apontamento aberto: "+novo.titulo.slice(0,60));
+  }
+  chkRender(); render(); salvar(); renderDoc();
+}
+
+function chkFotosDoc(b){
+  const comFoto=b.itens.filter(it=>it.fotos&&it.fotos.length);
+  if(!comFoto.length)return "";
+  const celulas=[];
+  comFoto.forEach(it=>it.fotos.forEach(f=>{
+    celulas.push(`<figure class="chk-doc-foto">
+      <figcaption>${esc(it.txt)}</figcaption>
+      <img src="${esc(f.url||f.assinada||"")}" alt="">
+    </figure>`);
+  }));
+  return `<div class="chk-doc-faixa">Fotos do bloco — ${esc(b.ref? b.ref+" · ":"")}${esc(b.titulo)}</div>
+          <div class="chk-doc-fotos">${celulas.join("")}</div>`;
+}
+
+function chkDoc(){
+  const blocos=chkLista();
+  if(!blocos.length)return "";
+  const rot={C:"Conforme", NC:"Não conforme", NA:"Não se aplica", "":"—"};
+  return blocos.map((b,bi)=>`
+    <div class="chk-doc-bloco">
+      <div class="chk-doc-topo"><span class="n">${bi+1}</span>${b.ref?`<b>${esc(b.ref)}</b> `:""}${esc(b.titulo)}</div>
+      <table class="chk-doc-tab"><tbody>
+        ${b.itens.map(it=>`<tr class="${it.r==="NC"?"nc":""}">
+          <td>${bi+1}.${it.n} - ${esc(it.txt)}${it.obs?`<div class="obs">Observação: ${esc(it.obs)}</div>`:""}</td>
+          <td class="r">${rot[it.r||""]}</td></tr>`).join("")}
+      </tbody></table>
+      ${chkFotosDoc(b)}
+    </div>`).join("");
+}
+
+/* eventos do checklist */
+document.addEventListener("click",ev=>{
+  const chip=ev.target.closest("[data-chk-bloco]");
+  if(chip){ chkAlternar(chip.dataset.chkBloco); return; }
+
+  const r=ev.target.closest("[data-chk-r]");
+  if(r){ chkResponder(r.dataset.bloco, Number(r.dataset.n), r.dataset.chkR); return; }
+
+  const ft=ev.target.closest("[data-chk-foto]");
+  if(ft){
+    const inp=document.createElement("input");
+    inp.type="file"; inp.accept="image/*"; inp.multiple=true;   /* várias fotos do mesmo item de uma vez */
+    inp.onchange=()=>{
+      Array.from(inp.files||[]).forEach(f=>comprimir(f,url=>{
+        const b=chkBloco(ft.dataset.bloco); if(!b)return;
+        const it=b.itens.find(x=>x.n===Number(ft.dataset.n)); if(!it)return;
+        (it.fotos=it.fotos||[]).push({url,path:""});
+        chkRender(); salvar(); renderDoc();
+      }));
+    };
+    inp.click(); return;
+  }
+
+  const tirar=ev.target.closest("[data-chk-tirar]");
+  if(tirar){
+    const b=chkBloco(tirar.dataset.bloco); if(!b)return;
+    const it=b.itens.find(x=>x.n===Number(tirar.dataset.n)); if(!it)return;
+    it.fotos.splice(Number(tirar.dataset.chkTirar),1);
+    chkRender(); salvar(); renderDoc(); return;
+  }
+});
+
+document.addEventListener("input",ev=>{
+  const o=ev.target.closest("[data-chk-obs]"); if(!o)return;
+  const b=chkBloco(o.dataset.bloco); if(!b)return;
+  const it=b.itens.find(x=>x.n===Number(o.dataset.n)); if(!it)return;
+  it.obs=o.value;
+  /* checklist pronto: o texto do item é a "Ação necessária / Prazo" da
+     planilha — vira a ação corretiva do apontamento aberto */
+  if(it.r==="NC"){
+    const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
+    if(ap&&o.value.trim()){ if(estado.modelo)ap.acao=o.value.trim(); else ap.encontrada=o.value.trim(); }
+  }
+  salvar(); renderDoc();
+});
+
+async function chkEnviarFotos(){
+  const blocos=chkLista();
+  for(const b of blocos){
+    for(const it of (b.itens||[])){
+      const fotos=it.fotos||[];
+      for(let i=0;i<fotos.length;i++){
+        const f=fotos[i];
+        if(f.url&&String(f.url).startsWith("data:")&&!f.path)
+          f.path=await enviarFoto(`${estado.id}/chk-${b.id}-${it.n}-${i}.jpg`,f.url);
+      }
+    }
+  }
+  const saida = blocos.map(b=>({
+    id:b.id, ref:b.ref||"", titulo:b.titulo||"",
+    itens:(b.itens||[]).map(it=>{
+      const o={n:it.n, txt:it.txt, r:it.r||"", obs:it.obs||"",
+        fotos:(it.fotos||[]).filter(f=>f.path).map(f=>({path:f.path}))};
+      if(it.cod)o.cod=it.cod;
+      if(it.r==="NC"){
+        const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
+        if(ap&&ap.prazoData)o.prazo=ap.prazoData;
+      }
+      return o;
+    })
+  }));
+  /* checklist pronto: o modelo e o cabeçalho próprio vão congelados no
+     primeiro bloco — o relatório de uma vistoria antiga sai igual depois. */
+  if(estado.modelo&&saida.length)saida[0].modelo=JSON.parse(JSON.stringify(estado.modelo));
+  return saida;
+}
+
+/* ─────────────── biblioteca de checklists em Configurações ─────────────── */
+let chkEditando=null;
+
+function chkSlug(txt){
+  return String(txt||"bloco").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,28) || "bloco";
+}
+
+function chkRenderConfig(){
+  const alvo=$("#cb-corpo"); if(!alvo)return;
+  const bib=chkBiblioteca();
+  const chaves=Object.keys(bib);
+  alvo.innerHTML = chaves.length
+    ? chaves.map(k=>`<tr>
+        <td>${bib[k].ref?`<b>${esc(bib[k].ref)}</b> · `:""}${esc(bib[k].titulo)}</td>
+        <td style="text-align:center">${bib[k].itens.length}</td>
+        <td><button class="bt-mini" type="button" data-cb-editar="${esc(k)}">editar</button></td>
+        <td><button class="bt-mini" type="button" data-cb-apagar="${esc(k)}" title="Remover">×</button></td>
+      </tr>`).join("")
+    : '<tr><td colspan="4" class="cfg-padrao">Nenhum bloco. Crie o primeiro abaixo.</td></tr>';
+  chkRenderEditor();
+}
+
+function chkRenderEditor(){
+  const cx=$("#cb-editor"); if(!cx)return;
+  if(!chkEditando){ cx.innerHTML=""; return; }
+  const b=chkEditando;
+  cx.innerHTML=`
+    <div class="grade" style="padding:0;margin-top:12px">
+      <div class="campo"><label for="cb-ref">Norma (opcional)</label>
+        <input type="text" id="cb-ref" value="${esc(b.ref||"")}" placeholder="NR 31.17.3.3"></div>
+      <div class="campo largo"><label for="cb-titulo">Título do bloco</label>
+        <input type="text" id="cb-titulo" value="${esc(b.titulo||"")}" placeholder="As instalações sanitárias devem"></div>
+    </div>
+    <div class="campo largo" style="margin-top:10px"><label for="cb-itens">Itens — um por linha</label>
+      <textarea id="cb-itens" rows="9" spellcheck="false">${esc((b.itens||[]).join("\n"))}</textarea></div>
+    <div class="rodape-item" style="margin-top:10px">
+      <button class="bt bt-fantasma" type="button" id="cb-cancelar">Cancelar</button>
+      <button class="bt bt-forte" type="button" id="cb-guardar">Guardar bloco</button>
+    </div>`;
+
+  $("#cb-cancelar").onclick=()=>{ chkEditando=null; chkRenderEditor(); };
+  $("#cb-guardar").onclick=()=>{
+    const ref=($("#cb-ref").value||"").trim();
+    const titulo=($("#cb-titulo").value||"").trim();
+    const itens=($("#cb-itens").value||"").split("\n").map(l=>l.trim()).filter(Boolean);
+    if(!titulo){ toast("O bloco precisa de um título."); return; }
+    if(!itens.length){ toast("O bloco precisa de pelo menos um item."); return; }
+    const id=b.id||chkSlug(ref||titulo);
+    chkCustom[id]={ref,titulo,itens};
+    chkEditando=null;
+    chkRenderConfig(); chkRenderEscolha();
+    toast("Bloco guardado. Clique em Salvar regras para valer para a equipe.");
+  };
+}
+
+function chkLigarConfig(){
+  const corpo=$("#cb-corpo"); if(!corpo)return;
+  corpo.addEventListener("click",ev=>{
+    const ed=ev.target.closest("[data-cb-editar]");
+    if(ed){
+      const bib=chkBiblioteca(), k=ed.dataset.cbEditar, b=bib[k];
+      if(!b)return;
+      chkEditando={id:k, ref:b.ref, titulo:b.titulo, itens:b.itens.slice()};
+      chkRenderEditor();
+      $("#cb-titulo").scrollIntoView({block:"center"});
+      return;
+    }
+    const ap=ev.target.closest("[data-cb-apagar]");
+    if(ap){
+      const k=ap.dataset.cbApagar;
+      if(!confirm("Tirar esse bloco da biblioteca? Vistorias já salvas não mudam."))return;
+      chkCustom[k]=null;
+      if(chkEditando&&chkEditando.id===k)chkEditando=null;
+      chkRenderConfig(); chkRenderEscolha();
+      toast("Bloco removido. Clique em Salvar regras para valer para a equipe.");
+    }
+  });
+  const novo=$("#cb-novo");
+  if(novo)novo.onclick=()=>{ chkEditando={id:"", ref:"", titulo:"", itens:[]}; chkRenderEditor(); };
+}
+
+chkLigarConfig();
+chkRender();
+
+["#bt-limpar","#bt-nova-vistoria"].forEach(sel=>{
+  const el=$(sel); if(!el)return;
+  const antes=el.onclick;
+  el.onclick=function(ev){ if(antes)antes.call(this,ev); setTimeout(chkRender,0); };
+});

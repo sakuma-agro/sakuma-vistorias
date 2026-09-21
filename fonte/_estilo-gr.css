@@ -1,0 +1,260 @@
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Gestão Rápida (Vistorias e Segurança) — mesmo padrão dos outros
+   Gestão Rápida (Pessoas, Manutenções, Programação Campo).
+   Identidade SAKUMA: verde #84BD00, marrom #744F28, cinza #51534A, Arial,
+   sem preto. Topo branco com filete verde, SAKUMA no alto, LOP gravada a
+   laser só embaixo — as duas marcas nunca no mesmo lugar.
+   Este arquivo vem por último e sobrepõe o estilo antigo.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root,:root[data-theme="light"]{
+  --verde:#84BD00; --verde-esc:#6A9800; --verde-claro:#EEF6DA;
+  --marrom:#744F28; --marrom-claro:#F6F0E9;
+  --cinza:#51534A;
+  --fundo:#F6F7F3; --superficie:#FFFFFF; --superficie-2:#F2F3EE;
+  --linha:#DCDDD7; --linha-forte:#C9CBC2;
+  --texto:#51534A; --texto-fraco:#8A8C83;
+  --ui:Arial,Helvetica,sans-serif;
+  --mono:Arial,Helvetica,sans-serif;
+  --r:6px;
+  --toque:44px;
+}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--cinza)}
+h1,h2,h3,h4{font-weight:bold}
+
+/* ─────────── topo ─────────── */
+.topo{background:#fff;border-bottom:3px solid var(--verde);padding:10px 16px 0;gap:10px 14px;
+  padding-top:calc(10px + env(safe-area-inset-top))}
+.marca{gap:12px}
+.topo-inicio{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0;margin:0;
+  font:inherit;color:inherit;cursor:pointer;border-radius:10px;text-align:left}
+.topo-inicio img{height:34px;width:34px;border-radius:7px;display:block}
+.topo-inicio:hover h1{color:var(--verde-esc)}
+.topo-inicio:focus-visible{outline:3px solid var(--marrom);outline-offset:3px}
+.topo h1{font-size:16px;margin:0;font-weight:bold;letter-spacing:-.2px;color:var(--cinza);white-space:nowrap}
+.topo h1 .modulo,.portao-marca h1 span,.marca-inicio h2 span{
+  display:inline-block;margin-left:6px;padding:2px 8px;border-radius:20px;
+  background:rgba(132,189,0,.12);color:var(--verde-esc);
+  font-size:11px;font-weight:bold;letter-spacing:.4px;text-transform:uppercase;vertical-align:2px}
+.topo-divisor{width:1px;height:28px;background:var(--linha);margin:0 2px}
+.marca-logo{height:31px}
+.acoes{margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+
+/* a segunda linha do topo é o menu de módulos, igual aos outros GR */
+.abas{order:3;flex:1 1 100%;min-width:0;max-width:100%;margin:6px 0 0;padding:0;background:#fff;border-radius:0;
+  gap:2px;overflow-x:auto;border-top:1px solid var(--linha)}
+.aba{flex:1 0 auto;justify-content:center;min-height:var(--toque);padding:0 16px;border-radius:0;
+  border-bottom:3px solid transparent;margin-bottom:-3px;font-size:15px;font-weight:normal;color:var(--cinza);white-space:nowrap}
+.aba:hover{color:var(--verde-esc)}
+.aba[aria-selected="true"]{background:none;box-shadow:none;color:var(--verde-esc);font-weight:bold;border-bottom-color:var(--marrom)}
+.aba .n{font-family:Arial,Helvetica,sans-serif;background:rgba(132,189,0,.14);color:var(--verde-esc);font-weight:bold}
+
+/* botões no jeito GR: verde cheio para a ação principal, marrom para a
+   secundária, contorno para o resto. Alvo grande: usado de luva, no campo. */
+.bt{border-radius:var(--r);border-color:var(--linha);font-size:14px;min-height:38px;color:var(--cinza)}
+.bt:hover{border-color:var(--verde);color:var(--verde-esc)}
+.bt-forte,:root[data-theme="light"] .bt-forte{background:var(--verde);border-color:var(--verde);color:#fff;font-weight:bold}
+.bt-forte:hover{background:var(--verde-esc);border-color:var(--verde-esc);color:#fff}
+.bt-marrom{background:var(--marrom);border-color:var(--marrom);color:#fff;font-weight:bold}
+.bt-marrom:hover{background:#5E3F1F;border-color:#5E3F1F;color:#fff}
+.btn{min-height:48px;padding:0 20px;border:0;border-radius:var(--r);background:var(--verde);color:#fff;
+  font:inherit;font-size:16px;font-weight:bold;cursor:pointer;display:inline-flex;flex-direction:column;
+  align-items:center;justify-content:center;line-height:1.15}
+.btn:hover{background:var(--verde-esc)}
+.btn.secundario{background:var(--marrom)}
+.btn.secundario:hover{background:#5E3F1F}
+.btn small{font-size:12px;font-weight:normal;opacity:.92}
+.etapa{font-family:Arial,Helvetica,sans-serif;background:rgba(132,189,0,.14);color:var(--verde-esc)}
+label{font-weight:bold;letter-spacing:.03em}
+.cartao,.kpi,.item{box-shadow:none}
+.kpi .v{font-family:Arial,Helvetica,sans-serif;font-weight:bold}
+.toast{background:var(--cinza);color:#fff}
+
+/* ─────────── tela de entrada (portão) ─────────── */
+.portao{background:var(--fundo)}
+.portao-marca .pt-icone{width:56px;height:56px;border-radius:12px;background:none;padding:0}
+.portao-marca h1{font-size:20px;color:var(--cinza)}
+.portao-marca .pt-sakuma{height:44px;width:auto}
+.portao-rodape{display:grid;justify-items:center;gap:18px}
+.pt-lop{--lop:300px;width:var(--lop);height:auto;margin-left:calc(var(--lop) * -0.0429);margin-right:calc(var(--lop) * -0.455)}
+
+/* na tela inicial e nos checklists prontos os botões de vistoria do topo
+   saem: cada tela tem os seus */
+body[data-aba="inicio"] #bt-salvar,body[data-aba="inicio"] #bt-pdf,
+body[data-aba="checklists"] #bt-salvar,body[data-aba="checklists"] #bt-pdf{display:none}
+
+/* ─────────── tela inicial ─────────── */
+body.no-inicio .rodape-gr{display:none}
+.marca-inicio{overflow:hidden;min-height:min(62vh,500px);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:30px 16px 20px}
+.mi-sakuma{width:min(190px,46vw);height:auto}
+.marca-inicio h2{margin:26px 0 0;font-size:21px;font-weight:normal;color:var(--marrom);letter-spacing:.2px}
+.marca-inicio h2 span{letter-spacing:1px;vertical-align:middle;padding:3px 10px}
+.mi-dica{margin:10px 0 0;color:var(--texto-fraco);font-size:14px}
+.mi-atalhos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+.mi-atalhos .btn{min-width:180px}
+.mi-modelos{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:720px}
+.mi-modelos .rot{width:100%;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--texto-fraco);font-weight:bold}
+.mi-modelo{border:1px solid var(--verde);background:#fff;color:var(--verde-esc);border-radius:20px;
+  padding:8px 14px;font:inherit;font-size:14px;font-weight:bold;cursor:pointer}
+.mi-modelo:hover{background:var(--verde);color:#fff}
+.mi-lop{--lop:440px;width:var(--lop);height:auto;margin-top:44px;
+  margin-left:calc(var(--lop) * -0.0429);margin-right:calc(var(--lop) * -0.455)}
+@media (max-width:560px){ .mi-lop{--lop:300px} .mi-atalhos .btn{min-width:0;flex:1 1 100%} }
+
+/* ─────────── rodapé LOP (fora da tela inicial) ─────────── */
+.palco{padding-bottom:20px}
+.rodape-gr{display:flex;justify-content:center;padding:14px 8px 70px}
+.rodape-lop{--lop:300px;width:var(--lop);height:auto;display:block;opacity:.92;
+  margin-left:calc(var(--lop) * -0.0429);margin-right:calc(var(--lop) * -0.455)}
+@media (max-width:560px){ .rodape-lop{--lop:230px} }
+
+/* ─────────── checklists prontos: lista ─────────── */
+.ck-modelos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;align-items:start}
+.ck-card{background:#fff;border:1px solid var(--linha);border-top:4px solid var(--verde);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.ck-card .ref{font-size:11px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;color:var(--marrom)}
+.ck-card h3{font-size:17px;color:var(--cinza);line-height:1.3}
+.ck-card .info{font-size:13px;color:var(--texto-fraco)}
+.ck-card .grupos{display:flex;flex-wrap:wrap;gap:5px}
+.ck-card .grupos span{font-size:12px;background:var(--superficie-2);border:1px solid var(--linha);border-radius:20px;padding:2px 9px}
+.ck-card .pe{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ck-card .pe .btn{flex:1}
+.ck-card a{font-size:13px;color:var(--marrom)}
+.ck-andamento{background:#FAF2EC;border:1px solid var(--marrom);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.ck-andamento b{flex:1;min-width:220px}
+
+/* ─────────── checklists prontos: preenchimento ─────────── */
+.ck-barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.ck-barra h2{flex:1;min-width:220px;font-size:19px;color:var(--cinza)}
+.ck-barra h2 small{display:block;font-size:13px;font-weight:normal;color:var(--marrom);margin-top:2px}
+.ck-progresso{height:8px;background:var(--superficie-2);border:1px solid var(--linha);border-radius:10px;overflow:hidden;margin:4px 0 16px}
+.ck-progresso i{display:block;height:100%;background:var(--verde);transition:width .2s}
+.ck-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.ck-kpi{background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:9px 10px;text-align:center}
+.ck-kpi b{display:block;font-size:22px;line-height:1.1}
+.ck-kpi span{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--texto-fraco);font-weight:bold}
+.ck-kpi.c b{color:var(--verde-esc)} .ck-kpi.nc b{color:var(--critico)} .ck-kpi.na b{color:var(--cinza)} .ck-kpi.sr b{color:var(--marrom)}
+@media (max-width:560px){ .ck-kpis{grid-template-columns:repeat(3,1fr)} }
+
+.ck-grupo{background:#fff;border:1px solid var(--linha);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.ck-grupo-topo{display:flex;align-items:center;gap:10px;background:var(--verde);color:#fff;padding:9px 12px}
+.ck-grupo-topo .n{background:rgba(255,255,255,.25);border-radius:5px;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-weight:bold}
+.ck-grupo-topo .tt{flex:1;font-weight:bold;font-size:15px}
+.ck-grupo-topo .ck-conta{font-size:12.5px;opacity:.95;white-space:nowrap}
+.ck-grupo-topo button{border:1px solid rgba(255,255,255,.7);background:transparent;color:#fff;border-radius:20px;
+  padding:4px 11px;font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.ck-grupo-topo button:hover{background:#fff;color:var(--verde-esc)}
+.ck-item{padding:12px;border-top:1px solid var(--linha)}
+.ck-item:nth-child(odd){background:#FBFCF7}
+.ck-item.r-C{box-shadow:inset 4px 0 0 var(--verde)}
+.ck-item.r-NC{background:var(--critico-bg);box-shadow:inset 4px 0 0 var(--critico)}
+.ck-item.r-NA{box-shadow:inset 4px 0 0 var(--linha-forte)}
+.ck-txt{font-size:15px;line-height:1.4;margin-bottom:9px;color:var(--cinza)}
+.ck-txt .cod{font-weight:bold;color:var(--marrom);margin-right:6px}
+.ck-resp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ck-bt{min-height:44px;min-width:64px;border:2px solid var(--linha);background:#fff;color:var(--cinza);border-radius:var(--r);
+  font:inherit;font-size:15px;font-weight:bold;cursor:pointer;padding:0 14px}
+.ck-bt:hover{border-color:var(--verde)}
+.ck-bt.on.r-C{background:var(--verde);border-color:var(--verde);color:#fff}
+.ck-bt.on.r-NC{background:var(--critico);border-color:var(--critico);color:#fff}
+.ck-bt.on.r-NA{background:var(--cinza);border-color:var(--cinza);color:#fff}
+.ck-bt.foto{font-weight:normal;font-size:14px;margin-left:auto}
+.ck-obs{margin-top:9px;width:100%;border:1px solid var(--linha-forte);border-radius:var(--r);padding:9px 10px;font:inherit;font-size:14px;background:#fff;color:var(--cinza)}
+.ck-apont{margin-top:7px;font-size:12.5px;color:var(--critico)}
+.ck-fim{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin:6px 0 18px}
+.ck-orient{background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:4px 14px;margin-bottom:14px}
+.ck-orient summary{cursor:pointer;font-weight:bold;padding:8px 0;color:var(--marrom)}
+.ck-orient dl{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin:4px 0 12px;font-size:13.5px}
+.ck-orient dt{font-weight:bold}
+.ck-orient dd{margin:0}
+.ck-nota{background:rgba(132,189,0,.10);border:1px solid var(--verde);border-radius:var(--r);padding:12px 14px;font-size:14px}
+
+/* ─────────── relatório no modelo de visita técnica (papel, cores fixas) ───────────
+   O documento é sempre claro. Verde SAKUMA nas faixas, cinza no texto, sem preto. */
+.doc{font-family:Arial,Helvetica,sans-serif;color:#51534A}
+.pd-cab{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:3px solid #84BD00;padding-bottom:10px}
+.pd-titulo h1{margin:0;font-size:24px;font-weight:bold;font-style:italic;letter-spacing:-.3px;color:#51534A;text-transform:uppercase}
+.pd-titulo p{margin:3px 0 0;font-size:12px;color:#744F28}
+.pd-cab img{height:48px;width:auto;display:block}
+.pd-quadro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 14px;margin:14px 0 6px}
+.pd-quadro div{display:grid;grid-template-columns:92px 1fr;align-items:stretch;font-size:11px}
+.pd-quadro span{background:#84BD00;color:#fff;font-weight:bold;text-transform:uppercase;padding:4px 7px;letter-spacing:.03em;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-quadro b{background:#F1F7DF;color:#51534A;font-weight:normal;padding:4px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.doc h2.pd-resultados{text-align:center;border:0;color:#51534A;font-size:16px;letter-spacing:.06em;margin:18px 0 10px;padding:0}
+.pd-resumo{display:flex;flex-wrap:wrap;border:1px solid #DCDDD7;margin:0 0 14px}
+.pd-resumo div{flex:1;min-width:80px;text-align:center;padding:6px 4px;border-right:1px solid #DCDDD7}
+.pd-resumo div:last-child{border-right:0}
+.pd-resumo b{display:block;font-size:16px;color:#51534A}
+.pd-resumo span{font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#8A8C83;font-weight:bold}
+.pd-resumo .c b{color:#4E8B1F} .pd-resumo .nc b{color:#C0392B} .pd-resumo .sr b{color:#744F28}
+.pd-resumo .pc{background:#F1F7DF;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-topico{margin:0 0 16px}
+.pd-tt{display:flex;align-items:center;gap:10px;background:#F1F7DF;border-left:0;margin-bottom:2px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-tt .n{background:#84BD00;color:#fff;font-weight:bold;min-width:30px;align-self:stretch;display:flex;align-items:center;justify-content:center;
+  padding:5px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-tt span:last-child{padding:5px 0;font-size:12.5px;color:#6A9800;font-weight:bold;text-transform:uppercase}
+.pd-item{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:2px 14px;padding:5px 2px;border-bottom:1px dashed #C9CBC2;font-size:11.5px;line-height:1.45}
+.pd-item.nc{background:#FBEDEB;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-q{color:#51534A}
+.pd-r{color:#51534A}
+.pd-r.r-c{color:#4E8B1F;font-weight:bold}
+.pd-r.r-nc{color:#C0392B;font-weight:bold}
+.pd-r.r-na{color:#8A8C83}
+.pd-r.r-sr{color:#744F28;font-style:italic}
+.pd-dados .pd-item{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pd-texto{grid-column:1/-1;font-size:11.5px;color:#51534A;padding:2px 0 4px;line-height:1.5}
+.pd-obs{grid-column:1/-1;font-size:10.5px;color:#744F28;padding-left:14px}
+.pd-grau{display:inline-block;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:10px;color:#fff;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-grau.g-c{background:#A32015} .pd-grau.g-a{background:#C06A00} .pd-grau.g-m{background:#87761C} .pd-grau.g-b{background:#4F6E7B}
+.pd-faixa{background:#84BD00;color:#fff;font-weight:bold;text-align:center;font-size:11.5px;padding:5px 8px;margin:10px 0 8px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-fotos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pd-foto{margin:0;border:1px solid #C9CBC2;padding:8px;text-align:center;break-inside:avoid;page-break-inside:avoid}
+.pd-foto figcaption{font-size:10px;color:#51534A;text-align:left;margin-bottom:6px;line-height:1.35}
+.pd-foto img{max-width:100%;height:190px;object-fit:contain;display:block;margin:0 auto}
+.pd-sub{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:#6A9800;margin:12px 0 5px}
+.pd-plano{width:100%;border-collapse:collapse;font-size:10.5px}
+.pd-plano th{background:#84BD00;color:#fff;text-align:left;padding:5px 6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pd-plano td{border:1px solid #DCDDD7;padding:5px 6px;vertical-align:top}
+.pd-plano tbody tr:nth-child(even) td{background:#F1F7DF;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@media (max-width:620px){
+  .pd-quadro{grid-template-columns:1fr}
+  .pd-item{grid-template-columns:minmax(0,1fr) 100px}
+  .pd-titulo h1{font-size:18px}
+}
+.doc-lop{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:22px}
+.doc-lop img{height:22px;width:auto;display:block}
+.doc-lop span{font:11px Arial,Helvetica,sans-serif;color:#51534A;letter-spacing:.02em}
+
+@media (max-width:760px){
+  .topo{padding:8px 12px 0}
+  .topo-divisor{display:none}
+  .marca-logo{height:22px}
+  .topo-inicio img{height:30px;width:30px}
+  .topo h1{font-size:15px}
+  .topo h1 .modulo{font-size:10px;padding:1px 6px;margin-left:4px}
+  .abas{margin:6px 0 0}
+  #bt-pdf{display:none}
+  .acoes{flex-wrap:nowrap}
+  .conta b{max-width:70px}
+  .aba{flex:1 0 auto;padding:0 12px;font-size:14px}
+  .ck-bt{min-width:56px;padding:0 10px}
+  .ck-orient dl{grid-template-columns:1fr}
+}
+@media (max-width:460px){
+  .topo h1 .modulo{display:none}
+}
+
+@media print{
+  .rodape-gr,#painel-inicio,#painel-checklists{display:none!important}
+  @page{margin:12mm 12mm 16mm;
+    @bottom-right{content:"Página " counter(page) " de " counter(pages);font:9px Arial,Helvetica,sans-serif;color:#8A8C83}
+    @bottom-left{font:9px Arial,Helvetica,sans-serif;color:#8A8C83}}
+  .pd-item,.pd-quadro,.pd-resumo,.doc-lop,.pd-plano tr{break-inside:avoid;page-break-inside:avoid}
+  .pd-tt,.pd-faixa{break-after:avoid;page-break-after:avoid}
+  .pd-foto img{height:170px}
+}

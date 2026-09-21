@@ -2,8 +2,9 @@
 <section class="portao" id="portao">
   <div class="portao-caixa">
     <div class="portao-marca">
-      <img id="portao-logo" alt="SAKUMA Agronegócios">
-      <h1>Vistorias &amp; Segurança</h1>
+      <img class="pt-icone" src="icons/gr-vs-192.v1.png" alt="">
+      <h1>Gestão Rápida <span>Vistorias e Segurança</span></h1>
+      <img id="portao-logo" class="pt-sakuma" alt="SAKUMA Agronegócios">
       <p>Entre com a conta que o administrador criou para você.</p>
     </div>
     <div class="portao-form">
@@ -15,21 +16,27 @@
       <button class="bt bt-forte" type="button" id="pt-entrar">Entrar</button>
     </div>
     <div class="portao-rodape">
-      <b>SAKUMA Agronegócios</b><br>
       Não tem conta? Fale com o administrador do sistema.
+      <img class="pt-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
     </div>
   </div>
 </section>
 
+<!-- TOPO — mesmo padrão dos outros Gestão Rápida (Pessoas, Manutenções,
+     Programação Campo): ícone e nome voltam ao início, SAKUMA no alto,
+     LOP gravada a laser só no rodapé. As duas marcas nunca no mesmo lugar. -->
 <header class="topo">
   <div class="marca">
+    <button type="button" class="topo-inicio" id="bt-inicio" title="Voltar ao início">
+      <img src="icons/gr-vs-192.v1.png" alt="">
+      <h1>Gestão Rápida <span class="modulo">Vistorias e Segurança</span></h1>
+    </button>
+    <span class="topo-divisor"></span>
     <img id="logo-img" class="marca-logo" alt="SAKUMA Agronegócios">
-    <div class="marca-texto">
-      <strong>Vistorias &amp; Segurança</strong>
-      <span>SAKUMA Agronegócios</span>
-    </div>
   </div>
   <div class="abas" role="tablist">
+    <button class="aba" id="t-inicio" role="tab" aria-selected="false" aria-controls="painel-inicio" hidden>Início</button>
+    <button class="aba" id="t-checklists" role="tab" aria-selected="false" aria-controls="painel-checklists">Checklists prontos</button>
     <button class="aba" id="t-vistoria" role="tab" aria-selected="true" aria-controls="painel-vistoria">Vistoria <b class="n" id="cont-itens">0</b></button>
     <button class="aba" id="t-aberto" role="tab" aria-selected="false" aria-controls="painel-aberto">Em aberto <b class="n" id="cont-aberto">0</b></button>
     <button class="aba" id="t-relatorio" role="tab" aria-selected="false" aria-controls="painel-relatorio">Relatório</button>
@@ -38,13 +45,35 @@
   <div class="acoes">
     <button class="conta off" id="bt-conta" type="button"><span class="bola">—</span><b>Entrar</b></button>
     <button class="bt bt-fantasma" id="bt-instalar" type="button" hidden title="Instalar no aparelho">⤓ Instalar</button>
-    <button class="bt bt-fantasma" id="bt-tema" type="button" title="Alternar tema">◐</button>
+    <button class="bt bt-fantasma" id="bt-tema" type="button" title="Alternar tema" hidden>◐</button>
     <button class="bt" id="bt-salvar" type="button">Salvar vistoria</button>
     <button class="bt bt-forte" id="bt-pdf" type="button">Imprimir / PDF</button>
   </div>
 </header>
 
 <main class="palco">
+
+  <!-- ────────── tela inicial ────────── -->
+  <section class="painel" id="painel-inicio" role="tabpanel" hidden>
+    <div class="marca-inicio">
+      <img class="mi-sakuma" src="img/sakuma-marca-vertical.png" alt="SAKUMA Agronegócios">
+      <h2>Gestão Rápida <span>Vistorias e Segurança</span></h2>
+      <p class="mi-dica" id="mi-dica"></p>
+      <div class="mi-atalhos">
+        <button type="button" class="btn" data-ir="checklists">Checklists prontos</button>
+        <button type="button" class="btn secundario" data-ir="vistoria">Vistoria</button>
+        <button type="button" class="btn secundario" data-ir="aberto">Em aberto <small id="mi-aberto"></small></button>
+      </div>
+      <div class="mi-modelos" id="mi-modelos"></div>
+      <img class="mi-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
+    </div>
+  </section>
+
+  <!-- ────────── checklists prontos ────────── -->
+  <section class="painel" id="painel-checklists" role="tabpanel" aria-labelledby="t-checklists" hidden>
+    <div id="ck-lista"></div>
+    <div id="ck-preencher" hidden></div>
+  </section>
 
   <!-- ────────── painel vistoria ────────── -->
   <section class="painel" id="painel-vistoria" role="tabpanel" aria-labelledby="t-vistoria">
@@ -73,6 +102,12 @@
           <div class="campo"><label for="f-aprovador">Aprovado por</label><input type="text" id="f-aprovador" data-cab="aprovador" placeholder="Nome de quem aprova"></div>
           <div class="campo"><label for="f-aprovador-cargo">Cargo de quem aprova</label><select id="f-aprovador-cargo" data-cab="aprovadorCargo"></select></div>
           <div class="campo"><label for="f-codigo">Código do documento</label><input type="text" id="f-codigo" data-cab="codigo" placeholder="automático ao salvar"></div>
+          <div class="campo"><label for="f-proprietario">Proprietário</label><input type="text" id="f-proprietario" data-cab="proprietario" placeholder="Nome do proprietário"></div>
+          <div class="campo"><label for="f-resp-turma">Responsável pela turma</label><input type="text" id="f-resp-turma" data-cab="responsavelTurma" placeholder="Quem responde pela frente de trabalho"></div>
+          <div class="campo"><label for="f-colaboradores">Nº de colaboradores</label><input type="number" min="0" step="1" id="f-colaboradores" data-cab="colaboradores" placeholder="0"></div>
+          <div class="campo"><label for="f-registro">Registro do técnico</label><input type="text" id="f-registro" data-cab="tecnicoRegistro" placeholder="Nº do registro profissional"></div>
+          <div class="campo"><label for="f-inicio">Início</label><input type="time" id="f-inicio" data-cab="inicio"></div>
+          <div class="campo"><label for="f-fim">Fim</label><input type="time" id="f-fim" data-cab="fim"></div>
         </div>
       </div>
     </div>
@@ -80,6 +115,18 @@
     <div class="secao">
       <div class="secao-topo">
         <span class="etapa">Etapa 2</span>
+        <h2>Checklist da norma</h2>
+        <span class="dica">Escolha os blocos que se aplicam à visita e responda item a item. O que estiver Não conforme abre apontamento com prazo.</span>
+      </div>
+      <div class="cartao">
+        <div class="chk-blocos" id="chk-escolha"></div>
+      </div>
+      <div id="chk-corpo"></div>
+    </div>
+
+    <div class="secao">
+      <div class="secao-topo">
+        <span class="etapa">Etapa 3</span>
         <h2>Não conformidades</h2>
         <span class="dica">Escolha a anomalia — norma, risco, ação e prazo vêm preenchidos e podem ser editados.</span>
       </div>
@@ -92,6 +139,18 @@
       <div class="rodape-item" style="margin-top:12px" id="rodape-add" hidden>
         <button class="bt bt-fantasma" type="button" id="bt-nova-vistoria">Começar nova vistoria</button>
         <button class="bt bt-forte" type="button" data-novo>＋ Adicionar não conformidade</button>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao-topo">
+        <span class="etapa">Etapa 4</span>
+        <h2>Observações do técnico</h2>
+        <span class="dica">Fecham o relatório, depois do checklist e dos apontamentos.</span>
+      </div>
+      <div class="cartao">
+        <div class="campo largo"><label for="f-observacoes">Observações</label>
+          <textarea id="f-observacoes" data-cab="observacoes" rows="4" placeholder="Leitura geral do que foi encontrado na visita."></textarea></div>
       </div>
     </div>
   </section>
@@ -227,6 +286,38 @@
       </div>
     </div>
 
+    <div class="cfg-secao" id="sec-modelos">
+      <h3>Checklists prontos <span class="cfg-trava" id="trava-modelos" hidden>somente administradores</span></h3>
+      <p>Os checklists que aparecem prontos para preencher. Para cadastrar um novo, importe a planilha no mesmo formato do Checklist NR-24 (colunas Nº, Categoria, Item de verificação, C, NC, NA) ou escreva os itens aqui. Checklist já preenchido não muda quando o modelo muda: o enunciado fica gravado junto da resposta.</p>
+      <div class="cfg-tabela-env" style="max-height:260px">
+        <table class="cfg-anomalias">
+          <thead><tr><th>Checklist</th><th style="width:60px">Itens</th><th style="width:70px"></th><th style="width:44px"></th></tr></thead>
+          <tbody id="md-corpo"></tbody>
+        </table>
+      </div>
+      <div id="md-editor"></div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="md-importar">Importar planilha (.xlsx)</button>
+        <button class="bt bt-fantasma" type="button" id="md-novo">＋ Escrever checklist</button>
+        <span class="cfg-salvo" id="md-aviso"></span>
+      </div>
+    </div>
+
+    <div class="cfg-secao" id="sec-checklists">
+      <h3>Blocos de checklist <span class="cfg-trava" id="trava-checklists" hidden>somente administradores</span></h3>
+      <p>Cada bloco é uma norma com seus itens. Na vistoria o técnico escolhe quais blocos se aplicam à visita. Vistoria já salva não muda quando o bloco muda: o enunciado do item fica gravado junto da resposta.</p>
+      <div class="cfg-tabela-env" style="max-height:240px">
+        <table class="cfg-anomalias">
+          <thead><tr><th>Bloco</th><th style="width:60px">Itens</th><th style="width:70px"></th><th style="width:44px"></th></tr></thead>
+          <tbody id="cb-corpo"></tbody>
+        </table>
+      </div>
+      <div id="cb-editor"></div>
+      <div class="rodape-item" style="margin-top:12px">
+        <button class="bt" type="button" id="cb-novo">＋ Novo bloco</button>
+      </div>
+    </div>
+
     <div class="cfg-secao" id="sec-contas">
       <h3>Contas e senhas <span class="cfg-trava" id="trava-contas" hidden>somente administradores</span></h3>
       <p>Quando alguém esquecer a senha, defina uma nova aqui e passe para a pessoa. A senha antiga não aparece para ninguém — nem para você: ela fica guardada embaralhada. Quem receber a senha nova pode usá-la direto, sem confirmar e-mail.</p>
@@ -255,6 +346,10 @@
     </div>
   </section>
 </main>
+
+<footer class="rodape-gr">
+  <img class="rodape-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
+</footer>
 
 <div class="status">
   <span id="status-txt">Rascunho automático ativo neste aparelho.</span>

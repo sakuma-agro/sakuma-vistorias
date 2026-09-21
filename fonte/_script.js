@@ -502,6 +502,10 @@ function renderKpis(){
 
 /* ══════════════════════════ render: relatório ══════════════════════════ */
 function renderDoc(){
+  /* checklist pronto tem relatório próprio, no formato da planilha */
+  /* todos os relatórios saem no modelo de visita técnica (tópicos numerados,
+     resposta por item e fotos agrupadas por tópico) — ver pdoc no _script-gr.js */
+  if(typeof pdocRascunho==="function"){$("#doc").innerHTML=pdocRascunho();return;}
   const c=estado.cab;
   const g={"Crítico":0,"Alto":0,"Médio":0,"Baixo":0};
   estado.itens.forEach(i=>{if(g[i.grau]!=null)g[i.grau]++;});
@@ -583,6 +587,10 @@ function renderDoc(){
       <div><span>Unidade</span><b>${esc(c.unidade)||"—"}</b></div>
       <div><span>Setor / área</span><b>${esc(c.setor)||"—"}</b></div>
       <div><span>Data</span><b>${dataBR(c.data)}</b></div>
+      <div><span>Início / fim</span><b>${esc(c.inicio)||"—"} · ${esc(c.fim)||"—"}</b></div>
+      <div><span>Proprietário</span><b>${esc(c.proprietario)||"—"}</b></div>
+      <div><span>Responsável pela turma</span><b>${esc(c.responsavelTurma)||"—"}</b></div>
+      <div><span>Nº de colaboradores</span><b>${esc(c.colaboradores)||"—"}</b></div>
       <div><span>Técnico responsável</span><b>${esc(c.tecnico)||"—"}</b></div>
       <div><span>Cargo</span><b>${esc(c.cargo)||"—"}</b></div>
       <div><span>Motivo</span><b>${esc(c.motivo)||"—"}</b></div>
@@ -598,15 +606,19 @@ function renderDoc(){
     </div>
     <div class="doc-texto">${esc(resumoTexto)}</div>
 
+    ${typeof chkDoc==="function"&&chkDoc()?`<h2>Checklist da norma</h2>${chkDoc()}`:""}
     ${estado.itens.length?`<h2>Não conformidades</h2>${fichas}`:""}
     ${plano}
     ${pendencias}
+    ${c.observacoes&&c.observacoes.trim()?`<h2>Observações do técnico</h2><div class="doc-texto">${nl(c.observacoes)}</div>`:""}
 
     <div class="doc-rodape">
       <div><span>Aprovado</span><b>${esc(c.aprovador)||"—"}</b><br>${esc(c.aprovadorCargo)||""}</div>
-      <div style="text-align:right"><span>Feito por</span><b>${esc(c.tecnico)||"—"}</b><br>${esc(c.cargo)||""}</div>
+      <div><span>Responsável do setor</span><b>${esc(c.responsavelTurma)||"—"}</b></div>
+      <div style="text-align:right"><span>Feito por</span><b>${esc(c.tecnico)||"—"}</b><br>${esc(c.cargo)||""}${c.tecnicoRegistro?" · Registro "+esc(c.tecnicoRegistro):""}</div>
     </div>
-    <div class="doc-cod">${esc(c.codigo)||"(sem número)"} · Relatório de Vistoria · SAKUMA Agronegócios</div>`;
+    <div class="doc-cod">${esc(c.codigo)||"(sem número)"} · Relatório de Vistoria · SAKUMA Agronegócios</div>
+    ${typeof docLop==="function"?docLop():""}`;
 }
 
 /* ══════════════════════════ eventos ══════════════════════════ */
@@ -772,3 +784,4 @@ if(!estado.cab.data)estado.cab.data=new Date().toISOString().slice(0,10);
 $("#logo-img").src=LOGO;
 preencherCabecalho();
 render();
+
