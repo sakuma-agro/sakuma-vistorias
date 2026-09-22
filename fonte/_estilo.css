@@ -226,11 +226,15 @@ table.plano tr:nth-child(even) td{background:#FAFBF5}
 
 /* ─────────────────────────────  impressão  ───────────────────────────── */
 @media print{
-  @page{size:A4;margin:14mm 12mm}
+  /* margem de cima e de baixo zero: sem espaço, o navegador não imprime
+     o endereço do site, a data e o título. O respiro de cada página vem do
+     padding do .doc, repetido em toda página pelo box-decoration-break. */
+  @page{size:A4;margin:0 12mm}
   body{background:#fff}
   .topo,.status,.barra-doc,.toast,#painel-vistoria{display:none!important}
   .palco{padding:0;max-width:none}
-  .doc{border:0;box-shadow:none;border-radius:0;max-width:none;padding:0;background:#fff;color:#2F312B}
+  .doc{border:0;box-shadow:none;border-radius:0;max-width:none;padding:12mm 0 14mm;background:#fff;color:#2F312B;
+    -webkit-box-decoration-break:clone;box-decoration-break:clone}
   /* mantém junto o que precisa ser lido junto, deixa o resto fluir entre as páginas */
   .ficha-topo{break-after:avoid;page-break-after:avoid}
   .ficha-fotos{break-inside:avoid;page-break-inside:avoid}

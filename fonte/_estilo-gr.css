@@ -221,6 +221,11 @@ body.no-inicio .rodape-gr{display:none}
 .pd-foto{margin:0;border:1px solid #C9CBC2;padding:8px;text-align:center;break-inside:avoid;page-break-inside:avoid}
 .pd-foto figcaption{font-size:10px;color:#51534A;text-align:left;margin-bottom:6px;line-height:1.35}
 .pd-foto img{max-width:100%;height:190px;object-fit:contain;display:block;margin:0 auto}
+/* fotos logo abaixo do item a que pertencem */
+.pd-fotos-item{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:6px 0 4px}
+.pd-fotos-item .pd-foto{background:#fff;padding:6px}
+.pd-fotos-item .pd-foto img{height:150px}
+.pd-rodape-fixo{display:none}
 .pd-sub{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:#6A9800;margin:12px 0 5px}
 .pd-plano{width:100%;border-collapse:collapse;font-size:10.5px}
 .pd-plano th{background:#84BD00;color:#fff;text-align:left;padding:5px 6px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -256,12 +261,11 @@ body.no-inicio .rodape-gr{display:none}
 
 @media print{
   .rodape-gr,#painel-inicio,#painel-checklists{display:none!important}
-  @page{margin:12mm 12mm 16mm;
-    @bottom-right{content:"Página " counter(page) " de " counter(pages);font:9px Arial,Helvetica,sans-serif;color:#8A8C83}
-    @bottom-left{font:9px Arial,Helvetica,sans-serif;color:#8A8C83}}
+  .pd-rodape-fixo{display:block;position:fixed;left:0;right:0;bottom:5mm;font:9px Arial,Helvetica,sans-serif;color:#8A8C83}
   .pd-item,.pd-quadro,.pd-resumo,.doc-lop,.pd-plano tr{break-inside:avoid;page-break-inside:avoid}
   .pd-tt,.pd-faixa{break-after:avoid;page-break-after:avoid}
   .pd-foto img{height:170px}
+  .pd-fotos-item .pd-foto img{height:150px}
 }
 
 /* assinaturas — tela */

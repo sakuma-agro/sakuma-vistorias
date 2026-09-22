@@ -668,6 +668,13 @@ function pdFotos(titulo,fotos){
       <img src="${esc(f.src)}" alt=""></figure>`).join("")}</div>`;
 }
 
+function pdFotosDoItem(fotos){
+  fotos=fotos.filter(f=>f&&f.src);
+  if(!fotos.length)return "";
+  return `<div class="pd-fotos pd-fotos-item">${fotos.map(f=>`<figure class="pd-foto">${f.leg?`<figcaption>${esc(f.leg)}</figcaption>`:""}
+      <img src="${esc(f.src)}" alt=""></figure>`).join("")}</div>`;
+}
+
 function pdTopico(num,titulo,corpo,cls){
   return `<section class="pd-topico${cls?" "+cls:""}">
     <div class="pd-tt"><span class="n">${num==null?"":num}</span><span>${titulo}</span></div>
@@ -713,11 +720,10 @@ function pdoc(d){
       if(it.r==="NC"&&it.prazo)obs.push(`Prazo para correção: ${pdData(it.prazo)}`);
       return `<div class="pd-item${it.r==="NC"?" nc":""}"><div class="pd-q">${esc(cod)} - ${esc(it.txt)}</div>
         <div class="pd-r r-${cls}">${rot}</div>
-        ${obs.length?`<div class="pd-obs">${obs.join("<br>")}</div>`:""}</div>`;
+        ${obs.length?`<div class="pd-obs">${obs.join("<br>")}</div>`:""}
+        ${pdFotosDoItem((it.fotos||[]).map(src=>({src,leg:""})))}</div>`;
     }).join("");
-    const fotos=[];
-    b.itens.forEach((it,k)=>(it.fotos||[]).forEach(src=>{ if(src)fotos.push({src,leg:`${it.cod||n+"."+(k+1)} - ${it.txt}`}); }));
-    partes.push(pdTopico(n,titulo,linhas+pdFotos(`Fotos das questões do tópico ${n} - ${titulo}`,fotos)));
+    partes.push(pdTopico(n,titulo,linhas));
   });
 
   /* não conformidades registradas na vistoria */
@@ -743,15 +749,14 @@ function pdoc(d){
       ].filter(Boolean).join("<br>");
       return `<div class="pd-item nc"><div class="pd-q">${num}.${i+1} - ${esc(a.titulo)}</div>
         <div class="pd-r"><span class="pd-grau g-${g}">${esc(a.grau||"")}</span></div>
-        <div class="pd-obs">${obs}</div></div>`;
+        <div class="pd-obs">${obs}</div>
+        ${pdFotosDoItem(a.fotos||[])}</div>`;
     }).join("");
-    const fotos=[];
-    ap.forEach((a,i)=>(a.fotos||[]).forEach(f=>{ if(f.src)fotos.push({src:f.src,leg:`${num}.${i+1} - ${a.titulo} · ${f.leg}`}); }));
     const plano=`<table class="pd-plano"><thead><tr><th style="width:40px">Nº</th><th>Ação corretiva</th><th style="width:110px">Responsável</th><th style="width:78px">Prazo</th>${ap.some(a=>a.situacao)?'<th style="width:100px">Situação</th>':""}</tr></thead>
       <tbody>${ap.map((a,i)=>`<tr><td>${num}.${i+1}</td><td>${esc(a.acao)||"—"}</td><td>${esc(a.responsavel)||"—"}</td>
         <td>${a.prazoData?pdData(a.prazoData):esc(a.prazo)||"—"}</td>${ap.some(x=>x.situacao)?`<td>${esc(a.situacao||"")}</td>`:""}</tr>`).join("")}</tbody></table>`;
     partes.push(pdTopico(num,"Não conformidades e plano de ação",
-      linhas+pdFotos(`Fotos das questões do tópico ${num} - Não conformidades`,fotos)+
+      linhas+
       `<div class="pd-sub">Plano de ação</div>`+plano));
   }
 
@@ -778,7 +783,7 @@ function pdoc(d){
   const quadro=(d.quadro||[]).filter(q=>q[1]);
   const rodapeTxt=`${d.codigo||"(sem número)"} · ${d.titulo} · SAKUMA Agronegócios`.replace(/["\\]/g,"");
   return `
-    <style>@media print{@page{@bottom-left{content:"${rodapeTxt}"}}}</style>
+    <div class="pd-rodape-fixo">${esc(rodapeTxt)}</div>
     <div class="pd-cab">
       <div class="pd-titulo"><h1>${esc(d.titulo)}</h1>${d.subtitulo?`<p>${esc(d.subtitulo)}</p>`:""}</div>
       <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios">
