@@ -305,3 +305,140 @@ notify pgrst, 'reload schema';
 -- Em Authentication → Sign In / Providers, deixe "Allow new users to sign up"
 -- DESLIGADO — assim só entra quem você cadastrar.
 -- ═══════════════════════════════════════════════════════════════════════════
+-- ─────────────── 9. Responsável pela vistoria ───────────────
+-- O administrador escolhe outra conta para responder por uma vistoria. Essa
+-- pessoa passa a enxergar a vistoria e a encerrar os apontamentos dela, mesmo
+-- sem "ve_tudo". Quem lançou continua com acesso. Só administrador troca.
+
+alter table public.vistorias add column if not exists designado_id    uuid references auth.users(id) on delete set null;
+alter table public.vistorias add column if not exists designado_email text;
+alter table public.vistorias add column if not exists designado_nome  text;
+alter table public.vistorias add column if not exists designado_em    timestamptz;
+alter table public.vistorias add column if not exists designado_por   text;
+
+-- Pode tratar a vistoria: quem lançou ou quem foi designado.
+create or replace function public.pode_tratar(p_vistoria uuid)
+returns boolean
+language sql stable security definer set search_path = public, auth as $$
+  select exists (
+    select 1 from public.vistorias v
+    where v.id = p_vistoria
+      and (v.user_id = auth.uid() or v.designado_id = auth.uid())
+  );
+$$;
+grant execute on function public.pode_tratar(uuid) to authenticated;
+
+-- Trava no banco: ninguém além do administrador mexe no responsável.
+create or replace function public.trava_designado()
+returns trigger
+language plpgsql security definer set search_path = public, auth as $$
+begin
+  if (new.designado_id is distinct from old.designado_id
+      or new.designado_email is distinct from old.designado_email
+      or new.designado_nome is distinct from old.designado_nome)
+     and not public.eh_admin() then
+    raise exception 'Só administrador altera o responsável da vistoria.';
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists vistorias_trava_designado on public.vistorias;
+create trigger vistorias_trava_designado before update on public.vistorias
+  for each row execute function public.trava_designado();
+
+-- Troca o responsável. p_usuario nulo devolve a vistoria só para quem lançou.
+create or replace function public.designar_responsavel(p_vistoria uuid, p_usuario uuid)
+returns json
+language plpgsql security definer set search_path = public, auth as $$
+declare
+  u record;
+begin
+  if not public.eh_admin() then
+    raise exception 'Só administrador altera o responsável da vistoria.';
+  end if;
+  if not exists (select 1 from public.vistorias where id = p_vistoria) then
+    raise exception 'Vistoria não encontrada.';
+  end if;
+  if p_usuario is null then
+    update public.vistorias
+       set designado_id = null, designado_email = null, designado_nome = null,
+           designado_em = now(), designado_por = auth.jwt() ->> 'email'
+     where id = p_vistoria;
+    return json_build_object('ok', true);
+  end if;
+  select id, email, coalesce(raw_user_meta_data ->> 'nome', raw_user_meta_data ->> 'name', '') as nome
+    into u from auth.users where id = p_usuario;
+  if not found then
+    raise exception 'Conta não encontrada.';
+  end if;
+  update public.vistorias
+     set designado_id = u.id, designado_email = u.email, designado_nome = nullif(u.nome, ''),
+         designado_em = now(), designado_por = auth.jwt() ->> 'email'
+   where id = p_vistoria;
+  return json_build_object('ok', true, 'email', u.email, 'nome', nullif(u.nome, ''));
+end $$;
+revoke all on function public.designar_responsavel(uuid, uuid) from public, anon;
+grant execute on function public.designar_responsavel(uuid, uuid) to authenticated;
+
+-- Políticas refeitas incluindo o designado.
+drop policy if exists vistorias_ler     on public.vistorias;
+drop policy if exists vistorias_alterar on public.vistorias;
+create policy vistorias_ler     on public.vistorias for select to authenticated
+  using (user_id = auth.uid() or designado_id = auth.uid() or public.ve_tudo());
+create policy vistorias_alterar on public.vistorias for update to authenticated
+  using (user_id = auth.uid() or designado_id = auth.uid() or public.ve_tudo())
+  with check (user_id = auth.uid() or designado_id = auth.uid() or public.ve_tudo());
+
+drop policy if exists itens_ler     on public.itens;
+drop policy if exists itens_alterar on public.itens;
+create policy itens_ler     on public.itens for select to authenticated
+  using (user_id = auth.uid() or public.ve_tudo() or public.pode_tratar(vistoria_id));
+create policy itens_alterar on public.itens for update to authenticated
+  using (user_id = auth.uid() or public.ve_tudo() or public.pode_tratar(vistoria_id))
+  with check (user_id = auth.uid() or public.ve_tudo() or public.pode_tratar(vistoria_id));
+
+drop policy if exists fotos_ler on storage.objects;
+create policy fotos_ler on storage.objects for select to authenticated
+  using (bucket_id = 'vistorias' and (
+    public.ve_tudo()
+    or owner = auth.uid()
+    or exists (select 1 from public.vistorias v
+               where (v.user_id = auth.uid() or v.designado_id = auth.uid())
+                 and v.id::text = split_part(name, '/', 1))
+  ));
+
+-- Visão de pendências com o responsável e o tipo (vistoria ou checklist).
+drop view if exists public.pendencias;
+create view public.pendencias
+with (security_invoker = true) as
+select
+  i.id, i.vistoria_id, i.ordem, i.chave, i.categoria,
+  i.titulo, i.local, i.grau, i.status,
+  i.encontrada, i.risco, i.requerida, i.acao, i.evidencia, i.pendencias,
+  i.responsavel, i.prazo, i.prazo_data, i.normas, i.normas_texto,
+  i.foto_encontrada, i.foto_requerida, i.foto_encerramento,
+  i.encerrado_em, i.encerrado_obs,
+  v.codigo   as vistoria_codigo,
+  v.unidade  as unidade,
+  v.setor    as setor,
+  v.data     as vistoria_data,
+  v.tecnico  as tecnico,
+  case
+    when i.status = 'Concluído' then 'Concluído'
+    when i.prazo_data is null then 'Sem prazo'
+    when i.prazo_data < current_date then 'Vencido'
+    when i.prazo_data <= current_date + 3 then 'Vence em breve'
+    else 'No prazo'
+  end as situacao_prazo,
+  (current_date - v.data) as dias_em_aberto,
+  v.motivo          as vistoria_motivo,
+  (jsonb_typeof(v.checklist) = 'array' and jsonb_array_length(v.checklist) > 0) as eh_checklist,
+  v.designado_id    as designado_id,
+  v.designado_email as designado_email,
+  v.designado_nome  as designado_nome
+from public.itens i
+join public.vistorias v on v.id = i.vistoria_id;
+
+grant select on public.pendencias to authenticated;
+
+notify pgrst, 'reload schema';
