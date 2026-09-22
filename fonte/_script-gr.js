@@ -1074,7 +1074,7 @@ function grRenderInicio(){
   const dica=$("#mi-dica");
   if(dica)dica.innerHTML=`Hoje é ${dias[d.getDay()]}, ${d.toLocaleDateString("pt-BR")}`+
     (abertos?` — <strong>${abertos} apontamento${abertos>1?"s":""} em aberto</strong>.`:".");
-  const n=$("#mi-aberto"); if(n)n.textContent=abertos?abertos+" pendente"+(abertos>1?"s":""):"";
+  const n=$("#mi-aberto"); if(n){n.textContent=abertos?String(abertos):"";n.classList.toggle("alerta",abertos>0);n.hidden=!abertos;}
   const ms=ckModelos(), chaves=Object.keys(ms);
   const alvo=$("#mi-modelos");
   if(alvo)alvo.innerHTML=chaves.length?`<span class="rot">Preencher agora</span>`+
@@ -1105,6 +1105,8 @@ $("#painel-inicio").addEventListener("click",ev=>{
   const q=ir.dataset.ir;
   if(q==="checklists")ckMostrar("lista");
   else if(q==="aberto"){carregarPendencias();aba("aberto");}
+  else if(q==="relatorio"){renderDoc();aba("relatorio");}
+  else if(q==="config"){renderConfig();aba("config");}
   else aba(q);
 });
 

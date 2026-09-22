@@ -55,17 +55,25 @@
 
   <!-- ────────── tela inicial ────────── -->
   <section class="painel" id="painel-inicio" role="tabpanel" hidden>
-    <div class="marca-inicio">
-      <img class="mi-sakuma" src="img/sakuma-marca-vertical.png" alt="SAKUMA Agronegócios">
-      <h2>Gestão Rápida <span>Vistorias e Segurança</span></h2>
-      <p class="mi-dica" id="mi-dica"></p>
-      <div class="mi-atalhos">
-        <button type="button" class="btn" data-ir="checklists">Checklists prontos</button>
-        <button type="button" class="btn secundario" data-ir="vistoria">Vistoria</button>
-        <button type="button" class="btn secundario" data-ir="aberto">Em aberto <small id="mi-aberto"></small></button>
+    <div class="ini-lateral">
+      <!-- acesso rápido na lateral (mesmo modelo do Programação Campo) -->
+      <nav class="ql" aria-label="Acesso rápido">
+        <button type="button" class="ql-item prim" data-ir="vistoria" title="Vistoria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 9v6M9 12h6"/></svg><span>Vistoria</span></button>
+        <button type="button" class="ql-item " data-ir="checklists" title="Checklists prontos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg><span>Checklists prontos</span></button>
+        <button type="button" class="ql-item " data-ir="aberto" title="Em aberto"><small class="ql-num" id="mi-aberto"></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Em aberto</span></button>
+        <button type="button" class="ql-item " data-ir="relatorio" title="Relatório"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M10 11h6M10 15h6"/></svg><span>Relatório</span></button>
+        <button type="button" class="ql-item " data-ir="config" title="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>Configurações</span></button>
+      </nav>
+      <div class="marca-inicio">
+        <img class="mi-sakuma" src="img/sakuma-marca-vertical.png" alt="SAKUMA Agronegócios">
+        <h2>Gestão Rápida <span>Vistorias e Segurança</span></h2>
+        <p class="mi-dica" id="mi-dica"></p>
+        <div class="mi-modelos" id="mi-modelos"></div>
+        <div class="lop-ass mi-lop-txt" role="img" aria-label="Desenvolvido por LOP — Inteligência para o agronegócio">
+          <img src="img/lop-marca.png" alt=""><span class="lop-div"></span>
+          <span class="lop-txt"><b>DESENVOLVIDO POR LOP</b><span>INTELIGÊNCIA PARA O AGRONEGÓCIO</span></span>
+        </div>
       </div>
-      <div class="mi-modelos" id="mi-modelos"></div>
-      <img class="mi-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
     </div>
   </section>
 
