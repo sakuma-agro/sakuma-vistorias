@@ -538,7 +538,9 @@ async function carregarPendencias(){
         normas:p.normas||[],normasTexto:p.normas_texto||[],codigo:p.vistoria_codigo,unidade:p.unidade,setor:p.setor,
         data:p.vistoria_data,tecnico:p.tecnico,
         fotoEPath:p.foto_encontrada,fotoRPath:p.foto_requerida,fotoCPath:p.foto_encerramento,
-        encerradoEm:p.encerrado_em,encerradoObs:p.encerrado_obs,remoto:true
+        encerradoEm:p.encerrado_em,encerradoObs:p.encerrado_obs,remoto:true,
+        motivo:p.vistoria_motivo||"",ehChecklist:!!p.eh_checklist,
+        designadoId:p.designado_id||null,designadoEmail:p.designado_email||"",designadoNome:p.designado_nome||""
       }));
       fonteRemota=true;
       $("#fonte-dados").textContent="Apontamentos de todas as vistorias da base, de toda a equipe.";
@@ -551,7 +553,8 @@ async function carregarPendencias(){
   const hist=lerJSON(K_HIST)||[];
   pendencias=hist.flatMap(v=>v.itens.map(it=>({
     ...it,vistoriaId:v.id,codigo:v.cab.codigo,unidade:v.cab.unidade,setor:v.cab.setor,
-    data:v.cab.data,tecnico:v.cab.tecnico,remoto:false
+    data:v.cab.data,tecnico:v.cab.tecnico,remoto:false,
+    motivo:v.cab.motivo||"",ehChecklist:String(v.cab.motivo||"").startsWith("Checklist")
   })));
   fonteRemota=false;
   $("#fonte-dados").textContent="Apontamentos das vistorias salvas neste aparelho.";
@@ -561,13 +564,15 @@ async function carregarPendencias(){
 function pendenciasFiltradas(){
   const b=($("#fl-busca").value||"").toLowerCase().trim();
   const u=$("#fl-unidade").value, g=$("#fl-grau").value, s=$("#fl-status").value;
+  const vs=$("#fl-vistoria").value;
   return pendencias.filter(p=>{
+    if(vs&&String(p.vistoriaId)!==vs)return false;
     if(s==="abertos"){if(p.status==="Concluído")return false;}
     else if(s&&p.status!==s)return false;
     if(u&&p.unidade!==u)return false;
     if(g&&p.grau!==g)return false;
     if(b){
-      const alvo=[p.titulo,p.acao,p.responsavel,p.local,p.codigo,p.setor].join(" ").toLowerCase();
+      const alvo=[p.titulo,p.acao,p.responsavel,p.local,p.codigo,p.setor,p.motivo,p.designadoNome,p.designadoEmail].join(" ").toLowerCase();
       if(!alvo.includes(b))return false;
     }
     return true;
@@ -578,6 +583,8 @@ function renderAberto(){
   const uni=[...new Set(pendencias.map(p=>p.unidade).filter(Boolean))].sort();
   const sel=$("#fl-unidade"), atual=sel.value;
   sel.innerHTML='<option value="">Todas</option>'+uni.map(u=>`<option${u===atual?" selected":""}>${esc(u)}</option>`).join("");
+  montarSeletorVistoria();
+  renderBarraVistoria();
 
   const abertos=pendencias.filter(p=>p.status!=="Concluído");
   const vencidos=abertos.filter(p=>situacaoPrazo(p).cls==="p-vencido");
@@ -638,10 +645,11 @@ function cartaoPendencia(p){
       <span class="prazo ${sp.cls}">${sp.txt}</span>
     </div>
     <div class="pend-meta">
-      <span class="cod">${esc(p.codigo||"—")}</span>
+      <button class="cod cod-bt" type="button" data-sel-vist="${esc(p.vistoriaId||"")}" title="Mostrar só esta ${p.ehChecklist?"checklist":"vistoria"}">${esc(p.codigo||"—")}</button>
       ${p.local?`<span>📍 ${esc(p.local)}</span>`:""}
       ${p.data?`<span>Vistoria de ${dataBR(p.data)}</span>`:""}
       ${p.responsavel?`<span>Responsável: ${esc(p.responsavel)}</span>`:""}
+      ${p.designadoId?`<span class="resp-vist">👤 Resp. pela vistoria: ${esc(p.designadoNome||p.designadoEmail)}</span>`:""}
       ${refsNorma(p)?`<span>${esc(refsNorma(p))}</span>`:""}
     </div>
     <div class="pend-acao">${esc(p.acao)||"—"}</div>
@@ -671,6 +679,132 @@ function cartaoPendencia(p){
     </div>
   </article>`;
 }
+
+/* ─────────────── escolher a vistoria / checklist e o responsável ───────────────
+   O filtro "Vistoria / checklist" lista cada vistoria que tem apontamento, com o
+   número de itens em aberto. Escolhida uma, aparece a faixa com quem responde
+   por ela e, para administrador, o botão de trocar o responsável.
+   Sem const/let no topo: renderAberto pode rodar durante a carga (TDZ). */
+var respVistoriaAtual=null;
+
+function vistoriasDaLista(){
+  const m=new Map();
+  pendencias.forEach(p=>{
+    const k=String(p.vistoriaId||"");
+    if(!k)return;
+    if(!m.has(k))m.set(k,{id:k,codigo:p.codigo||"",unidade:p.unidade||"",setor:p.setor||"",data:p.data||"",
+      tecnico:p.tecnico||"",motivo:p.motivo||"",ehChecklist:!!p.ehChecklist,remoto:!!p.remoto,
+      designadoId:p.designadoId||null,designadoNome:p.designadoNome||"",designadoEmail:p.designadoEmail||"",
+      abertos:0,total:0});
+    const v=m.get(k);
+    v.total++;
+    if(p.status!=="Concluído")v.abertos++;
+  });
+  return [...m.values()].sort((a,b)=>String(b.codigo).localeCompare(String(a.codigo),"pt-BR",{numeric:true}));
+}
+
+function tipoVistoria(v){
+  if(!v.ehChecklist)return "Vistoria";
+  const m=String(v.motivo||"").trim();
+  return m.toLowerCase().startsWith("checklist")?m:"Checklist";
+}
+
+function montarSeletorVistoria(){
+  const sel=$("#fl-vistoria"); if(!sel)return;
+  const atual=sel.value;
+  const lista=vistoriasDaLista();
+  const op=v=>{
+    const lugar=[v.unidade,v.setor].map(x=>String(x).trim()).filter(Boolean).join(" · ");
+    const txt=[v.codigo||"sem número",tipoVistoria(v),lugar,v.data?dataBR(v.data):""].filter(Boolean).join(" — ");
+    return `<option value="${esc(v.id)}"${v.id===atual?" selected":""}>${esc(txt)} (${v.abertos} em aberto)</option>`;
+  };
+  const vist=lista.filter(v=>!v.ehChecklist), chk=lista.filter(v=>v.ehChecklist);
+  sel.innerHTML='<option value="">Todas</option>'
+    +(chk.length?`<optgroup label="Checklists">${chk.map(op).join("")}</optgroup>`:"")
+    +(vist.length?`<optgroup label="Vistorias">${vist.map(op).join("")}</optgroup>`:"");
+  if(atual&&!lista.some(v=>v.id===atual))sel.value="";
+}
+
+function escolherVistoria(id){
+  const sel=$("#fl-vistoria"); if(!sel)return;
+  sel.value=id;
+  if(id&&$("#fl-status").value!=="abertos"&&$("#fl-status").value!=="")$("#fl-status").value="abertos";
+  renderAberto();
+  const b=$("#barra-vistoria"); if(b&&!b.hidden)b.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderBarraVistoria(){
+  const b=$("#barra-vistoria"); if(!b)return;
+  const id=($("#fl-vistoria")||{}).value||"";
+  const v=id?vistoriasDaLista().find(x=>x.id===id):null;
+  if(!v){b.hidden=true;b.innerHTML="";return;}
+  const lugar=[v.unidade,v.setor].map(x=>String(x).trim()).filter(Boolean).join(" · ");
+  const quem=v.designadoId
+    ? `<b>${esc(v.designadoNome||v.designadoEmail)}</b>${v.designadoNome&&v.designadoEmail?` <span class="bv-email">${esc(v.designadoEmail)}</span>`:""}`
+    : `<b>só quem lançou</b> <span class="bv-email">(ninguém designado)</span>`;
+  const podeTrocar=souAdmin&&conectado()&&v.remoto;
+  b.hidden=false;
+  b.innerHTML=`
+    <div class="bv-info">
+      <div class="bv-linha1"><span class="cod">${esc(v.codigo||"—")}</span><strong>${esc(tipoVistoria(v))}</strong>${lugar?`<span>${esc(lugar)}</span>`:""}${v.data?`<span>${dataBR(v.data)}</span>`:""}</div>
+      <div class="bv-linha2">${v.abertos} em aberto de ${v.total} apontamento${v.total>1?"s":""}${v.tecnico?` · Técnico: ${esc(v.tecnico)}`:""}</div>
+      <div class="bv-resp">Responsável pela vistoria: ${quem}</div>
+    </div>
+    <div class="bv-acoes">
+      ${podeTrocar?`<button class="bt bt-forte" type="button" id="bv-trocar">Alterar responsável</button>`:""}
+      <button class="bt bt-fantasma" type="button" id="bv-todas">Ver todas</button>
+    </div>`;
+  $("#bv-todas").onclick=()=>escolherVistoria("");
+  const tr=$("#bv-trocar"); if(tr)tr.onclick=()=>abrirResponsavel(v);
+}
+
+async function abrirResponsavel(v){
+  if(!souAdmin){toast("Só administrador altera o responsável da vistoria.");return;}
+  respVistoriaAtual=v;
+  const dlg=$("#dlg-responsavel");
+  $("#rv-vistoria").textContent=[v.codigo,tipoVistoria(v),[v.unidade,v.setor].filter(Boolean).join(" · ")].filter(Boolean).join(" — ");
+  $("#rv-erro").hidden=true;
+  const sel=$("#rv-conta");
+  sel.innerHTML='<option value="">Lendo os usuários…</option>';sel.disabled=true;
+  $("#rv-salvar").disabled=true;
+  dlg.showModal();
+  try{
+    if(!contasBase){const d=await chamarFuncao("contas",{acao:"listar"});contasBase=(d&&d.contas)||[];}
+    const contas=contasBase.filter(c=>!c.bloqueado||c.id===v.designadoId)
+      .slice().sort((a,b)=>String(a.nome||a.email).localeCompare(String(b.nome||b.email),"pt-BR"));
+    sel.innerHTML='<option value="">Ninguém — só quem lançou e os administradores</option>'
+      +contas.map(c=>`<option value="${esc(c.id)}"${c.id===v.designadoId?" selected":""}>${esc(c.nome?c.nome+" — "+c.email:c.email)}${usEhAdmin(c.email)?" (admin)":""}</option>`).join("");
+    sel.disabled=false;$("#rv-salvar").disabled=false;
+  }catch(e){
+    sel.innerHTML='<option value="">—</option>';
+    $("#rv-erro").textContent="Não deu para ler os usuários: "+String(e.message).slice(0,120);
+    $("#rv-erro").hidden=false;
+  }
+}
+
+async function salvarResponsavel(){
+  const v=respVistoriaAtual; if(!v)return;
+  const conta=$("#rv-conta").value||null;
+  if((conta||null)===(v.designadoId||null)){$("#dlg-responsavel").close();return;}
+  const bt=$("#rv-salvar");bt.disabled=true;bt.textContent="Salvando…";
+  try{
+    await rest("rpc/designar_responsavel",{method:"POST",body:JSON.stringify({p_vistoria:v.id,p_usuario:conta})});
+    $("#dlg-responsavel").close();
+    const c=conta?(contasBase||[]).find(x=>x.id===conta):null;
+    toast(c?`${v.codigo}: responsável agora é ${c.nome||c.email}.`:`${v.codigo}: responsável retirado.`);
+    await carregarPendencias();
+  }catch(e){
+    let msg=String(e.message||"");
+    try{const j=JSON.parse(msg);msg=j.message||msg;}catch(_){}
+    $("#rv-erro").textContent="A base recusou: "+msg.slice(0,140);
+    $("#rv-erro").hidden=false;
+  }finally{
+    bt.disabled=false;bt.textContent="Salvar";
+  }
+}
+
+$("#rv-salvar").onclick=salvarResponsavel;
+$("#dlg-responsavel").addEventListener("click",ev=>{if(ev.target.closest("[data-fechar-rv]"))$("#dlg-responsavel").close();});
 
 /* ─────────────── mudar status / encerrar ─────────────── */
 const evidencias={};
@@ -763,7 +897,7 @@ $("#bt-conta").onclick=abrirConta;
 $("#bt-confirmar").onclick=confirmarConta;
 $("#bt-salvar").onclick=salvarVistoria;
 $("#bt-recarregar").onclick=()=>carregarPendencias();
-["#fl-busca","#fl-unidade","#fl-grau","#fl-status"].forEach(s=>{
+["#fl-busca","#fl-unidade","#fl-grau","#fl-status","#fl-vistoria"].forEach(s=>{
   $(s).addEventListener("input",renderAberto);
   $(s).addEventListener("change",renderAberto);
 });
@@ -786,6 +920,9 @@ $("#lista-aberto").addEventListener("click",ev=>{
 
   const zoom=t.closest("[data-lupa],[data-lupa-remota]");
   if(zoom&&zoom.src){const l=$("#lupa");l.querySelector("img").src=zoom.src;l.hidden=false;return;}
+
+  const selv=t.closest("[data-sel-vist]");
+  if(selv){if(selv.dataset.selVist)escolherVistoria(selv.dataset.selVist);return;}
 
   const abrir=t.closest("[data-abrir]");
   if(abrir){abrirFicha(abrir.dataset.abrir);return;}

@@ -173,12 +173,15 @@
     <div class="kpis" id="kpis-aberto"></div>
 
     <div class="filtros">
-      <div class="campo"><label for="fl-busca">Buscar</label><input type="text" id="fl-busca" placeholder="Título, ação, responsável, local"></div>
+      <div class="campo"><label for="fl-vistoria">Vistoria / checklist</label><select id="fl-vistoria"><option value="">Todas</option></select></div>
+      <div class="campo"><label for="fl-busca">Buscar</label><input type="text" id="fl-busca" placeholder="Nº, título, ação, responsável, local"></div>
       <div class="campo"><label for="fl-unidade">Unidade</label><select id="fl-unidade"><option value="">Todas</option></select></div>
       <div class="campo"><label for="fl-grau">Grau</label><select id="fl-grau"><option value="">Todos</option><option>Crítico</option><option>Alto</option><option>Médio</option><option>Baixo</option></select></div>
       <div class="campo"><label for="fl-status">Situação</label><select id="fl-status"><option value="abertos">Em aberto</option><option value="Aberto">Aberto</option><option value="Em andamento">Em andamento</option><option value="Concluído">Concluído</option><option value="">Tudo</option></select></div>
       <button class="bt" type="button" id="bt-recarregar">Recarregar</button>
     </div>
+
+    <div class="barra-vistoria" id="barra-vistoria" hidden></div>
 
     <div id="lista-aberto"></div>
   </section>
@@ -397,6 +400,21 @@
     </span>
     <button class="bt bt-fantasma" type="button" data-fechar-us>Fechar</button>
     <button class="bt bt-forte" type="button" id="us-salvar">Criar login</button>
+  </div>
+</dialog>
+
+<!-- ────────── responsável pela vistoria ────────── -->
+<dialog id="dlg-responsavel">
+  <div class="dlg-topo"><h3>Responsável pela vistoria</h3><button class="x" type="button" data-fechar-rv>×</button></div>
+  <div class="dlg-corpo">
+    <p class="rv-vist" id="rv-vistoria"></p>
+    <div class="campo"><label for="rv-conta">Quem responde por esta vistoria</label><select id="rv-conta"></select></div>
+    <p class="rv-ajuda">A pessoa escolhida passa a ver esta vistoria na aba Em aberto e pode encerrar os apontamentos dela com foto de evidência. Quem lançou continua com acesso. Só administrador faz esta troca.</p>
+    <div class="dlg-erro" id="rv-erro" hidden></div>
+  </div>
+  <div class="dlg-rodape">
+    <button class="bt bt-fantasma" type="button" data-fechar-rv>Cancelar</button>
+    <button class="bt bt-forte" type="button" id="rv-salvar">Salvar</button>
   </div>
 </dialog>
 
