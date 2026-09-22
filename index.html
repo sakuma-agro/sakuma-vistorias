@@ -873,6 +873,38 @@ body.no-inicio .rodape-gr{display:none}
 /* uma assinatura só */
 .ck-assin-grade{grid-template-columns:minmax(0,420px)}
 .pd-assin.um{grid-template-columns:minmax(0,260px)}
+
+/* ─────────── tela inicial: acesso rápido na lateral (modelo do Programação Campo) ─────────── */
+.ini-lateral{display:flex;gap:24px;align-items:flex-start;padding:4px 0 20px}
+.ini-lateral .marca-inicio{flex:1;min-height:0;justify-content:flex-start;padding-top:clamp(20px,7vh,80px)}
+.ql{width:96px;flex:none;display:flex;flex-direction:column;gap:10px}
+.ql-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:76px;
+  padding:12px 4px;border-radius:10px;background:var(--superficie);border:1px solid var(--linha);color:var(--cinza);
+  font:inherit;font-size:11.5px;font-weight:bold;line-height:1.2;text-align:center;cursor:pointer}
+.ql-item svg{width:26px;height:26px;flex:none}
+.ql-item:hover{border-color:var(--verde);background:var(--verde-claro)}
+.ql-item.prim{background:var(--verde);border-color:var(--verde);color:#fff}
+.ql-item.prim:hover{background:var(--verde-esc)}
+.ql-num{position:absolute;top:6px;right:7px;min-width:18px;border-radius:99px;padding:1px 6px;font-size:10px;
+  background:var(--superficie-2);color:var(--cinza)}
+.ql-num.alerta{background:#C0392B;color:#fff}
+@media (max-width:700px){
+  .ini-lateral{flex-direction:column;gap:6px}
+  .ql{width:100%;flex-direction:row;overflow-x:auto;padding-bottom:4px}
+  .ql-item{min-width:86px}
+  .ini-lateral .marca-inicio{padding-top:24px}
+}
+/* assinatura LOP em texto, tamanho intermediário */
+.lop-ass{display:flex;align-items:center;gap:12px;color:var(--texto);margin-top:44px;--h:38px}
+.lop-ass img{height:var(--h);width:auto;display:block;mix-blend-mode:multiply}
+.lop-div{width:2px;align-self:stretch;min-height:calc(var(--h) * .9);background:currentColor;border-radius:1px}
+.lop-txt{display:flex;flex-direction:column;line-height:1.25;text-align:left}
+.lop-txt b{font-size:13.5px;letter-spacing:1.5px}
+.lop-txt span{font-size:10.5px;letter-spacing:1.1px;color:var(--texto-fraco)}
+@media (max-width:560px){ .lop-ass{--h:32px;gap:10px} .lop-txt b{font-size:11.5px;letter-spacing:1.1px} .lop-txt span{font-size:9px;letter-spacing:.8px} }
+/* no tema escuro o símbolo vai numa plaquinha clara, sem mexer no desenho */
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .lop-ass img{mix-blend-mode:normal;background:#fff;border-radius:6px;padding:3px} }
+:root[data-theme="dark"] .lop-ass img{mix-blend-mode:normal;background:#fff;border-radius:6px;padding:3px}
 </style>
 </head>
 <body>
@@ -933,17 +965,25 @@ body.no-inicio .rodape-gr{display:none}
 
   <!-- ────────── tela inicial ────────── -->
   <section class="painel" id="painel-inicio" role="tabpanel" hidden>
-    <div class="marca-inicio">
-      <img class="mi-sakuma" src="img/sakuma-marca-vertical.png" alt="SAKUMA Agronegócios">
-      <h2>Gestão Rápida <span>Vistorias e Segurança</span></h2>
-      <p class="mi-dica" id="mi-dica"></p>
-      <div class="mi-atalhos">
-        <button type="button" class="btn" data-ir="checklists">Checklists prontos</button>
-        <button type="button" class="btn secundario" data-ir="vistoria">Vistoria</button>
-        <button type="button" class="btn secundario" data-ir="aberto">Em aberto <small id="mi-aberto"></small></button>
+    <div class="ini-lateral">
+      <!-- acesso rápido na lateral (mesmo modelo do Programação Campo) -->
+      <nav class="ql" aria-label="Acesso rápido">
+        <button type="button" class="ql-item prim" data-ir="vistoria" title="Vistoria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 9v6M9 12h6"/></svg><span>Vistoria</span></button>
+        <button type="button" class="ql-item " data-ir="checklists" title="Checklists prontos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg><span>Checklists prontos</span></button>
+        <button type="button" class="ql-item " data-ir="aberto" title="Em aberto"><small class="ql-num" id="mi-aberto"></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Em aberto</span></button>
+        <button type="button" class="ql-item " data-ir="relatorio" title="Relatório"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M10 11h6M10 15h6"/></svg><span>Relatório</span></button>
+        <button type="button" class="ql-item " data-ir="config" title="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>Configurações</span></button>
+      </nav>
+      <div class="marca-inicio">
+        <img class="mi-sakuma" src="img/sakuma-marca-vertical.png" alt="SAKUMA Agronegócios">
+        <h2>Gestão Rápida <span>Vistorias e Segurança</span></h2>
+        <p class="mi-dica" id="mi-dica"></p>
+        <div class="mi-modelos" id="mi-modelos"></div>
+        <div class="lop-ass mi-lop-txt" role="img" aria-label="Desenvolvido por LOP — Inteligência para o agronegócio">
+          <img src="img/lop-marca.png" alt=""><span class="lop-div"></span>
+          <span class="lop-txt"><b>DESENVOLVIDO POR LOP</b><span>INTELIGÊNCIA PARA O AGRONEGÓCIO</span></span>
+        </div>
       </div>
-      <div class="mi-modelos" id="mi-modelos"></div>
-      <img class="mi-lop" src="img/lop-assinatura-laser-escuro.png" alt="Desenvolvido por LOP — Inteligência para o agronegócio">
     </div>
   </section>
 
@@ -5174,7 +5214,7 @@ function grRenderInicio(){
   const dica=$("#mi-dica");
   if(dica)dica.innerHTML=`Hoje é ${dias[d.getDay()]}, ${d.toLocaleDateString("pt-BR")}`+
     (abertos?` — <strong>${abertos} apontamento${abertos>1?"s":""} em aberto</strong>.`:".");
-  const n=$("#mi-aberto"); if(n)n.textContent=abertos?abertos+" pendente"+(abertos>1?"s":""):"";
+  const n=$("#mi-aberto"); if(n){n.textContent=abertos?String(abertos):"";n.classList.toggle("alerta",abertos>0);n.hidden=!abertos;}
   const ms=ckModelos(), chaves=Object.keys(ms);
   const alvo=$("#mi-modelos");
   if(alvo)alvo.innerHTML=chaves.length?`<span class="rot">Preencher agora</span>`+
@@ -5205,6 +5245,8 @@ $("#painel-inicio").addEventListener("click",ev=>{
   const q=ir.dataset.ir;
   if(q==="checklists")ckMostrar("lista");
   else if(q==="aberto"){carregarPendencias();aba("aberto");}
+  else if(q==="relatorio"){renderDoc();aba("relatorio");}
+  else if(q==="config"){renderConfig();aba("config");}
   else aba(q);
 });
 
