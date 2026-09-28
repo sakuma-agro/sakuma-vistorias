@@ -156,6 +156,10 @@ body.no-inicio .rodape-gr{display:none}
 .ck-item.r-NC{background:var(--critico-bg);box-shadow:inset 4px 0 0 var(--critico)}
 .ck-item.r-NA{box-shadow:inset 4px 0 0 var(--linha-forte)}
 .ck-txt{font-size:15px;line-height:1.4;margin-bottom:9px;color:var(--cinza)}
+.ck-dica{display:block;font-size:13.5px;color:var(--texto-fraco);margin-top:4px}
+.ck-dica b{color:var(--marrom)}
+.ck-nv{display:inline-block;font-size:11.5px;font-weight:bold;border-radius:5px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.ck-nv-c{background:#FBEDEB;color:#A32015}.ck-nv-M{background:var(--marrom-claro);color:var(--marrom)}.ck-nv-m{background:#ECEDE7;color:var(--cinza)}.ck-nv-r{background:var(--verde-claro);color:var(--verde-esc)}
 .ck-txt .cod{font-weight:bold;color:var(--marrom);margin-right:6px}
 .ck-resp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .ck-bt{min-height:44px;min-width:64px;border:2px solid var(--linha);background:#fff;color:var(--cinza);border-radius:var(--r);
