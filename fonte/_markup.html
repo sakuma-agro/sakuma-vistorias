@@ -190,6 +190,11 @@
   <section class="painel" id="painel-relatorio" role="tabpanel" aria-labelledby="t-relatorio" hidden>
     <div class="barra-doc">
       <button class="bt bt-forte" type="button" id="bt-pdf-2">Imprimir / Salvar em PDF</button>
+      <div class="orient" role="group" aria-label="Formato da folha">
+        <button type="button" class="orient-bt" data-orient="retrato" aria-pressed="true">Retrato</button>
+        <button type="button" class="orient-bt" data-orient="paisagem" aria-pressed="false" title="Folha deitada: cada apontamento com descrição, local, data e as fotos errado × correto lado a lado">Paisagem</button>
+        <button type="button" class="orient-bt" data-orient="prancha" aria-pressed="false" title="Uma folha deitada por apontamento, com as fotos errado × correto grandes, e capa com índice">Prancha</button>
+      </div>
       <button class="bt" type="button" id="bt-exportar" title="Gera um arquivo do relatório para enviar ou guardar — funciona sem internet">Exportar</button>
       <span class="aviso">No Chrome: Imprimir → Destino “Salvar como PDF” → Margens padrão.</span>
     </div>

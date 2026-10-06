@@ -286,6 +286,7 @@ function montarArquivo(){
 <style>${estilo}
 body{background:#fff;padding:0;margin:0}
 .doc{max-width:820px;margin:0 auto;padding:28px 22px}
+.doc:has(.pd-paisagem){max-width:1120px}
 .aviso-exp{max-width:820px;margin:16px auto 0;padding:10px 14px;border:1px solid var(--linha,#DDD);border-radius:10px;font:13px/1.5 system-ui,sans-serif;color:#6b6f63}
 @media print{.aviso-exp{display:none}}
 </style>

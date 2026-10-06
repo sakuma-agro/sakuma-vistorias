@@ -686,6 +686,140 @@ function pdTopico(num,titulo,corpo,cls){
     ${corpo}</section>`;
 }
 
+/* ─────────── relatório em paisagem (fotográfico) ───────────
+   Opção do aparelho, escolhida na aba Relatório. Cada não conformidade vira
+   uma ficha horizontal: descrição, local e data à esquerda e as duas fotos
+   lado a lado — como foi encontrado (errado) e como deve ficar (correto).
+   A folha sai em A4 deitada. Função (e não const) por causa da carga. */
+function pdModo(){
+  let v=""; try{ v=localStorage.getItem("sakuma-orientacao")||""; }catch(e){}
+  return v==="paisagem"||v==="prancha"?v:"retrato";
+}
+/* folha deitada: vale para as fichas e para a prancha fotográfica */
+function pdPaisagem(){ return pdModo()!=="retrato"; }
+
+function pdOrientarPagina(){
+  const deitada=pdPaisagem();
+  let st=document.getElementById("vs-pagina");
+  if(deitada&&!st){
+    st=document.createElement("style"); st.id="vs-pagina";
+    st.textContent="@media print{@page{size:A4 landscape;margin:0 12mm}}";
+    document.head.appendChild(st);
+  }else if(!deitada&&st)st.remove();
+  document.querySelectorAll("[data-orient]").forEach(b=>
+    b.setAttribute("aria-pressed",String(b.dataset.orient===pdModo())));
+}
+
+function pdFichaFoto(f,tipo,rotulo){
+  return `<figure class="pd-fp ${tipo}"><figcaption>${rotulo}</figcaption>
+    ${f&&f.src?`<img src="${esc(f.src)}" alt="">`:`<div class="pd-fp-sem">Sem foto</div>`}</figure>`;
+}
+
+function pdFichas(ap,num,data){
+  return ap.map((a,i)=>{
+    const g=(GRAUS[a.grau]||GRAUS["Médio"]).doc;
+    const fotos=a.fotos||[];
+    const enc=fotos[2]&&fotos[2].src?fotos[2]:null;
+    const req=(a.normas||[]).map(x=>`${esc(x.ref)}${x.item&&x.item!=="—"?", item "+esc(x.item):""}${x.ok===false?" (confirmar item)":""}`).join("; ");
+    const lin=(r,v)=>v?`<div class="pd-fl"><span>${r}</span><div>${v}</div></div>`:"";
+    return `<div class="pd-ficha${enc?" tres":""}">
+      <div class="pd-ficha-txt">
+        <div class="pd-ficha-tt"><b>${num}.${i+1}</b> ${esc(a.titulo)}</div>
+        <div class="pd-ficha-grau"><span class="pd-grau g-${g}">${esc(a.grau||"")}</span></div>
+        ${lin("Local",esc(a.local))}
+        ${lin("Data",data?pdData(data):"")}
+        ${lin("Descrição",nl(a.encontrada))}
+        ${lin("Risco",nl(a.risco))}
+        ${lin("Requisito",req)}
+        ${lin("Ação corretiva",nl(a.acao))}
+        ${lin("Responsável",esc(a.responsavel))}
+        ${lin("Prazo",(a.prazoData?pdData(a.prazoData):esc(a.prazo||"")))}
+        ${lin("Situação",esc(a.situacao))}
+        ${lin("Encerramento",esc(a.encerramento))}
+      </div>
+      ${pdFichaFoto(fotos[0],"errado","✕ Errado — como foi encontrado")}
+      ${pdFichaFoto(fotos[1],"correto","✓ Correto — como deve ficar")}
+      ${enc?pdFichaFoto(enc,"correto","✓ Evidência do encerramento"):""}
+    </div>`;
+  }).join("");
+}
+
+/* o texto inteiro das normas citadas, congelado, logo depois das fichas */
+function pdRequisitos(ap,num){
+  const l=ap.map((a,i)=>(a.normas||[]).length?`<div class="pd-item"><div class="pd-texto"><b>${num}.${i+1}</b> — ${(a.normas||[])
+    .map(x=>`${esc(x.ref)}${x.item&&x.item!=="—"?", item "+esc(x.item):""}: ${esc(x.txt)}`).join("<br>")}</div></div>`:"").join("");
+  return l?`<div class="pd-sub">Requisitos citados</div>`+l:"";
+}
+
+/* ─────────── prancha fotográfica ───────────
+   Capa com os dados, o resumo por grau, o índice com miniatura e as
+   observações; depois uma folha deitada por apontamento, com as fotos do
+   errado e do correto grandes. Sem campos de assinatura. */
+function pdPranchaCapa(d,ap){
+  const c=d.cab||{};
+  const hora=[c.inicio,c.fim].filter(Boolean).join(" às ");
+  const quadro=[["Unidade",c.unidade],["Data",[pdData(c.data),hora].filter(Boolean).join(" · ")],
+    ["Setor",c.setor],["Resp. pela vistoria",c.tecnico],["Resp. do setor",c.responsavelTurma],["Código",c.codigo]]
+    .filter(q=>q[1]);
+  const conta={"Crítico":0,"Alto":0,"Médio":0,"Baixo":0};
+  let aberto=0,vencido=0,encerrado=0;
+  ap.forEach(a=>{
+    if(conta[a.grau]!=null)conta[a.grau]++;
+    if(a.encerramento){encerrado++;return;}
+    aberto++;
+    if(typeof situacaoPrazo==="function"&&situacaoPrazo({status:"Aberto",prazoData:a.prazoData}).cls==="p-vencido")vencido++;
+  });
+  const maior=Math.max(1,...Object.values(conta));
+  const dias=g=>{ try{ const n=regras.dias[g]; return Number.isFinite(n)?n:null; }catch(e){ return null; } };
+  const barras=Object.keys(conta).map(gr=>{const n=dias(gr);
+    return `<div class="cp-g"><span class="cp-rot">${gr}</span><span class="cp-barra"><i class="g-${GRAUS[gr].doc}" style="width:${conta[gr]/maior*100}%"></i></span><b>${conta[gr]}</b>${n!=null?`<small>prazo ${n} dia${n===1?"":"s"}</small>`:""}</div>`;}).join("");
+  const comFolha=!(d.blocos&&d.blocos.length)&&ap.length<=10;
+  const indice=ap.length?`<div class="cp-ind"><div class="cp-sub">Índice dos apontamentos</div>
+    <table><thead><tr><th>Nº</th><th>Foto</th><th>Apontamento</th><th>Local</th><th>Grau</th><th>Responsável</th><th>Prazo</th>${comFolha?"<th>Folha</th>":""}</tr></thead><tbody>
+    ${ap.map((a,i)=>{const f=(a.fotos||[]).find(x=>x&&x.src);
+      return `<tr><td class="n">${i+1}</td><td><div class="cp-mini">${f?`<img src="${esc(f.src)}" alt="">`:""}</div></td><td><b>${esc(a.titulo)}</b></td>
+      <td>${esc(a.local)||"—"}</td><td><span class="pd-grau g-${(GRAUS[a.grau]||GRAUS["Médio"]).doc}">${esc(a.grau||"")}</span></td>
+      <td>${esc(a.responsavel)||"—"}</td><td>${a.prazoData?pdData(a.prazoData):esc(a.prazo)||"—"}</td>${comFolha?`<td class="n">${i+2}</td>`:""}</tr>`;}).join("")}
+    </tbody></table></div>`:`<div class="cp-ind"><div class="cp-sub">Índice dos apontamentos</div><p>Nenhuma não conformidade registrada.</p></div>`;
+  return `<div class="pr-capa">
+    <div class="pd-cab"><div class="pd-titulo"><h1>Relatório fotográfico de vistoria</h1><p>${esc([d.subtitulo,d.codigo].filter(Boolean).join(" · "))}</p></div>
+      <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios"></div>
+    <div class="pd-quadro">${quadro.map(([r,v])=>`<div><span>${esc(r)}</span><b>${esc(v)}</b></div>`).join("")}</div>
+    <div class="cp-meio">
+      <div class="cp-res"><div class="cp-tot"><b>${ap.length}</b><span>apontamento${ap.length===1?"":"s"}</span></div>${barras}
+        <div class="cp-sit"><div><b>${aberto}</b><span>em aberto</span></div><div><b>${vencido}</b><span>vencidos</span></div><div><b>${encerrado}</b><span>encerrados</span></div></div></div>
+      ${indice}
+    </div>
+    ${d.observacoes&&String(d.observacoes).trim()?`<div class="cp-obs"><div class="cp-sub">Observações</div><p>${nl(d.observacoes)}</p></div>`:""}
+  </div>`;
+}
+
+function pdPranchas(d,ap){
+  const c=d.cab||{};
+  return ap.map((a,i)=>{
+    const fotos=a.fotos||[];
+    const enc=fotos[2]&&fotos[2].src?fotos[2]:null;
+    const req=(a.normas||[]).map(x=>`${esc(x.ref)}${x.item&&x.item!=="—"?", item "+esc(x.item):""}${x.ok===false?" (confirmar item)":""}`).join("; ");
+    const foto=(f,tipo,rot)=>`<figure class="${tipo}"><figcaption>${rot}</figcaption>${f&&f.src?`<img src="${esc(f.src)}" alt="">`:`<div class="pr-sem">Sem foto</div>`}</figure>`;
+    const meta=[a.local&&"📍 "+esc(a.local),c.data&&"📅 "+pdData(c.data),esc(d.codigo||"")].filter(Boolean).join(" &nbsp;·&nbsp; ");
+    const campo=(r,v)=>`<div><span>${r}</span>${v||"—"}</div>`;
+    return `<section class="pr">
+      <div class="pr-topo"><span class="pr-n">${i+1}</span><span class="pr-tt">${esc(a.titulo)}</span>
+        <span class="pd-grau g-${(GRAUS[a.grau]||GRAUS["Médio"]).doc}">${esc(a.grau||"")}</span><span class="pr-meta">${meta}</span></div>
+      <div class="pr-fotos${enc?" tres":""}">
+        ${foto(fotos[0],"e","✕ Errado — como foi encontrado")}
+        ${foto(fotos[1],"c","✓ Correto — como deve ficar")}
+        ${enc?foto(enc,"c","✓ Evidência do encerramento"):""}
+      </div>
+      <div class="pr-base">
+        ${campo("Descrição",nl(a.encontrada))}
+        ${campo("Requisito",req)}
+        ${campo("Ação corretiva",nl(a.acao))}
+        <div class="pr-quem"><span>Responsável · Prazo</span>${esc(a.responsavel)||"—"}${a.prazoData||a.prazo?`<b>${a.prazoData?"até "+pdData(a.prazoData):esc(a.prazo)}</b>`:""}${a.situacao?`<em>${esc(a.situacao)}</em>`:""}${a.encerramento?`<em>Encerrado: ${esc(a.encerramento)}</em>`:""}</div>
+      </div></section>`;
+  }).join("");
+}
+
 /* d = {titulo, subtitulo, codigo, logo, quadro:[[rot,val]...], ident:[[rot,val]...],
         blocos:[{titulo, itens:[{cod,txt,r,obs,obsRot,prazo,fotos:[src]}]}],
         apont:[{titulo,grau,local,encontrada,risco,normas:[{ref,item,txt,ok}],requerida,acao,
@@ -694,9 +828,10 @@ function pdTopico(num,titulo,corpo,cls){
 function pdoc(d){
   let n=0;
   const partes=[];
+  const prancha=pdModo()==="prancha";
 
   /* identificação */
-  if(d.ident&&d.ident.length)
+  if(!prancha&&d.ident&&d.ident.length)
     partes.push(pdTopico(null,"Identificação",d.ident.map(([r,v])=>pdLinha(esc(r),esc(v))).join(""),"pd-dados"));
 
   /* resumo do checklist */
@@ -733,7 +868,7 @@ function pdoc(d){
 
   /* não conformidades registradas na vistoria */
   const ap=d.apont||[];
-  if(ap.length){
+  if(ap.length&&!prancha){
     n++;
     const num=n;
     const linhas=ap.map((a,i)=>{
@@ -760,22 +895,23 @@ function pdoc(d){
     const plano=`<table class="pd-plano"><thead><tr><th style="width:40px">Nº</th><th>Ação corretiva</th><th style="width:110px">Responsável</th><th style="width:78px">Prazo</th>${ap.some(a=>a.situacao)?'<th style="width:100px">Situação</th>':""}</tr></thead>
       <tbody>${ap.map((a,i)=>`<tr><td>${num}.${i+1}</td><td>${esc(a.acao)||"—"}</td><td>${esc(a.responsavel)||"—"}</td>
         <td>${a.prazoData?pdData(a.prazoData):esc(a.prazo)||"—"}</td>${ap.some(x=>x.situacao)?`<td>${esc(a.situacao||"")}</td>`:""}</tr>`).join("")}</tbody></table>`;
+    const deitada=pdPaisagem();
     partes.push(pdTopico(num,"Não conformidades e plano de ação",
-      linhas+
+      (deitada?pdFichas(ap,num,d.data)+pdRequisitos(ap,num):linhas)+
       `<div class="pd-sub">Plano de ação</div>`+plano));
   }
 
-  if(d.observacoes&&String(d.observacoes).trim())
+  if(!prancha&&d.observacoes&&String(d.observacoes).trim())
     partes.push(pdTopico(null,"Observações do técnico",
       `<div class="pd-item"><div class="pd-texto">${nl(d.observacoes)}</div></div>`));
 
-  if(d.fecho&&d.fecho.length)
+  if(!prancha&&d.fecho&&d.fecho.length)
     partes.push(pdTopico(null,"Técnico de segurança e responsável do setor",
       d.fecho.map(([r,v])=>pdLinha(esc(r),esc(v))).join(""),"pd-dados"));
 
   /* assinaturas do checklist pronto: feitas na tela, com data e hora; as que
      não foram feitas no app saem com a linha em branco para assinar no papel */
-  if(d.assinaturas&&d.assinaturas.length)
+  if(!prancha&&d.assinaturas&&d.assinaturas.length)
     partes.push(pdTopico(null,d.assinaturas.length>1?"Assinaturas":"Assinatura",`<div class="pd-assin${d.assinaturas.length===1?" um":""}">${d.assinaturas.map(a=>`
       <div class="pd-assin-cx">
         <div class="pd-assin-img">${a.img?`<img src="${a.img}" alt="Assinatura">`:""}</div>
@@ -786,8 +922,14 @@ function pdoc(d){
       </div>`).join("")}</div>`));
 
   const quadro=(d.quadro||[]).filter(q=>q[1]);
-  const rodapeTxt=`${d.codigo||"(sem número)"} · ${d.titulo} · SAKUMA Agronegócios`.replace(/["\\]/g,"");
-  return `
+  const rodapeTxt=`${d.codigo||"(sem número)"} · ${prancha?"Relatório fotográfico":d.titulo} · SAKUMA Agronegócios`.replace(/["\\]/g,"");
+  if(prancha)return `<div class="pd-paisagem pd-prancha" hidden></div>
+    <div class="pd-rodape-fixo">${esc(rodapeTxt)}</div>
+    ${pdPranchaCapa(d,ap)}
+    ${partes.length?`<div class="pr-chk">${partes.join("")}</div>`:""}
+    ${pdPranchas(d,ap)}
+    ${docLop()}`;
+  return `${pdPaisagem()?'<div class="pd-paisagem" hidden></div>':""}
     <div class="pd-rodape-fixo">${esc(rodapeTxt)}</div>
     <div class="pd-cab">
       <div class="pd-titulo"><h1>${esc(d.titulo)}</h1>${d.subtitulo?`<p>${esc(d.subtitulo)}</p>`:""}</div>
@@ -847,7 +989,7 @@ function pdDados(c,m,blocos,apont,logo){
   const assinaturas=m?(Array.isArray(m.assinaturas)&&m.assinaturas.length
       ?m.assinaturas.filter((a,i)=>i===0||a.em)
       :ckPapeis().map(p=>({papel:p,nome:"",img:"",em:""}))):null;
-  return {titulo,subtitulo,codigo:c.codigo,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
+  return {titulo,subtitulo,codigo:c.codigo,data:c.data,cab:c,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
 }
 
 /* ─────────── vistoria salva na base (vistorias.js) ───────────
@@ -1139,6 +1281,14 @@ ckRenderConfig();
 
 /* ─────────── fim da carga ───────────
    Daqui em diante tudo está declarado: libera o relatório e desenha. */
+/* escolha retrato / paisagem do relatório (vale para este aparelho) */
+document.addEventListener("click",ev=>{
+  const b=ev.target.closest&&ev.target.closest("[data-orient]"); if(!b)return;
+  try{ localStorage.setItem("sakuma-orientacao",b.dataset.orient); }catch(e){}
+  pdOrientarPagina(); renderDoc();
+});
+pdOrientarPagina();
+
 window.__vsPronto=true;
 try{ renderDoc(); }catch(e){ console.error("relatório:",e); }
 window.__vsIniciar();
