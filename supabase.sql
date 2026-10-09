@@ -442,3 +442,65 @@ join public.vistorias v on v.id = i.vistoria_id;
 grant select on public.pendencias to authenticated;
 
 notify pgrst, 'reload schema';
+
+-- ─────────────────── 10. Antes e Depois ───────────────────
+-- Registro rápido, fora da vistoria: foto do antes, foto do depois quando o
+-- problema for resolvido, e relatório em paisagem para mostrar à equipe.
+-- Mesma regra de acesso das vistorias: cada conta vê o que lançou; quem tem
+-- "Vê todas" (ve_tudo) vê o de toda a equipe.
+
+create table if not exists public.antes_depois (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  autor         text,
+  codigo        text,
+  titulo        text not null,
+  unidade       text,
+  local         text,
+  descricao     text,
+  data_antes    date,
+  foto_antes    text,          -- caminho no bucket: <id>/antes.jpg
+  data_depois   date,
+  foto_depois   text,          -- caminho no bucket: <id>/depois.jpg
+  obs_depois    text,
+  responsavel   text,
+  criado_em     timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
+);
+
+create index if not exists antes_depois_data_idx on public.antes_depois (data_antes desc);
+
+drop trigger if exists antes_depois_atualizado on public.antes_depois;
+create trigger antes_depois_atualizado before update on public.antes_depois
+  for each row execute function public.marca_atualizacao();
+
+alter table public.antes_depois enable row level security;
+
+drop policy if exists ad_ler     on public.antes_depois;
+drop policy if exists ad_inserir on public.antes_depois;
+drop policy if exists ad_alterar on public.antes_depois;
+drop policy if exists ad_apagar  on public.antes_depois;
+
+create policy ad_ler     on public.antes_depois for select to authenticated using (user_id = auth.uid() or public.ve_tudo());
+create policy ad_inserir on public.antes_depois for insert to authenticated with check (user_id = auth.uid());
+create policy ad_alterar on public.antes_depois for update to authenticated using (user_id = auth.uid() or public.ve_tudo()) with check (user_id = auth.uid() or public.ve_tudo());
+create policy ad_apagar  on public.antes_depois for delete to authenticated using (user_id = auth.uid() or public.eh_admin());
+
+grant select, insert, update, delete on public.antes_depois to authenticated;
+
+-- A foto do antes e depois segue o registro: o caminho começa com o id dele.
+-- Assim quem lançou vê o "depois" mesmo que outra pessoa tenha tirado.
+drop policy if exists fotos_ler on storage.objects;
+create policy fotos_ler on storage.objects for select to authenticated
+  using (bucket_id = 'vistorias' and (
+    public.ve_tudo()
+    or owner = auth.uid()
+    or exists (select 1 from public.vistorias v
+               where (v.user_id = auth.uid() or v.designado_id = auth.uid())
+                 and v.id::text = split_part(name, '/', 1))
+    or exists (select 1 from public.antes_depois a
+               where a.user_id = auth.uid()
+                 and a.id::text = split_part(name, '/', 1))
+  ));
+
+notify pgrst, 'reload schema';
