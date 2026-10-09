@@ -4764,6 +4764,108 @@ const CK_PADRAO = {
       ["Reposição", "Todo item NC vira apontamento com prazo e aparece em Em aberto até ser encerrado com foto do kit completo."],
       ["Frequência", "Conferir o kit todo mês e sempre depois de um uso."]
     ]
+  },
+  /* Moradia dos trabalhadores · Rainforest Alliance 2020 (5.7.1): pedido do Guilherme em 09/10/2026.
+     Parâmetros do Guia K (Housing and living conditions) da Rainforest Alliance. */
+  "modelo:ra-moradia": {
+    sigla:"RA Moradia", titulo:"Vistoria da moradia dos trabalhadores", subtitulo:"Rainforest Alliance 2020 · requisito 5.7.1 (Guia K)",
+    ref:"Rainforest Alliance 2020 · 5.7.1 Moradia e condições de vida",
+    arquivo:"",
+    campos:["Fazenda", "Casa / alojamento", "Morador responsável", "Nº de moradores", "Data da vistoria", "Responsável pela vistoria"],
+    grupos:[
+      {titulo:"Estrutura da casa", itens:[
+        ["1.1", "O piso é firme, seco e acima do nível do chão (cimento, cerâmica, madeira ou similar)?", "Olhe todos os cômodos. Chão de terra batida sem tratamento: NC."],
+        ["1.2", "As paredes são permanentes e sem rachaduras que ofereçam risco?", "Procure rachaduras grandes, partes soltas, buracos."],
+        ["1.3", "O telhado não tem goteiras nem telhas quebradas?", "Olhe o forro e o teto por dentro: manchas de umidade indicam goteira."],
+        ["1.4", "A casa está em local seguro, sem risco de alagamento ou deslizamento?", "Veja o entorno, o caminho da água da chuva e barrancos próximos."],
+        ["1.5", "Os cômodos têm ventilação e luz natural suficientes?", "Janelas que abrem e iluminação adequada durante o dia."],
+        ["1.6", "Há energia elétrica e luz artificial suficiente nos cômodos?", "Se há energia na região, a casa deve ter."]
+      ]},
+      {titulo:"Água potável", itens:[
+        ["2.1", "Há água potável disponível, no mínimo 20 litros por pessoa por dia?", "Veja de onde vem a água e se chega a todos os moradores."],
+        ["2.2", "A água está a menos de 1 km ou 30 minutos (ida e volta) da casa?", "Se a água é canalizada até a casa, é Conforme."],
+        ["2.3", "A caixa d'água está tampada e foi limpa nos últimos 6 meses?", "Limpeza no mínimo 2 vezes por ano. Peça o registro ou a data da última limpeza."],
+        ["2.4", "Há análise da qualidade da água feita antes da última auditoria?", "Laudo de análise da água."]
+      ]},
+      {titulo:"Banheiro e higiene", itens:[
+        ["3.1", "Há 1 vaso sanitário, 1 chuveiro e 1 pia para cada até 15 pessoas?", "Conte os moradores e os equipamentos."],
+        ["3.2", "O banheiro fica a no máximo 60 metros dos quartos?", "Banheiro dentro da casa é Conforme."],
+        ["3.3", "O banheiro tem porta com tranca e divisória do chão ao teto?", "Privacidade de quem usa."],
+        ["3.4", "Em alojamento coletivo, há banheiros separados para homens e mulheres?", "Casa de uma família só: marque Não se aplica."],
+        ["3.5", "O banheiro está limpo e funcionando (descarga, chuveiro, pia com torneira)?", "Teste a descarga e a torneira."]
+      ]},
+      {titulo:"Cozinha e alimentos", itens:[
+        ["4.1", "O local de cozinhar tem saída para a fumaça (janela, chaminé ou coifa)?", "Fogão a lenha sem chaminé dentro de casa: NC."],
+        ["4.2", "Os alimentos ficam guardados protegidos de umidade, ratos e insetos?", "Armário fechado, potes com tampa."],
+        ["4.3", "Os alimentos ficam longe de produtos químicos, combustível e agrotóxicos?", "Nada de defensivo, óleo ou gasolina na cozinha ou na despensa."],
+        ["4.4", "O banheiro não abre direto para a cozinha?", "Porta do banheiro dando para a área de preparo de alimentos: NC."]
+      ]},
+      {titulo:"Quartos", itens:[
+        ["5.1", "Cada trabalhador tem a sua própria cama (sem revezamento de cama)?", "Conte camas e moradores."],
+        ["5.2", "Há pelo menos 1 metro entre as camas (0,7 m livre entre beliches)?", "Meça com trena em alojamento coletivo."],
+        ["5.3", "Cada trabalhador tem armário próprio ou 1 metro de prateleira?", "Em casa de família, avalie se há onde guardar as coisas de cada um."],
+        ["5.4", "Em alojamento coletivo, os quartos são separados para homens e mulheres e têm tranca?", "Casa de uma família só: marque Não se aplica."],
+        ["5.5", "Famílias com crianças têm quartos separados de trabalhadores que não são da família?", "Se não houver outros moradores, marque Não se aplica."]
+      ]},
+      {titulo:"Segurança", itens:[
+        ["6.1", "A instalação elétrica está segura (sem fios expostos, gambiarras ou tomadas soltas)?", "Olhe tomadas, interruptores e o quadro de luz."],
+        ["6.2", "Em alojamento coletivo, há extintor, saída de emergência sinalizada e instrução de uso?", "Casa de uma família só: marque Não se aplica."],
+        ["6.3", "A casa respeita a faixa sem aplicação de agrotóxico em volta da moradia?", "Veja a distância até a lavoura tratada mais próxima."],
+        ["6.4", "A casa não recebe cheiro ou vapor de agrotóxico, combustível ou outros produtos?", "Depósito de defensivo, tanque de diesel ou oficina próximos: NC."],
+        ["6.5", "Os moradores conhecem o plano de evacuação e o ponto de encontro?", "Pergunte a um morador."]
+      ]},
+      {titulo:"Arredores", itens:[
+        ["7.1", "Não há água parada em volta da casa e a drenagem funciona?", "Procure poças, calhas entupidas, valas sem saída."],
+        ["7.2", "O lixo é separado em orgânico e reciclável e a lixeira é esvaziada com frequência?", "Veja as lixeiras e o lugar onde o lixo é juntado."],
+        ["7.3", "O esgoto e o lixo ficam a mais de 50 metros de nascentes ou poços de água para beber?", "Veja onde ficam a fossa e o poço."],
+        ["7.4", "Não há sinais de ratos, baratas, escorpiões ou outras pragas?", "Fezes, tocas, insetos nos cantos e armários."]
+      ]},
+      {titulo:"Crianças", itens:[
+        ["8.1", "As crianças em idade escolar que moram na casa estão frequentando a escola?", "Pergunte aos pais. Sem crianças: marque Não se aplica. (Requisito 5.7.2.)"],
+        ["8.2", "Há transporte ou escola a uma distância razoável (até 3 km para 5 a 10 anos; até 5 km para 10 a 15 anos)?", "Pergunte como as crianças vão para a escola. (Requisito 5.7.2.)"],
+        ["8.3", "As crianças ficam com um adulto responsável durante o horário de trabalho dos pais?", "Pergunte quem cuida delas."]
+      ]}
+    ],
+    orientacoes:[
+      ["Classificação", "C = Conforme | NC = Não Conforme | NA = Não Aplicável"],
+      ["Base", "Rainforest Alliance 2020, requisito 5.7.1 (moradia) e 5.7.2 (escola), com os parâmetros do Guia K da Rainforest Alliance."],
+      ["Fotos", "Fotografe cada NC. Ela vira apontamento com prazo em Em aberto até ser encerrada com foto da correção."],
+      ["Lei local", "Se a lei ou o acordo coletivo for mais exigente, vale o mais exigente."],
+      ["Respeito", "É a casa do morador: peça licença antes de entrar e de fotografar os cômodos."]
+    ]
+  },
+  /* Extintores: pedido do Guilherme em 09/10/2026 — bem simples, um extintor por checklist. */
+  "modelo:extintores": {
+    sigla:"Extintores", titulo:"Checklist de extintores", subtitulo:"Inspeção visual rápida · NR-23",
+    ref:"NR-23 · ABNT NBR 12962 (inspeção e manutenção de extintores)",
+    arquivo:"",
+    campos:["Unidade", "Local do extintor", "Identificação do extintor (número ou placa)", "Tipo e capacidade", "Data da verificação", "Responsável pela verificação"],
+    grupos:[
+      {titulo:"Local", itens:[
+        ["1.1", "O extintor está no local indicado e com sinalização visível (placa e pintura no piso, se exigida)?", "Placa acima do extintor; em galpão e garagem, também a pintura no piso."],
+        ["1.2", "O acesso está livre, sem nada na frente do extintor?", "Nada de caixas, sacarias, máquinas ou veículos bloqueando."],
+        ["1.3", "Está bem fixado na parede ou no suporte, com a alça a no máximo 1,60 m do chão?", "Meça do chão até a alça."],
+        ["1.4", "O tipo do extintor é o certo para o risco do local (água, pó, CO₂)?", "Água: madeira e papel. Pó ABC: uso geral. CO₂: painel elétrico."]
+      ]},
+      {titulo:"Condição", itens:[
+        ["2.1", "O ponteiro do manômetro está na faixa verde?", "Extintor de CO₂ não tem manômetro: marque Não se aplica."],
+        ["2.2", "O lacre e o pino de segurança estão no lugar e inteiros?", "Lacre rompido indica que pode ter sido usado."],
+        ["2.3", "A mangueira e o difusor estão inteiros, sem rachadura nem entupimento?", "Dobre levemente a mangueira e olhe a ponta."],
+        ["2.4", "O cilindro está sem ferrugem, amassado ou pintura descascada?", "Olhe principalmente a base."],
+        ["2.5", "O selo do INMETRO e o quadro de instruções estão legíveis?", "Etiqueta no corpo do extintor."]
+      ]},
+      {titulo:"Prazos", itens:[
+        ["3.1", "Validade da carga (recarga anual) dentro do prazo?", "Etiqueta da empresa de recarga. Anote a data de validade ao lado."],
+        ["3.2", "Validade do teste hidrostático (a cada 5 anos) dentro do prazo?", "Ano gravado no anel ou na etiqueta do teste. Anote a data ao lado."]
+      ]}
+    ],
+    orientacoes:[
+      ["Classificação", "C = Conforme | NC = Não Conforme | NA = Não Aplicável"],
+      ["Um por vez", "Um checklist para cada extintor: preencha o número e o local no cabeçalho."],
+      ["Validade", "Os itens de validade têm campo de data: o app avisa se está vencido ou se vence em até 30 dias."],
+      ["NC", "Extintor com NC vira apontamento com prazo e fica em Em aberto até ser encerrado com foto."],
+      ["Frequência", "Inspeção visual todo mês; recarga uma vez por ano; teste hidrostático a cada 5 anos."]
+    ]
   }
 };
 
