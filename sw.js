@@ -2,7 +2,7 @@
    Guarda a casca do app para abrir sem internet. Nunca guarda chamada de API:
    tudo que vai para o Supabase passa direto pela rede.
    Ao publicar uma versão nova, mude o número em VERSAO. */
-const VERSAO = "v27";
+const VERSAO = "v28";
 const CACHE = `sakuma-vistorias-${VERSAO}`;
 
 const CASCA = [
@@ -11,13 +11,13 @@ const CASCA = [
   "./config.js",
   "./vistorias.js",
   "./manifest.webmanifest",
-  "./icons/lop-gr-192.v1.png",
-  "./icons/lop-gr-512.v1.png",
-  "./icons/lop-gr-maskable-192.v1.png",
-  "./icons/lop-gr-maskable-512.v1.png",
-  "./icons/lop-gr-180.v1.png",
-  "./icons/lop-gr-32.v1.png",
-  "./icons/lop-gr-favicon.v1.ico",
+  "./icons/lop-vs-192.v1.png",
+  "./icons/lop-vs-512.v1.png",
+  "./icons/lop-vs-maskable-192.v1.png",
+  "./icons/lop-vs-maskable-512.v1.png",
+  "./icons/lop-vs-180.v1.png",
+  "./icons/lop-vs-32.v1.png",
+  "./icons/lop-vs-favicon.v1.ico",
   "./img/sakuma-marca-vertical.png",
   "./img/lop-assinatura-laser-escuro.png",
   "./img/lop-marca.png"

@@ -68,10 +68,10 @@ CABECA = '''<meta charset="utf-8">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#84BD00">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="icons/lop-gr-favicon.v1.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/lop-gr-32.v1.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/lop-gr-192.v1.png">
-<link rel="apple-touch-icon" href="icons/lop-gr-180.v1.png">
+<link rel="icon" href="icons/lop-vs-favicon.v1.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/lop-vs-32.v1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/lop-vs-192.v1.png">
+<link rel="apple-touch-icon" href="icons/lop-vs-180.v1.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vistorias">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">

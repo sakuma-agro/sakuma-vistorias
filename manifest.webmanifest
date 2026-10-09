@@ -29,25 +29,25 @@
   ],
   "icons": [
     {
-      "src": "icons/lop-gr-192.v1.png",
+      "src": "icons/lop-vs-192.v1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/lop-gr-512.v1.png",
+      "src": "icons/lop-vs-512.v1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/lop-gr-maskable-192.v1.png",
+      "src": "icons/lop-vs-maskable-192.v1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icons/lop-gr-maskable-512.v1.png",
+      "src": "icons/lop-vs-maskable-512.v1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -60,7 +60,7 @@
       "url": "./?aba=checklists",
       "icons": [
         {
-          "src": "icons/lop-gr-192.v1.png",
+          "src": "icons/lop-vs-192.v1.png",
           "sizes": "192x192"
         }
       ]
@@ -71,7 +71,7 @@
       "url": "./?acao=nova",
       "icons": [
         {
-          "src": "icons/lop-gr-192.v1.png",
+          "src": "icons/lop-vs-192.v1.png",
           "sizes": "192x192"
         }
       ]
@@ -82,7 +82,7 @@
       "url": "./?aba=aberto",
       "icons": [
         {
-          "src": "icons/lop-gr-192.v1.png",
+          "src": "icons/lop-vs-192.v1.png",
           "sizes": "192x192"
         }
       ]
