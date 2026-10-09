@@ -504,3 +504,45 @@ create policy fotos_ler on storage.objects for select to authenticated
   ));
 
 notify pgrst, 'reload schema';
+
+-- ─────────────────── 11. Extintores ───────────────────
+-- Cadastro fixo dos extintores das fazendas, com a validade da carga (recarga
+-- anual) e do teste hidrostático (5 anos). O app calcula a validade a partir da
+-- data, mas aceita a data digitada quando a empresa de recarga usa outro prazo.
+-- Cadastro compartilhado: toda a equipe vê e atualiza; só administrador apaga.
+
+create table if not exists public.extintores (
+  id               uuid primary key default gen_random_uuid(),
+  user_id          uuid not null default auth.uid() references auth.users(id),
+  codigo           text not null,
+  unidade          text,
+  local            text,
+  tipo             text,
+  capacidade       text,
+  recarga_data     date,
+  recarga_validade date,
+  teste_data       date,
+  teste_validade   date,
+  obs              text,
+  ativo            boolean not null default true,
+  criado_em        timestamptz not null default now(),
+  atualizado_em    timestamptz not null default now()
+);
+create index if not exists extintores_unidade_idx on public.extintores (unidade);
+
+drop trigger if exists extintores_atualizado on public.extintores;
+create trigger extintores_atualizado before update on public.extintores
+  for each row execute function public.marca_atualizacao();
+
+alter table public.extintores enable row level security;
+drop policy if exists ext_ler     on public.extintores;
+drop policy if exists ext_inserir on public.extintores;
+drop policy if exists ext_alterar on public.extintores;
+drop policy if exists ext_apagar  on public.extintores;
+create policy ext_ler     on public.extintores for select to authenticated using (true);
+create policy ext_inserir on public.extintores for insert to authenticated with check (user_id = auth.uid());
+create policy ext_alterar on public.extintores for update to authenticated using (true) with check (true);
+create policy ext_apagar  on public.extintores for delete to authenticated using (public.eh_admin());
+grant select, insert, update, delete on public.extintores to authenticated;
+
+notify pgrst, 'reload schema';

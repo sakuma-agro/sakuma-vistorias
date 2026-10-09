@@ -38,6 +38,7 @@
     <button class="aba" id="t-inicio" role="tab" aria-selected="false" aria-controls="painel-inicio" hidden>Início</button>
     <button class="aba" id="t-checklists" role="tab" aria-selected="false" aria-controls="painel-checklists">Checklists prontos</button>
     <button class="aba" id="t-ad" role="tab" aria-selected="false" aria-controls="painel-ad">Antes e Depois <b class="n" id="cont-ad" hidden>0</b></button>
+    <button class="aba" id="t-ex" role="tab" aria-selected="false" aria-controls="painel-ex">Extintores <b class="n alerta-n" id="cont-ex" hidden>0</b></button>
     <button class="aba" id="t-vistoria" role="tab" aria-selected="true" aria-controls="painel-vistoria">Vistoria <b class="n" id="cont-itens">0</b></button>
     <button class="aba" id="t-aberto" role="tab" aria-selected="false" aria-controls="painel-aberto">Em aberto <b class="n" id="cont-aberto">0</b></button>
     <button class="aba" id="t-relatorio" role="tab" aria-selected="false" aria-controls="painel-relatorio">Relatório</button>
@@ -62,6 +63,7 @@
         <button type="button" class="ql-item prim" data-ir="vistoria" title="Vistoria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 9v6M9 12h6"/></svg><span>Vistoria</span></button>
         <button type="button" class="ql-item " data-ir="checklists" title="Checklists prontos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg><span>Checklists prontos</span></button>
         <button type="button" class="ql-item " data-ir="ad" title="Antes e Depois"><small class="ql-num" id="mi-ad" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.5"/><rect x="13.5" y="6" width="8" height="12" rx="1.5"/><path d="M5 14l2-2 2 2M16 12l1.5 1.5L20 11"/></svg><span>Antes e Depois</span></button>
+        <button type="button" class="ql-item " data-ir="ex" title="Extintores"><small class="ql-num alerta" id="mi-ex" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="7" width="8" height="14" rx="3"/><path d="M10 7V4h4v3M14 4h3l2 2M12 11v4"/></svg><span>Extintores</span></button>
         <button type="button" class="ql-item " data-ir="aberto" title="Em aberto"><small class="ql-num" id="mi-aberto"></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Em aberto</span></button>
         <button type="button" class="ql-item " data-ir="relatorio" title="Relatório"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M10 11h6M10 15h6"/></svg><span>Relatório</span></button>
         <button type="button" class="ql-item " data-ir="config" title="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>Configurações</span></button>
@@ -90,6 +92,12 @@
     <div id="ad-lista"></div>
     <div id="ad-form" hidden></div>
     <div id="ad-previa" hidden></div>
+  </section>
+
+  <!-- ────────── extintores ────────── -->
+  <section class="painel" id="painel-ex" role="tabpanel" aria-labelledby="t-ex" hidden>
+    <div id="ex-lista"></div>
+    <div id="ex-form" hidden></div>
   </section>
 
   <!-- ────────── painel vistoria ────────── -->
@@ -453,3 +461,4 @@
 
 <!-- ────────── antes e depois: o que vai para a impressão ────────── -->
 <div id="ad-imprimir" hidden></div>
+<div id="ex-imprimir" hidden></div>

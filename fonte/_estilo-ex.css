@@ -1,0 +1,59 @@
+
+/* ═══════════════════════════ Extintores ═══════════════════════════ */
+body[data-aba="ex"] #bt-salvar,body[data-aba="ex"] #bt-pdf,body[data-aba="ex"] .status{display:none}
+.aba .n.alerta-n{background:#C0392B;color:#fff}
+.ex-topo-bts{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.ex-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.ex-kpi{background:#fff;border:1px solid var(--linha);border-left:5px solid var(--cinza);border-radius:var(--r);padding:10px 12px;
+  text-align:left;cursor:pointer;font:inherit;display:grid;gap:2px;color:var(--cinza);min-height:64px}
+.ex-kpi b{font-size:24px;line-height:1.1}
+.ex-kpi span{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--texto-fraco)}
+.ex-kpi.venc{border-left-color:#C0392B}.ex-kpi.venc b{color:#C0392B}
+.ex-kpi.breve{border-left-color:var(--alto)}.ex-kpi.breve b{color:var(--alto)}
+.ex-kpi.ok{border-left-color:var(--verde)}.ex-kpi.ok b{color:var(--verde-esc)}
+.ex-kpi.sem{border-left-color:var(--linha-forte)}
+.ex-kpi[aria-pressed="true"]{box-shadow:0 0 0 2px var(--verde);border-color:var(--verde)}
+@media (max-width:640px){ .ex-kpis{grid-template-columns:repeat(2,1fr)} .ex-kpis .ex-kpi:first-child{grid-column:1/-1} }
+
+.ex-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.ex-grade>.vazio{grid-column:1/-1}
+.ex-card{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;text-align:left;font:inherit;cursor:pointer;
+  background:#fff;border:1px solid var(--linha);border-left:5px solid var(--verde);border-radius:var(--r);padding:12px 14px;color:var(--texto)}
+.ex-card.venc{border-left-color:#C0392B}.ex-card.breve{border-left-color:var(--alto)}.ex-card.sem{border-left-color:var(--linha-forte)}
+.ex-card:hover{border-color:var(--verde)}
+.ex-num{grid-row:span 2;min-width:52px;height:52px;padding:0 8px;border-radius:10px;background:var(--superficie-2);display:flex;align-items:center;justify-content:center;
+  font-weight:bold;font-size:17px;color:var(--cinza)}
+.ex-info{display:grid}
+.ex-info b{font-size:15px;color:var(--cinza)}
+.ex-info small{font-size:13px;color:var(--texto-fraco)}
+.ex-datas{display:grid;gap:3px}
+.ex-datas>span{display:flex;align-items:center;gap:6px;font-size:12px}
+.ex-datas i{font-style:normal;width:38px;color:var(--texto-fraco)}
+.ex-selo{display:inline-block;font-size:12px;font-weight:bold;border-radius:12px;padding:2px 9px;border:1px solid}
+.ex-selo.ok{color:var(--verde-esc);background:var(--verde-claro);border-color:var(--verde)}
+.ex-selo.breve{color:#8A4B00;background:#FCF2E4;border-color:var(--alto)}
+.ex-selo.venc{color:#fff;background:#C0392B;border-color:#C0392B}
+.ex-selo.sem{color:var(--texto-fraco);background:var(--superficie-2);border-color:var(--linha-forte)}
+.ex-prazos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0 6px}
+.ex-dica-val{margin:0 0 16px}
+@media (max-width:640px){ .ex-prazos{grid-template-columns:1fr} }
+
+/* lista impressa: A4 em pé */
+#ex-imprimir{display:none}
+.exr-doc{font-family:Arial,Helvetica,sans-serif;color:#51534A;display:flex;flex-direction:column;gap:4mm;padding:10mm 0 8mm}
+.exr-kpis{grid-template-columns:repeat(4,1fr)}
+.exr-kpis .exr-k-venc{border-left-color:#C0392B}.exr-kpis .exr-k-venc b{color:#C0392B}
+.exr-tab td{font-size:10.5px}
+.exr-tab tr{break-inside:avoid;page-break-inside:avoid}
+.exr-tab thead{display:table-header-group}
+td.exr-venc{background:#FBEDEB!important;color:#A32015}
+td.exr-breve{background:#FCF2E4!important;color:#8A4B00}
+td.exr-ok{color:#5D8700}
+@media print{
+  body.ex-imprimindo>*:not(#ex-imprimir){display:none!important}
+  body.ex-imprimindo #ex-imprimir{display:block!important}
+  body.ex-imprimindo .exr-doc{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .exr-doc,.exr-doc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.ad-filtros input[type=search]{border:1px solid var(--linha-forte);background:var(--superficie);border-radius:7px;padding:8px 10px;font:inherit;font-size:14px;color:var(--texto)}
+.ad-filtros input[type=search]:focus{border-color:var(--verde);outline:none;box-shadow:0 0 0 3px var(--verde-claro)}
