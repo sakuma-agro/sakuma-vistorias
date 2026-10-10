@@ -144,7 +144,8 @@ async function adApagar(){
     const d=await rest(`antes_depois?id=eq.${encodeURIComponent(r.id)}`,{method:"DELETE",headers:{Prefer:"return=representation"}});
     if(!d||!d.length)throw new Error("Só quem lançou ou um administrador pode apagar.");
     for(const cam of [r.foto_antes,r.foto_depois].filter(Boolean)){
-      try{ const h=await comToken(); await fetch(`${cfg.url}/storage/v1/object/${encodeURI("vistorias/"+cam)}`,{method:"DELETE",headers:h}); }catch(e){}
+      try{ if(typeof window.apagarFoto==="function")await window.apagarFoto(cam);
+           else{ const h=await comToken(); await fetch(`${cfg.url}/storage/v1/object/${encodeURI("vistorias/"+cam)}`,{method:"DELETE",headers:h}); } }catch(e){}
     }
     adRegs=adRegs.filter(x=>x.id!==r.id);
     try{ localStorage.setItem(AD_CACHE,JSON.stringify(adRegs)); }catch(e){}

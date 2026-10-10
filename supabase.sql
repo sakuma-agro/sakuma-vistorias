@@ -546,3 +546,53 @@ create policy ext_apagar  on public.extintores for delete to authenticated using
 grant select, insert, update, delete on public.extintores to authenticated;
 
 notify pgrst, 'reload schema';
+
+-- ─────────────────── 12. Fotos no Google Drive ───────────────────
+-- As fotos novas vão para o Drive da conta escritoriosakuma1@gmail.com, pela
+-- Edge Function "fotos" (supabase-funcoes/fotos). Esta tabela liga o caminho da
+-- foto (o mesmo formato do bucket: <id da vistoria>/<arquivo>.jpg) ao arquivo no
+-- Drive. Fotos antigas continuam no bucket "vistorias" até serem migradas.
+-- As regras repetem as do bucket: qualquer conta envia e troca; só quem enviou
+-- apaga; ver segue foto_pode_ver (mesma regra de fotos_ler).
+
+create table if not exists public.fotos_drive (
+  caminho       text primary key,
+  drive_id      text not null,
+  tamanho       integer,
+  user_id       uuid not null default auth.uid() references auth.users(id),
+  criado_em     timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
+);
+
+drop trigger if exists fotos_drive_atualizado on public.fotos_drive;
+create trigger fotos_drive_atualizado before update on public.fotos_drive
+  for each row execute function public.marca_atualizacao();
+
+alter table public.fotos_drive enable row level security;
+drop policy if exists fd_ler     on public.fotos_drive;
+drop policy if exists fd_inserir on public.fotos_drive;
+drop policy if exists fd_trocar  on public.fotos_drive;
+drop policy if exists fd_apagar  on public.fotos_drive;
+create policy fd_ler     on public.fotos_drive for select to authenticated using (true);
+create policy fd_inserir on public.fotos_drive for insert to authenticated with check (user_id = auth.uid());
+create policy fd_trocar  on public.fotos_drive for update to authenticated using (true) with check (true);
+create policy fd_apagar  on public.fotos_drive for delete to authenticated using (user_id = auth.uid());
+grant select, insert, update, delete on public.fotos_drive to authenticated;
+
+-- Quem pode ver uma foto: a mesma regra da política fotos_ler do bucket.
+create or replace function public.foto_pode_ver(p_caminho text)
+returns boolean language sql stable security definer set search_path = public as $$
+  select public.ve_tudo()
+      or exists (select 1 from public.fotos_drive f where f.caminho = p_caminho and f.user_id = auth.uid())
+      or exists (select 1 from storage.objects o
+                 where o.bucket_id = 'vistorias' and o.name = p_caminho and o.owner = auth.uid())
+      or exists (select 1 from public.vistorias v
+                 where (v.user_id = auth.uid() or v.designado_id = auth.uid())
+                   and v.id::text = split_part(p_caminho, '/', 1))
+      or exists (select 1 from public.antes_depois a
+                 where a.user_id = auth.uid() and a.id::text = split_part(p_caminho, '/', 1));
+$$;
+revoke all on function public.foto_pode_ver(text) from public, anon;
+grant execute on function public.foto_pode_ver(text) to authenticated;
+
+notify pgrst, 'reload schema';

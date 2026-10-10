@@ -81,6 +81,7 @@ CABECA = '''<meta charset="utf-8">
 corpo = (markup + '\n<script src="config.js"></script>\n<script>\n' + script + '\n' + extra
          + '\n</script>\n<script>\n' + open('_script-ad.js', encoding='utf-8').read()
          + '\n</script>\n<script>\n' + open('_script-ex.js', encoding='utf-8').read()
+         + '\n</script>\n<script>\n' + open('_script-fotos.js', encoding='utf-8').read()
          + '\n</script>\n<script src="vistorias.js"></script>\n')
 open('../index.html','w',encoding='utf-8').write(
  f'<!doctype html>\n<html lang="pt-BR" data-theme="light">\n<head>\n{CABECA}\n<style>{estilo}</style>\n</head>\n<body>\n{corpo}</body>\n</html>\n')
