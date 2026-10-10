@@ -2020,17 +2020,21 @@ function carregar(){
 }
 
 /* ══════════════════════════ imagens ══════════════════════════ */
+/* Tamanho das fotos gravadas: 1280 px no lado maior, qualidade 0,65.
+   Até a v30 era 1400 px / 0,82 (~550 KB por foto); assim fica ~300 KB, ainda
+   nítida para ler etiqueta e manômetro, e o 1 GB gratuito da base rende o dobro. */
+const FOTO_MAX=1280, FOTO_QUALIDADE=0.65;
 function comprimir(file,cb){
   const fr=new FileReader();
   fr.onload=()=>{
     const img=new Image();
     img.onload=()=>{
-      const max=1400;
+      const max=FOTO_MAX;
       let{width:w,height:h}=img;
       if(Math.max(w,h)>max){const f=max/Math.max(w,h);w=Math.round(w*f);h=Math.round(h*f);}
       const c=document.createElement("canvas");c.width=w;c.height=h;
       c.getContext("2d").drawImage(img,0,0,w,h);
-      cb(c.toDataURL("image/jpeg",0.82));
+      cb(c.toDataURL("image/jpeg",FOTO_QUALIDADE));
     };
     img.onerror=()=>toast("Não foi possível ler essa imagem.");
     img.src=fr.result;
