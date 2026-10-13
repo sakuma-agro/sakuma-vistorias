@@ -306,7 +306,8 @@ const CK_PADRAO = {
         ["1.4", "PL", "", "", "texto"],
         ["1.5", "Cultura", "", "", "texto"],
         ["1.6", "Variedade", "", "", "texto"],
-        ["1.7", "Responsável pela Turma", "", "", "texto"]
+        ["1.7", "Responsável pela Turma", "", "", "texto"],
+        ["1.8", "Ticket interno (Controle de Carregamento)", "Nº do ticket — e anexe a foto", "", "texto"]
       ]},
       {titulo:"Avaliação", itens:[
         ["2.1", "Área está liberada para colheita?"],
@@ -656,7 +657,7 @@ function ckRenderPreencher(){
         if(tp){
           const atr=`data-chk-val="1" data-bloco="${esc(b.id)}" data-n="${it.n}"`;
           const campo=tp==="longo"?`<textarea class="ck-tp-campo" rows="2" ${atr}>${esc(it.val||"")}</textarea>`
-            :`<input class="ck-tp-campo" type="${tp==="data"?"date":"text"}" value="${esc(it.val||"")}" ${atr}>`;
+            :`<input class="ck-tp-campo" type="${tp==="data"?"date":"text"}" value="${esc(it.val||"")}" placeholder="${esc(it.dica||"")}" ${atr}>`;
           return `<div class="ck-item ck-item-tp${it.val?" r-ok":""}">
         <div class="ck-txt"><span class="cod">${esc(it.cod||(bi+1)+"."+it.n)}</span>${esc(it.txt)}</div>
         <div class="ck-resp">${campo}
