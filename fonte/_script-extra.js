@@ -2043,6 +2043,7 @@ async function chkEnviarFotos(){
         fotos:(it.fotos||[]).filter(f=>f.path).map(f=>({path:f.path}))};
       if(it.cod)o.cod=it.cod;
       if(it.val)o.val=it.val;
+      if(it.tp)o.tp=it.tp;
       if(it.r==="NC"){
         const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
         if(ap&&ap.prazoData)o.prazo=ap.prazoData;

@@ -439,3 +439,15 @@ body.no-inicio .rodape-gr{display:none}
   .pr-fotos.tres img,.pr-fotos.tres .pr-sem{height:80mm}
   .cp-ind tr{break-inside:avoid;page-break-inside:avoid}
 }
+
+/* FORMAGR-02: quadro de controle do documento e itens com resposta em texto/data */
+.pd-controle{border-collapse:collapse;font-size:10.5px;color:#51534A;margin-left:auto;align-self:center}
+.pd-controle th,.pd-controle td{border:1px solid #B9BBB2;padding:2px 8px;text-align:left;white-space:nowrap}
+.pd-controle th{font-weight:normal;color:#744F28;background:#F1F7E4}
+.pd-controle td{font-weight:bold}
+.pd-r.pd-valor{font-weight:bold;color:#51534A}
+.ck-item-tp .ck-resp{flex-wrap:wrap}
+.ck-tp-campo{flex:1 1 220px;min-width:0;font:inherit;padding:8px 10px;border:1px solid var(--linha,#ccc);border-radius:8px;background:var(--campo,#fff);color:inherit}
+textarea.ck-tp-campo{resize:vertical}
+.ck-item-tp.r-ok{border-left-color:#84BD00}
+@media (max-width:600px){.pd-controle{font-size:9.5px}}

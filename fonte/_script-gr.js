@@ -286,6 +286,45 @@ const CK_PADRAO = {
     ]
   },
   /* Extintores: pedido do Guilherme em 09/10/2026 — bem simples, um extintor por checklist. */
+  /* FORMAGR-02: pedido do Guilherme em 13/10/2026 — idêntico ao CHECK LIST
+     COLHEITA da PariPassu (CLICQ). Quinto campo do item = tipo da resposta:
+     "texto", "longo" ou "data" no lugar de C/NC/NA. "controle" sai no quadro
+     de código/data/revisão do cabeçalho do relatório. */
+  "modelo:formagr-02-colheita": {
+    sigla:"FORMAGR-02", titulo:"Inspeção Colheita", subtitulo:"FORMAGR-02 – Inspeção de Colheita",
+    ref:"FORMAGR-02 – Inspeção de Colheita",
+    arquivo:"",
+    controle:{codigo:"FORMAGR-002-00", data:"2024-12-01", revisao:"1"},
+    papeis:["Avaliador"],
+    soQuadro:true,
+    campos:["Data da verificação", "Início", "Fim"],
+    grupos:[
+      {titulo:"Identificação", itens:[
+        ["1.1", "Fazenda", "", "", "texto"],
+        ["1.2", "Romaneio", "", "", "texto"],
+        ["1.3", "Lote", "", "", "texto"],
+        ["1.4", "PL", "", "", "texto"],
+        ["1.5", "Cultura", "", "", "texto"],
+        ["1.6", "Variedade", "", "", "texto"],
+        ["1.7", "Responsável pela Turma", "", "", "texto"]
+      ]},
+      {titulo:"Avaliação", itens:[
+        ["2.1", "Área está liberada para colheita?"],
+        ["2.2", "Os sanitários estão em local que não comprometa a segurança alimentar?"],
+        ["2.3", "Refeitório estão em locais seguros?"],
+        ["2.4", "Área a ser colhida está identificada?"],
+        ["2.5", "O fruto está em ponto de colheita?"],
+        ["2.6", "Caixas, Bags, Bin ou caçambas está em bom estado de conservação?"],
+        ["2.7", "Caixas, Bags, Bin ou caçambas foram lavados?"],
+        ["2.8", "Produtos colhidos foram acondicionado corretamente?"],
+        ["2.9", "Produto está sofrendo algum dano mecânico?"]
+      ]},
+      {titulo:"Plano de ação.", itens:[
+        ["3.1", "Data de higienização da caixa?", "", "", "data"],
+        ["3.2", "Plano de ação das não conformidades.", "", "", "longo"]
+      ]}
+    ]
+  },
   "modelo:extintores": {
     sigla:"Extintores", titulo:"Checklist de extintores", subtitulo:"Inspeção visual rápida · NR-23",
     ref:"NR-23 · ABNT NBR 12962 (inspeção e manutenção de extintores)",
@@ -340,6 +379,8 @@ function ckCampoCab(rotulo){
   const r=String(rotulo||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[:.]/g,"").trim();
   if(/^(fazenda|unidade|propriedade)/.test(r))return "unidade";
   if(/^data da (verificacao|vistoria|inspecao)/.test(r))return "data";
+  if(r==="inicio")return "inicio";
+  if(r==="fim")return "fim";
   if(/(trabalhadores|colaboradores)/.test(r))return "colaboradores";
   if(r==="responsavel"||/^responsavel (pela|do|da) (turma|setor|area)/.test(r))return "responsavelTurma";
   if(/^(atividade|talhao|setor|local)/.test(r))return "setor";
@@ -350,6 +391,7 @@ function ckCampoCab(rotulo){
 function ckTipo(rotulo){
   const r=String(rotulo||"").toLowerCase();
   if(/^data/.test(r))return "date";
+  if(r==="início"||r==="inicio"||r==="fim")return "time";
   if(/^n[º°o]\s/.test(r)||/^numero/.test(r))return "number";
   return "text";
 }
@@ -358,6 +400,10 @@ function ckValor(rotulo,cab,modelo){
   if(k)return cab[k]||"";
   return (modelo.valores||{})[rotulo]||"";
 }
+
+/* Item que não é C/NC/NA: a resposta é um texto ou uma data (em it.val) */
+const CK_TIPOS={texto:1,longo:1,data:1};
+function ckTipoItem(it){ return it&&CK_TIPOS[it.tp]?it.tp:""; }
 
 /* ─────────── começar um checklist ─────────── */
 function ckTemRascunho(){
@@ -377,10 +423,12 @@ function ckIniciar(chave){
          tecnicoRegistro:ant.tecnicoRegistro||""},
     id:uuid(),salvoEm:null,itens:[],
     modelo:{chave,sigla:m.sigla||"",titulo:m.titulo||"",subtitulo:m.subtitulo||"",ref:m.ref||"",
-            campos:(m.campos||[]).slice(),orientacoes:(m.orientacoes||[]).slice(),valores:{}},
+            campos:(m.campos||[]).slice(),orientacoes:(m.orientacoes||[]).slice(),valores:{},
+            controle:m.controle?Object.assign({},m.controle):null,papeis:Array.isArray(m.papeis)?m.papeis.slice():null,
+            soQuadro:!!m.soQuadro},
     chk:(m.grupos||[]).map((g,gi)=>({
       id:chave.replace(/^modelo:/,"")+"-"+(gi+1), ref:"", titulo:g.titulo||("Grupo "+(gi+1)),
-      itens:(g.itens||[]).map((x,k)=>({n:k+1,cod:String(x[0]||""),txt:String(x[1]||""),dica:String(x[2]||""),nv:String(x[3]||""),r:"",obs:"",fotos:[]}))
+      itens:(g.itens||[]).map((x,k)=>({n:k+1,cod:String(x[0]||""),txt:String(x[1]||""),dica:String(x[2]||""),nv:String(x[3]||""),tp:CK_TIPOS[x[4]]?String(x[4]):"",r:"",obs:"",fotos:[]}))
     }))
   };
   /* "Data" solta no cabeçalho da planilha é a data do documento */
@@ -486,7 +534,10 @@ function ckMontarTela(){
    mouse). Ao confirmar, grava a imagem, o nome e a data e hora exatas. Elas
    ficam em estado.modelo.assinaturas, que vai congelado para a base junto do
    checklist (chkEnviarFotos copia o modelo) e saem no relatório. */
-function ckPapeis(){ return ["Responsável pela verificação"]; }
+function ckPapeis(){
+  const p=estado.modelo&&estado.modelo.papeis;
+  return Array.isArray(p)&&p.length?p:["Responsável pela verificação"];
+}
 function ckAssinaturas(){
   const m=estado.modelo; if(!m)return [];
   if(!Array.isArray(m.assinaturas))m.assinaturas=[];
@@ -572,6 +623,7 @@ $("#painel-checklists").addEventListener("input",ev=>{
 function ckContagem(blocos){
   const t={total:0,C:0,NC:0,NA:0,sem:0};
   (blocos||[]).forEach(b=>(b.itens||[]).forEach(i=>{
+    if(ckTipoItem(i))return;
     t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;
   }));
   t.pc=(t.C+t.NC)?Math.round(t.C*100/(t.C+t.NC)):null;
@@ -591,7 +643,7 @@ function ckRenderPreencher(){
   const p=$("#ck-barra-prog"); if(p)p.style.width=(t.total?Math.round((t.total-t.sem)*100/t.total):0)+"%";
 
   corpo.innerHTML=blocos.map((b,bi)=>{
-    const nc=b.itens.filter(i=>i.r==="NC").length, feitos=b.itens.filter(i=>i.r).length;
+    const nc=b.itens.filter(i=>i.r==="NC").length, feitos=b.itens.filter(i=>i.r||(ckTipoItem(i)&&i.val)).length;
     return `<div class="ck-grupo">
       <div class="ck-grupo-topo">
         <span class="n">${bi+1}</span><span class="tt">${esc(b.titulo)}</span>
@@ -600,6 +652,21 @@ function ckRenderPreencher(){
       </div>
       ${b.itens.map(it=>{
         const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
+        const tp=ckTipoItem(it);
+        if(tp){
+          const atr=`data-chk-val="1" data-bloco="${esc(b.id)}" data-n="${it.n}"`;
+          const campo=tp==="longo"?`<textarea class="ck-tp-campo" rows="2" ${atr}>${esc(it.val||"")}</textarea>`
+            :`<input class="ck-tp-campo" type="${tp==="data"?"date":"text"}" value="${esc(it.val||"")}" ${atr}>`;
+          return `<div class="ck-item ck-item-tp${it.val?" r-ok":""}">
+        <div class="ck-txt"><span class="cod">${esc(it.cod||(bi+1)+"."+it.n)}</span>${esc(it.txt)}</div>
+        <div class="ck-resp">${campo}
+          <button type="button" class="ck-bt foto" data-chk-foto="1" data-bloco="${esc(b.id)}" data-n="${it.n}">＋ foto${it.fotos&&it.fotos.length?" ("+it.fotos.length+")":""}</button>
+        </div>
+        ${(it.fotos&&it.fotos.length)?`<div class="chk-fotos">${it.fotos.map((f,fi)=>
+          `<figure><img src="${esc(f.url||f.assinada||"")}" alt="Foto do item ${esc(it.cod||"")}">
+           <button type="button" class="x" data-chk-tirar="${fi}" data-bloco="${esc(b.id)}" data-n="${it.n}" title="Tirar foto">×</button></figure>`).join("")}</div>`:""}
+      </div>`;
+        }
         return `<div class="ck-item${it.r?" r-"+it.r:""}">
         <div class="ck-txt"><span class="cod">${esc(it.cod||(bi+1)+"."+it.n)}</span>${esc(it.txt)}${it.nv&&CK_NIVEL[it.nv]?` <span class="ck-nv ck-nv-${esc(it.nv)}">${CK_NIVEL[it.nv]}</span>`:""}${it.dica?`<span class="ck-dica"><b>Onde conferir:</b> ${esc(it.dica)}</span>`:""}</div>
         <div class="ck-resp">
@@ -710,7 +777,7 @@ $("#painel-checklists").addEventListener("click",ev=>{
   const todos=t.closest("[data-ck-todos]");
   if(todos){
     const b=chkBloco(todos.dataset.ckTodos); if(!b)return;
-    b.itens.forEach(i=>{ if(!i.r)i.r="C"; });
+    b.itens.forEach(i=>{ if(!i.r&&!ckTipoItem(i))i.r="C"; });
     chkRender(); render(); salvar();
     return;
   }
@@ -733,6 +800,16 @@ $("#painel-checklists").addEventListener("input",ev=>{
     const b=chkBloco(el.dataset.bloco); if(!b)return;
     const it=b.itens.find(x=>x.n===Number(el.dataset.n)); if(!it)return;
     it.val=el.value;
+    if(ckTipoItem(it)){
+      const k=ckTipoItem(it)==="texto"?ckCampoCab(it.txt):null;
+      if(k){ estado.cab[k]=el.value;
+        const espelho=document.querySelector(`#painel-vistoria [data-cab="${k}"]`); if(espelho)espelho.value=el.value; }
+      const cx=el.closest(".ck-item"); if(cx)cx.classList.toggle("r-ok",!!el.value);
+      const g=el.closest(".ck-grupo"), bb=chkBloco(el.dataset.bloco), ct=g&&g.querySelector(".ck-conta");
+      if(ct&&bb){ const nc=bb.itens.filter(i=>i.r==="NC").length;
+        ct.textContent=`${bb.itens.filter(i=>i.r||(ckTipoItem(i)&&i.val)).length}/${bb.itens.length}${nc?` · ${nc} NC`:""}`; }
+      salvar(); renderDoc(); return;
+    }
     const lab=el.closest(".ck-val"), velho=lab&&lab.querySelector(".ck-val-selo");
     if(velho)velho.remove();
     if(lab&&el.value)lab.insertAdjacentHTML("beforeend",ckSeloValidade(el.value));
@@ -760,6 +837,16 @@ $("#painel-checklists").addEventListener("input",ev=>{
    before initialization" e travava o app inteiro com rascunho de checklist. */
 function pdResp(r){
   return ({C:["Conforme","c"],NC:["Não conforme","nc"],NA:["Não se aplica","na"]})[r||""]||["Sem resposta","sr"];
+}
+
+/* quadro de controle do documento (código, data, revisão) — modelos com "controle" */
+function pdControle(d){
+  const k=d&&d.controle; if(!k)return "";
+  return `<table class="pd-controle"><tbody>
+    ${k.codigo?`<tr><th>Código:</th><td>${esc(k.codigo)}</td></tr>`:""}
+    ${k.data?`<tr><th>Data:</th><td>${esc(pdData(k.data))}</td></tr>`:""}
+    ${k.revisao?`<tr><th>Revisão:</th><td>${esc(k.revisao)}</td></tr>`:""}
+  </tbody></table>`;
 }
 
 function pdData(iso){ return iso?dataBR(String(iso).slice(0,10)):""; }
@@ -885,7 +972,7 @@ function pdPranchaCapa(d,ap){
     </tbody></table></div>`:`<div class="cp-ind"><div class="cp-sub">Índice dos apontamentos</div><p>Nenhuma não conformidade registrada.</p></div>`;
   return `<div class="pr-capa">
     <div class="pd-cab"><div class="pd-titulo"><h1>Relatório fotográfico de vistoria</h1><p>${esc([d.subtitulo,d.codigo].filter(Boolean).join(" · "))}</p></div>
-      <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios"></div>
+      ${pdControle(d)}<img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios"></div>
     <div class="pd-quadro">${quadro.map(([r,v])=>`<div><span>${esc(r)}</span><b>${esc(v)}</b></div>`).join("")}</div>
     <div class="cp-meio">
       <div class="cp-res"><div class="cp-tot"><b>${ap.length}</b><span>apontamento${ap.length===1?"":"s"}</span></div>${barras}
@@ -938,7 +1025,7 @@ function pdoc(d){
 
   /* resumo do checklist */
   const t={total:0,C:0,NC:0,NA:0,sem:0};
-  (d.blocos||[]).forEach(b=>b.itens.forEach(i=>{t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;}));
+  (d.blocos||[]).forEach(b=>b.itens.forEach(i=>{if(ckTipoItem(i))return;t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;}));
   const pc=(t.C+t.NC)?Math.round(t.C*100/(t.C+t.NC)):null;
   if(t.total)partes.push(`<div class="pd-resumo">
       <div><b>${t.total}</b><span>Itens verificados</span></div>
@@ -954,9 +1041,15 @@ function pdoc(d){
     const titulo=esc(b.titulo);
     const linhas=b.itens.map((it,k)=>{
       const cod=it.cod||`${n}.${k+1}`;
+      if(ckTipoItem(it)){
+        const v=ckTipoItem(it)==="data"?pdData(it.val):(it.val||"");
+        return `<div class="pd-item pd-item-tp"><div class="pd-q">${esc(cod)} - ${esc(it.txt)}</div>
+        <div class="pd-r pd-valor">${v?nl(v):"—"}</div>
+        ${pdFotosDoItem((it.fotos||[]).map(src=>({src,leg:""})))}</div>`;
+      }
       const [rot,cls]=pdResp(it.r);
       const obs=[];
-      if(it.val){ const dv=ckDiasAte(it.val);
+      if(it.val&&!ckTipoItem(it)){ const dv=ckDiasAte(it.val);
         obs.push(`Data de validade: ${pdData(it.val)}${dv!=null&&dv<0?" (vencido)":dv!=null&&dv<=30?" (vence em "+dv+" dia"+(dv===1?"":"s")+")":""}`); }
       if(it.obs)obs.push(`${esc(it.obsRot||"Observação")}: ${esc(it.obs)}`);
       if(it.r==="NC"&&it.prazo)obs.push(`Prazo para correção: ${pdData(it.prazo)}`);
@@ -1035,7 +1128,7 @@ function pdoc(d){
     <div class="pd-rodape-fixo">${esc(rodapeTxt)}</div>
     <div class="pd-cab">
       <div class="pd-titulo"><h1>${esc(d.titulo)}</h1>${d.subtitulo?`<p>${esc(d.subtitulo)}</p>`:""}</div>
-      <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios">
+      ${pdControle(d)}<img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios">
     </div>
     <div class="pd-quadro">${quadro.map(([r,v])=>`<div><span>${esc(r)}</span><b>${esc(v)}</b></div>`).join("")}</div>
     <h2 class="pd-resultados">Resultados</h2>
@@ -1050,7 +1143,7 @@ function pdocRascunho(){
     titulo:(b.ref?b.ref+" ":"")+b.titulo,
     itens:b.itens.map(it=>{
       const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
-      return {cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",val:it.val||"",obsRot:m?"Ação necessária":"Observação",
+      return {cod:it.cod||"",txt:it.txt,tp:it.tp||"",r:it.r||"",obs:it.obs||"",val:it.val||"",obsRot:m?"Ação necessária":"Observação",
         prazo:ap&&ap.prazoData||"",fotos:(it.fotos||[]).map(f=>f.url||f.assinada||"")};
     })
   }));
@@ -1075,6 +1168,8 @@ function pdDados(c,m,blocos,apont,logo){
     ident=(m.campos||[]).map(rot=>{
       let v=ckValor(rot,c,m); if(ckTipo(rot)==="date"&&v)v=pdData(v); return [rot,v];
     });
+    /* modelo cujos campos só alimentam o quadro (data, início, fim) não repete a Identificação */
+    if(m.soQuadro)ident=ident.filter(([rot])=>!["data","inicio","fim"].includes(ckCampoCab(rot)));
     fecho=[["Elaboração",[c.tecnico,c.cargo].filter(Boolean).join(" — ")+(c.tecnicoRegistro?" · Registro: "+c.tecnicoRegistro:"")],
       ["Responsável",c.responsavelTurma||""],["Aprovação",[ckValor("Aprovação",c,m)||c.aprovador,c.aprovadorCargo].filter(Boolean).join(" — ")]];
   }else{
@@ -1091,7 +1186,8 @@ function pdDados(c,m,blocos,apont,logo){
   const assinaturas=m?(Array.isArray(m.assinaturas)&&m.assinaturas.length
       ?m.assinaturas.filter((a,i)=>i===0||a.em)
       :ckPapeis().map(p=>({papel:p,nome:"",img:"",em:""}))):null;
-  return {titulo,subtitulo,codigo:c.codigo,data:c.data,cab:c,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
+  const controle=m&&m.controle&&(m.controle.codigo||m.controle.revisao)?m.controle:null;
+  return {titulo,subtitulo,codigo:c.codigo,data:c.data,cab:c,logo,quadro,controle,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
 }
 
 /* ─────────── vistoria salva na base (vistorias.js) ───────────
@@ -1105,7 +1201,7 @@ window.pdocSalvo=function(v,itens,logo,sit,normas){
     observacoes:v.observacoes,inicio:v.hora_inicio,fim:v.hora_fim,tecnicoRegistro:v.tecnico_registro,motivo:v.motivo};
   const blocos=blocosBase.map(b=>({
     titulo:(b.ref?b.ref+" ":"")+b.titulo,
-    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",val:it.val||"",
+    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,tp:it.tp||"",r:it.r||"",obs:it.obs||"",val:it.val||"",
       obsRot:m?"Ação necessária":"Observação",prazo:it.prazo||"",fotos:(it.fotos||[]).map(f=>f._url||"")}))
   }));
   const apont=(itens||[]).filter(it=>!(m&&m.sigla&&String(it.titulo||"").startsWith(m.sigla+" ")))
@@ -1147,6 +1243,11 @@ function ckRenderEditor(){
       <div class="campo largo"><label for="md-titulo">Título</label><input type="text" id="md-titulo" value="${esc(m.titulo||"")}" placeholder="Checklist de Verificação – NR-24"></div>
       <div class="campo largo"><label for="md-sub">Subtítulo / norma</label><input type="text" id="md-sub" value="${esc(m.subtitulo||"")}" placeholder="Portaria MTE nº 1.590/2026"></div>
     </div>
+    <div class="grade" style="padding:0;margin-top:10px">
+      <div class="campo"><label for="md-ctl-cod">Código do documento</label><input type="text" id="md-ctl-cod" value="${esc((m.controle||{}).codigo||"")}" placeholder="FORMAGR-002-00"></div>
+      <div class="campo"><label for="md-ctl-data">Data da revisão</label><input type="date" id="md-ctl-data" value="${esc((m.controle||{}).data||"")}"></div>
+      <div class="campo"><label for="md-ctl-rev">Revisão</label><input type="text" id="md-ctl-rev" value="${esc((m.controle||{}).revisao||"")}" placeholder="1"></div>
+    </div>
     <div class="campo largo" style="margin-top:10px"><label for="md-campos">Campos do cabeçalho — um por linha</label>
       <textarea id="md-campos" rows="5" spellcheck="false">${esc((m.campos||[]).join("\n"))}</textarea></div>
     <div class="campo largo" style="margin-top:10px"><label for="md-itens">Itens — um por linha: Nº | Categoria | Item de verificação</label>
@@ -1162,6 +1263,9 @@ function ckRenderEditor(){
     const titulo=$("#md-titulo").value.trim();
     if(!titulo){toast("O checklist precisa de um título.");return;}
     const grupos=[], idx={};
+    /* item que continua com o mesmo texto guarda dica, nível e tipo de resposta */
+    const antes={};
+    (m.grupos||[]).forEach(g=>(g.itens||[]).forEach(x=>{ antes[String(x[1]||"")]=x; }));
     $("#md-itens").value.split("\n").map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{
       const p=l.split("|").map(x=>x.trim());
       let cod,cat,txt;
@@ -1169,12 +1273,15 @@ function ckRenderEditor(){
       else if(p.length===2){[cod,cat,txt]=[p[0],"Itens",p[1]];}
       else {[cod,cat,txt]=[String(i+1),"Itens",p[0]];}
       if(!(cat in idx)){idx[cat]=grupos.length;grupos.push({titulo:cat,itens:[]});}
-      grupos[idx[cat]].itens.push([cod,txt]);
+      const a=antes[txt];
+      grupos[idx[cat]].itens.push(a&&a.length>2?[cod,txt].concat(a.slice(2)):[cod,txt]);
     });
     if(!grupos.length){toast("O checklist precisa de pelo menos um item.");return;}
+    const ctl={codigo:$("#md-ctl-cod").value.trim(),data:$("#md-ctl-data").value,revisao:$("#md-ctl-rev").value.trim()};
     const obj={sigla:$("#md-sigla").value.trim(),titulo,subtitulo:$("#md-sub").value.trim(),
       ref:[$("#md-sigla").value.trim(),$("#md-sub").value.trim()].filter(Boolean).join(" · "),
       arquivo:m.arquivo||"",
+      controle:(ctl.codigo||ctl.revisao)?ctl:null, papeis:m.papeis||null, soQuadro:!!m.soQuadro,
       campos:$("#md-campos").value.split("\n").map(l=>l.trim().replace(/:$/,"")).filter(Boolean),
       grupos,
       orientacoes:$("#md-orient").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{
