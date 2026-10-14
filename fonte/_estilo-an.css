@@ -262,3 +262,15 @@ body[data-aba="an"] #bt-salvar,body[data-aba="an"] #bt-pdf,body[data-aba="an"] .
 .anr-painel .anr-rod{margin-top:5mm}
 @media (max-width:700px){ .anp-graf svg{min-width:640px;max-height:none} }
 @media print{ .anr-graf .anp-graf svg{min-width:0} }
+/* 14/10/2026: etiqueta da foto em vermelho "Anomalia" e a ficha Visualizar */
+.anomalia{background:#C0392B}
+.an-pfotos figure.an-pf-ver{cursor:zoom-in}
+.an-ver-dlg{max-width:760px}
+.an-v-tit{margin:0 0 12px;font-size:18px;color:var(--cinza)}
+.an-v-fotos{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+.an-v-fotos.duas{grid-template-columns:1fr 1fr}
+.an-v-fotos figure{margin:0;position:relative;min-height:200px;background:var(--superficie-2);border-radius:var(--r);overflow:hidden;max-height:62vh;display:flex;align-items:center;justify-content:center}
+.an-v-fotos img{max-width:100%;max-height:62vh;object-fit:contain;display:block;cursor:zoom-in}
+.an-v-fotos figcaption{position:absolute;left:8px;top:8px;font:bold 12px Arial,Helvetica,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#fff;padding:3px 9px;border-radius:4px}
+.an-v-tab th{width:150px;background:var(--verde-claro);color:var(--cinza);text-align:left;font-size:12px}
+@media (max-width:640px){ .an-v-fotos.duas{grid-template-columns:1fr} }

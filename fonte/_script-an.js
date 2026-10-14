@@ -465,7 +465,7 @@ function anRenderPlista(){
     const c=anConcluida(it), f=anFaixa(it);
     return `<article class="an-pcard anp-f-${f}">
       <div class="an-pfotos">
-        <figure><img alt="" data-an-pf="${esc(it.foto||"")}"><figcaption class="antes">Problema</figcaption></figure>
+        <figure class="an-pf-ver" data-an-visualizar="${esc(rel.id)}|${esc(it.uid)}" title="Visualizar a anomalia"><img alt="" data-an-pf="${esc(it.foto||"")}"><figcaption class="anomalia">Anomalia</figcaption></figure>
         ${c?`<figure><img alt="" data-an-pf="${esc(it.fim_foto||"")}"><figcaption class="depois">Corrigido</figcaption></figure>`:""}
       </div>
       <div class="an-pinfo">
@@ -479,6 +479,7 @@ function anRenderPlista(){
       <div class="pe">
         ${c?`<button class="anp-btn" type="button" data-an-reabrir="${esc(rel.id)}|${esc(it.uid)}">Reabrir</button>`
           :`<button class="anp-btn principal" type="button" data-an-concluir="${esc(rel.id)}|${esc(it.uid)}">✓ Concluir</button>`}
+        <button class="anp-btn" type="button" data-an-visualizar="${esc(rel.id)}|${esc(it.uid)}">Visualizar</button>
         <button class="anp-btn" type="button" data-an-ver="${esc(rel.id)}">Relatório</button>
       </div>
     </article>`;
@@ -513,6 +514,51 @@ function anFolhaPainel(){
   </div>`;
 }
 
+/* ── Visualizar uma anomalia (14/10/2026, pedido dele) ──
+   Ficha de uma anomalia só: foto grande, o problema, o plano, quem vai
+   arrumar, prazo e situação; se concluída, a foto do corrigido e o que foi
+   feito. Daqui dá para concluir ou abrir o relatório inteiro. */
+function anVisualizar(relId,uid){
+  const rel=anRels.find(x=>x.id===relId), its=rel?(rel.itens||[]):[], i=its.findIndex(x=>x.uid===uid), it=its[i]; if(!it)return;
+  const c=anConcluida(it);
+  let d=$("#an-ver-dlg");
+  if(!d){ d=document.createElement("dialog"); d.id="an-ver-dlg"; d.className="an-dlg an-ver-dlg"; document.body.appendChild(d);
+    d.addEventListener("click",ev=>{
+      const fechar=()=>{ d.close?d.close():d.removeAttribute("open"); };
+      if(ev.target===d||ev.target.closest("[data-an-v-fechar]")){ fechar(); return; }
+      const b=ev.target.closest("[data-an-v-concluir]"); if(b){ fechar(); const [x,y]=b.dataset.anVConcluir.split("|"); anAbrirConcluir(x,y); return; }
+      const r=ev.target.closest("[data-an-v-rel]"); if(r){ fechar(); const rr=anRels.find(x=>x.id===r.dataset.anVRel); if(rr)anPrevia(rr,anVista); return; }
+      const im=ev.target.closest("img[data-an-v-foto]"); if(im&&im.src)window.open(im.src,"_blank");
+    }); }
+  const linha=(rot,val)=>val?`<tr><th>${rot}</th><td>${val}</td></tr>`:"";
+  d.innerHTML=`<div class="dlg-topo"><h3>Anomalia nº ${i+1} · ${esc([rel.codigo,rel.local].filter(Boolean).join(" · "))}</h3><button class="x" type="button" data-an-v-fechar aria-label="Fechar">×</button></div>
+    <div class="dlg-corpo an-dlg-corpo">
+      <h2 class="an-v-tit">${esc(it.problema||"—")}</h2>
+      <div class="an-v-fotos${c?" duas":""}">
+        <figure><img alt="Foto da anomalia" data-an-v-foto="${esc(it.foto||"")}"><figcaption class="anomalia">Anomalia</figcaption></figure>
+        ${c?`<figure><img alt="Foto do corrigido" data-an-v-foto="${esc(it.fim_foto||"")}"><figcaption class="depois">Corrigido</figcaption></figure>`:""}
+      </div>
+      <table class="anp-tab an-v-tab"><tbody>
+        ${linha("Plano de ação",anNl(it.plano)||"—")}
+        ${linha("Quem vai arrumar",esc(it.responsavel||"—"))}
+        ${linha("Prazo",esc(anData(it.prazo)||"—"))}
+        ${linha("Situação",anTagPrazo(it))}
+        ${c?linha("Concluída em",esc(anData(it.fim_data)||"—")):""}
+        ${c?linha("O que foi feito",anNl(it.fim_obs)):""}
+        ${linha("Relatório",esc([rel.codigo,anData(rel.data),rel.responsavel?"apontado por "+rel.responsavel:""].filter(Boolean).join(" · ")))}
+      </tbody></table>
+    </div>
+    <div class="dlg-rodape"><button class="bt bt-fantasma" type="button" data-an-v-fechar>Fechar</button>
+      <button class="bt" type="button" data-an-v-rel="${esc(rel.id)}">Relatório</button>
+      ${c?"":`<button class="bt bt-forte" type="button" data-an-v-concluir="${esc(rel.id)}|${esc(it.uid)}">✓ Concluir</button>`}</div>`;
+  d.querySelectorAll("img[data-an-v-foto]").forEach(async im=>{
+    const cam=im.dataset.anVFoto; const u=cam?await anSrc(cam):"";
+    im.onerror=()=>im.replaceWith(Object.assign(document.createElement("div"),{className:"ad-falta",textContent:"Foto indisponível"}));
+    if(u)im.src=u; else im.replaceWith(Object.assign(document.createElement("div"),{className:"ad-falta",textContent:cam?"Foto indisponível sem rede":"Sem foto"}));
+  });
+  d.showModal ? d.showModal() : d.setAttribute("open","");
+}
+
 /* ── Concluir com a foto do corrigido ── */
 function anAbrirConcluir(relId,uid){
   const rel=anRels.find(x=>x.id===relId), it=rel&&(rel.itens||[]).find(x=>x.uid===uid); if(!it)return;
@@ -531,7 +577,7 @@ function anDlgHtml(rel,it){
     <div class="dlg-corpo an-dlg-corpo">
       <p class="an-dlg-prob"><b>${esc(it.problema||"")}</b><br><span>Plano: ${esc(it.plano||"")}</span></p>
       <div class="an-dlg-fotos">
-        <figure><img alt="" data-an-c-antes><figcaption class="antes">Problema</figcaption></figure>
+        <figure><img alt="" data-an-c-antes><figcaption class="anomalia">Anomalia</figcaption></figure>
         <button type="button" class="ad-foto" data-an-c-foto>${s._src?`<img src="${esc(s._src)}" alt="Foto do corrigido"><span class="ad-trocar">Trocar foto</span>`
           :`<span class="ad-vazia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Foto do corrigido *</span>`}</button>
       </div>
@@ -627,7 +673,7 @@ async function anMontarDoc(r){
       <div class="anr-item-cab"><span class="anr-n">${i+1}</span><h3>${esc(it.problema||"")}</h3><span class="anr-sit ${c?"ok":anVencida(it)?"venc":""}">${esc(sit)}</span></div>
       <div class="anr-item-corpo">
         <div class="anr-fotos${fC?" duas":""}">
-          <figure><div class="anr-img">${fA?`<img src="${esc(fA)}" alt="">`:`<span>Sem foto</span>`}</div><figcaption class="antes">Problema</figcaption></figure>
+          <figure><div class="anr-img">${fA?`<img src="${esc(fA)}" alt="">`:`<span>Sem foto</span>`}</div><figcaption class="anomalia">Anomalia</figcaption></figure>
           ${fC?`<figure><div class="anr-img"><img src="${esc(fC)}" alt=""></div><figcaption class="depois">Corrigido</figcaption></figure>`:""}
         </div>
         <table class="anr-tab"><tbody>
@@ -755,6 +801,7 @@ $("#painel-an").addEventListener("click",ev=>{
   if(q("[data-an-imp-painel]")){ anImprimir(anFolhaPainel()); return; }
   if(el=q("[data-an-glocal]")){ anFiltro.local=el.dataset.anGlocal==="Sem local"?"":el.dataset.anGlocal; anFiltro.sit="todas"; anRenderPainel(); $("#an-plista").scrollIntoView({behavior:"smooth"}); return; }
   if(el=q("[data-an-gresp]")){ anFiltro.resp=el.dataset.anGresp==="Sem responsável"?"":el.dataset.anGresp; anFiltro.sit="todas"; anRenderPainel(); $("#an-plista").scrollIntoView({behavior:"smooth"}); return; }
+  if(el=q("[data-an-visualizar]")){ const [a,b]=el.dataset.anVisualizar.split("|"); anVisualizar(a,b); return; }
   if(el=q("[data-an-concluir]")){ const [a,b]=el.dataset.anConcluir.split("|"); anAbrirConcluir(a,b); return; }
   if(el=q("[data-an-reabrir]")){ const [a,b]=el.dataset.anReabrir.split("|"); anReabrir(a,b); return; }
   if(el=q("[data-an-ver]")){ const r=anRels.find(x=>x.id===el.dataset.anVer); if(r)anPrevia(r,anVista); return; }
