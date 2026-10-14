@@ -36,6 +36,7 @@
   </div>
   <div class="abas" role="tablist">
     <button class="aba" id="t-inicio" role="tab" aria-selected="false" aria-controls="painel-inicio" hidden>Início</button>
+    <button class="aba" id="t-pg" role="tab" aria-selected="false" aria-controls="painel-pg">Painel</button>
     <button class="aba" id="t-checklists" role="tab" aria-selected="false" aria-controls="painel-checklists">Checklists prontos</button>
     <button class="aba" id="t-an" role="tab" aria-selected="false" aria-controls="painel-an">Anomalias <b class="n" id="cont-an" hidden>0</b></button>
     <button class="aba" id="t-ad" role="tab" aria-selected="false" aria-controls="painel-ad">Antes e Depois <b class="n" id="cont-ad" hidden>0</b></button>
@@ -62,6 +63,7 @@
       <!-- acesso rápido na lateral (mesmo modelo do Programação Campo) -->
       <nav class="ql" aria-label="Acesso rápido">
         <button type="button" class="ql-item prim" data-ir="vistoria" title="Vistoria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 9v6M9 12h6"/></svg><span>Vistoria</span></button>
+        <button type="button" class="ql-item " data-ir="pg" title="Painel geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Painel</span></button>
         <button type="button" class="ql-item " data-ir="checklists" title="Checklists prontos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg><span>Checklists prontos</span></button>
         <button type="button" class="ql-item " data-ir="an" title="Anomalias"><small class="ql-num" id="mi-an" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg><span>Anomalias</span></button>
         <button type="button" class="ql-item " data-ir="ad" title="Antes e Depois"><small class="ql-num" id="mi-ad" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.5"/><rect x="13.5" y="6" width="8" height="12" rx="1.5"/><path d="M5 14l2-2 2 2M16 12l1.5 1.5L20 11"/></svg><span>Antes e Depois</span></button>
@@ -81,6 +83,11 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- ────────── painel geral (14/10/2026): tudo junto, no desenho do Pessoas ────────── -->
+  <section class="painel" id="painel-pg" role="tabpanel" aria-labelledby="t-pg" hidden>
+    <div id="pg-corpo"></div>
   </section>
 
   <!-- ────────── checklists prontos ────────── -->

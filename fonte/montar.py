@@ -58,7 +58,7 @@ troca("""function opcoesAnomalia(sel){
 
 
 extra  = open('_script-extra.js', encoding='utf-8').read() + '\n' + open('_script-gr.js', encoding='utf-8').read()
-estilo = open('_estilo.css', encoding='utf-8').read() + open('_estilo-extra.css', encoding='utf-8').read() + open('_estilo-gr.css', encoding='utf-8').read() + open('_estilo-ad.css', encoding='utf-8').read() + open('_estilo-ex.css', encoding='utf-8').read() + open('_estilo-an.css', encoding='utf-8').read()
+estilo = open('_estilo.css', encoding='utf-8').read() + open('_estilo-extra.css', encoding='utf-8').read() + open('_estilo-gr.css', encoding='utf-8').read() + open('_estilo-ad.css', encoding='utf-8').read() + open('_estilo-ex.css', encoding='utf-8').read() + open('_estilo-an.css', encoding='utf-8').read() + open('_estilo-pg.css', encoding='utf-8').read()
 markup = open('_markup.html', encoding='utf-8').read()
 
 CABECA = '''<meta charset="utf-8">
@@ -82,6 +82,7 @@ corpo = (markup + '\n<script src="config.js"></script>\n<script>\n' + script + '
          + '\n</script>\n<script>\n' + open('_script-ad.js', encoding='utf-8').read()
          + '\n</script>\n<script>\n' + open('_script-ex.js', encoding='utf-8').read()
          + '\n</script>\n<script>\n' + open('_script-an.js', encoding='utf-8').read()
+         + '\n</script>\n<script>\n' + open('_script-pg.js', encoding='utf-8').read()
          + '\n</script>\n<script>\n' + open('_script-fotos.js', encoding='utf-8').read()
          + '\n</script>\n<script src="vistorias.js"></script>\n')
 open('../index.html','w',encoding='utf-8').write(

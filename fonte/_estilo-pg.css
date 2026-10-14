@@ -1,0 +1,8 @@
+/* ═════════ Painel geral (14/10/2026) — reaproveita o desenho anp- do painel das Anomalias ═════════ */
+#painel-pg .anp{max-width:1180px;margin:0 auto}
+.pg .anp-tab tr.pg-f-vencidos td:first-child{box-shadow:inset 4px 0 0 #c0392b}
+.pg .anp-tab tr.pg-f-breve td:first-child{box-shadow:inset 4px 0 0 #c98a00}
+.pg .anp-tab tr.pg-f-noprazo td:first-child{box-shadow:inset 4px 0 0 var(--marrom)}
+.pg .anp-tab tr.pg-f-concluidos td:first-child{box-shadow:inset 4px 0 0 var(--verde)}
+.pg .anp-tab td .anp-btn.mini{white-space:nowrap}
+@media (max-width:700px){ .pg .anp-tab{font-size:12px} }
