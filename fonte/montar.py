@@ -93,3 +93,33 @@ open('vistoria-body.html','w',encoding='utf-8').write(
  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">\n'
  f'<style>{estilo}</style>\n' + corpo)
 print('montado')
+
+# ─────────────── Vistorias dentro do LOP - Gestão Rápida ───────────────
+# python3 montar.py --lop /caminho/do/gestao-rapida-pessoas
+# Escreve a pasta vistorias/ do LOP: o mesmo app, com o login e o banco do LOP
+# (_lop-antes.js e _lop-depois.js). A chave é a publicável do LOP, lida do
+# js/store.js de lá — a mesma que já está no navegador de todo mundo.
+import sys, os, re, shutil
+if '--lop' in sys.argv:
+    lop = sys.argv[sys.argv.index('--lop') + 1]
+    chave = re.search(r"chave:\s*'([^']+)'", open(os.path.join(lop, 'js/store.js'), encoding='utf-8').read()).group(1)
+    destino = os.path.join(lop, 'vistorias')
+    os.makedirs(os.path.join(destino, 'img'), exist_ok=True)
+    os.makedirs(os.path.join(destino, 'icons'), exist_ok=True)
+    os.makedirs(os.path.join(destino, 'arquivos'), exist_ok=True)
+    cab_lop = '\n'.join(l for l in CABECA.split('\n')
+                        if 'manifest' not in l and 'rel="icon"' not in l and 'apple-touch-icon' not in l)
+    corpo_lop = corpo.replace('<script src="config.js"></script>', '<script src="lop-antes.js"></script>', 1)
+    corpo_lop = corpo_lop.replace('<script src="vistorias.js"></script>',
+                                  '<script src="vistorias.js"></script>\n<script src="lop-depois.js"></script>', 1)
+    assert corpo_lop.count('lop-antes.js') == 1 and corpo_lop.count('lop-depois.js') == 1
+    open(os.path.join(destino, 'index.html'), 'w', encoding='utf-8').write(
+        f'<!doctype html>\n<html lang="pt-BR" data-theme="light">\n<head>\n{cab_lop}\n<style>{estilo}</style>\n</head>\n<body>\n{corpo_lop}</body>\n</html>\n')
+    open(os.path.join(destino, 'lop-antes.js'), 'w', encoding='utf-8').write(
+        open('_lop-antes.js', encoding='utf-8').read().replace('__CHAVE_LOP__', chave))
+    shutil.copy('_lop-depois.js', os.path.join(destino, 'lop-depois.js'))
+    shutil.copy('../vistorias.js', os.path.join(destino, 'vistorias.js'))
+    for a in ['img/sakuma-marca-vertical.png', 'img/lop-marca.png', 'img/lop-assinatura-laser-escuro.png',
+              'icons/gr-vs-192.v1.png', 'arquivos/Checklist_NR24_Portaria_MTE_1590_2026.xlsx']:
+        shutil.copy(os.path.join('..', a), os.path.join(destino, a))
+    print('montado no LOP:', destino)
