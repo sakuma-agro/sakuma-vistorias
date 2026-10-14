@@ -570,6 +570,8 @@ create table if not exists public.anomalias_relatorios (
   atualizado_em  timestamptz not null default now()
 );
 create index if not exists anomalias_relatorios_data_idx on public.anomalias_relatorios (data desc);
+-- Observação do relatório (14/10/2026)
+alter table public.anomalias_relatorios add column if not exists observacoes text;
 
 drop trigger if exists anomalias_relatorios_atualizado on public.anomalias_relatorios;
 create trigger anomalias_relatorios_atualizado before update on public.anomalias_relatorios
