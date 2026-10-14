@@ -114,6 +114,10 @@ if '--lop' in sys.argv:
     corpo_lop = corpo_lop.replace('<script src="vistorias.js"></script>',
                                   '<script src="vistorias.js"></script>\n<script src="lop-depois.js"></script>', 1)
     assert corpo_lop.count('lop-antes.js') == 1 and corpo_lop.count('lop-depois.js') == 1
+    # Dentro do LOP o Vistorias usa o ícone da área (família de ícones do LOP,
+    # 14/10/2026). O app avulso continua com o gr-vs-192.
+    assert corpo_lop.count('src="icons/gr-vs-192.v1.png"') == 2
+    corpo_lop = corpo_lop.replace('src="icons/gr-vs-192.v1.png"', 'src="icons/area-vistorias.v1.svg"')
     open(os.path.join(destino, 'index.html'), 'w', encoding='utf-8').write(
         f'<!doctype html>\n<html lang="pt-BR" data-theme="light">\n<head>\n{cab_lop}\n<style>{estilo}</style>\n</head>\n<body>\n{corpo_lop}</body>\n</html>\n')
     open(os.path.join(destino, 'lop-antes.js'), 'w', encoding='utf-8').write(
@@ -121,6 +125,6 @@ if '--lop' in sys.argv:
     shutil.copy('_lop-depois.js', os.path.join(destino, 'lop-depois.js'))
     shutil.copy('../vistorias.js', os.path.join(destino, 'vistorias.js'))
     for a in ['img/sakuma-marca-vertical.png', 'img/lop-marca.png', 'img/lop-assinatura-laser-escuro.png',
-              'icons/gr-vs-192.v1.png', 'arquivos/Checklist_NR24_Portaria_MTE_1590_2026.xlsx']:
+              'icons/gr-vs-192.v1.png', 'icons/area-vistorias.v1.svg', 'arquivos/Checklist_NR24_Portaria_MTE_1590_2026.xlsx']:
         shutil.copy(os.path.join('..', a), os.path.join(destino, a))
     print('montado no LOP:', destino)
