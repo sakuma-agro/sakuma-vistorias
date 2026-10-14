@@ -119,3 +119,12 @@ body[data-aba="ad"] #bt-salvar,body[data-aba="ad"] #bt-pdf,body[data-aba="ad"] .
   body.ad-imprimindo .adr-folha:last-child{break-after:auto;page-break-after:auto}
   .adr-folha,.adr-folha *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* histórico (14/10/2026): todos os registros numa tabela */
+.ad-grade.ad-grade-hist{display:block}
+.ad-hist-resumo{margin:0 0 10px;font-size:13px;color:var(--cinza)}
+.ad-tag{display:inline-block;border-radius:10px;padding:2px 9px;font-size:11px;font-weight:700;white-space:nowrap}
+.ad-tag.ok{background:var(--verde-claro);color:#4E7D00}
+.ad-tag.aberto{background:#FBEBC8;color:#8A5A00}
+.ad-hist tr.ad-h-aberto td:first-child{box-shadow:inset 4px 0 0 #c98a00}
+.ad-hist tr.ad-h-ok td:first-child{box-shadow:inset 4px 0 0 var(--verde)}
+.ad-hist td .anp-btn.mini{white-space:nowrap;margin:2px 0}
