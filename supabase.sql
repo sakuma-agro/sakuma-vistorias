@@ -590,7 +590,9 @@ returns boolean language sql stable security definer set search_path = public as
                  where (v.user_id = auth.uid() or v.designado_id = auth.uid())
                    and v.id::text = split_part(p_caminho, '/', 1))
       or exists (select 1 from public.antes_depois a
-                 where a.user_id = auth.uid() and a.id::text = split_part(p_caminho, '/', 1));
+                 where a.user_id = auth.uid() and a.id::text = split_part(p_caminho, '/', 1))
+      or exists (select 1 from public.anomalias_relatorios r
+                 where r.user_id = auth.uid() and r.id::text = split_part(p_caminho, '/', 1));
 $$;
 revoke all on function public.foto_pode_ver(text) from public, anon;
 grant execute on function public.foto_pode_ver(text) to authenticated;
