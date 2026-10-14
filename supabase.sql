@@ -547,7 +547,62 @@ grant select, insert, update, delete on public.extintores to authenticated;
 
 notify pgrst, 'reload schema';
 
--- ─────────────────── 12. Fotos no Google Drive ───────────────────
+-- ─────────────────── 13. Anomalias ───────────────────
+-- Vistoria livre e simples: a pessoa anda pela fazenda e, para cada coisa
+-- errada, tira a foto, descreve o problema, escreve o plano de ação e quem vai
+-- arrumar. Um relatório por visita (ANOM-001, ANOM-002…), com as anomalias
+-- dentro dele em itens (jsonb). Encerrar uma anomalia grava a foto do
+-- corrigido no próprio item. Editar atualiza o mesmo relatório.
+-- Mesma regra de acesso das vistorias: cada conta vê o que lançou; quem tem
+-- "Vê todas" (ve_tudo) vê o de toda a equipe.
+
+create table if not exists public.anomalias_relatorios (
+  id             uuid primary key default gen_random_uuid(),
+  user_id        uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  codigo         text,
+  local          text,            -- nome da fazenda
+  responsavel    text,            -- quem fez os apontamentos
+  data           date,
+  itens          jsonb not null default '[]'::jsonb,
+  assinatura     text,            -- imagem PNG (data URL) de quem fez os apontamentos
+  assinado_em    timestamptz,
+  criado_em      timestamptz not null default now(),
+  atualizado_em  timestamptz not null default now()
+);
+create index if not exists anomalias_relatorios_data_idx on public.anomalias_relatorios (data desc);
+
+drop trigger if exists anomalias_relatorios_atualizado on public.anomalias_relatorios;
+create trigger anomalias_relatorios_atualizado before update on public.anomalias_relatorios
+  for each row execute function public.marca_atualizacao();
+
+alter table public.anomalias_relatorios enable row level security;
+drop policy if exists an_ler     on public.anomalias_relatorios;
+drop policy if exists an_inserir on public.anomalias_relatorios;
+drop policy if exists an_alterar on public.anomalias_relatorios;
+drop policy if exists an_apagar  on public.anomalias_relatorios;
+create policy an_ler     on public.anomalias_relatorios for select to authenticated using (user_id = auth.uid() or public.ve_tudo());
+create policy an_inserir on public.anomalias_relatorios for insert to authenticated with check (user_id = auth.uid());
+create policy an_alterar on public.anomalias_relatorios for update to authenticated using (user_id = auth.uid() or public.ve_tudo()) with check (user_id = auth.uid() or public.ve_tudo());
+create policy an_apagar  on public.anomalias_relatorios for delete to authenticated using (user_id = auth.uid() or public.eh_admin());
+grant select, insert, update, delete on public.anomalias_relatorios to authenticated;
+
+-- A foto da anomalia segue o relatório: o caminho começa com o id dele.
+alter policy fotos_ler on storage.objects
+  using (bucket_id = 'vistorias' and (
+    public.ve_tudo()
+    or owner = auth.uid()
+    or exists (select 1 from public.vistorias v
+               where (v.user_id = auth.uid() or v.designado_id = auth.uid())
+                 and v.id::text = split_part(name, '/', 1))
+    or exists (select 1 from public.antes_depois a
+               where a.user_id = auth.uid()
+                 and a.id::text = split_part(name, '/', 1))
+    or exists (select 1 from public.anomalias_relatorios r
+               where r.user_id = auth.uid()
+                 and r.id::text = split_part(name, '/', 1))
+  ));
+
+-- ─────────────────── 14. Fotos no Google Drive ───────────────────
 -- As fotos novas vão para o Drive da conta escritoriosakuma1@gmail.com, pela
 -- Edge Function "fotos" (supabase-funcoes/fotos). Esta tabela liga o caminho da
 -- foto (o mesmo formato do bucket: <id da vistoria>/<arquivo>.jpg) ao arquivo no

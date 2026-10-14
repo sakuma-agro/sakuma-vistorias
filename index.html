@@ -1021,6 +1021,18 @@ body.no-inicio .rodape-gr{display:none}
   .cp-ind tr{break-inside:avoid;page-break-inside:avoid}
 }
 
+/* FORMAGR-02: quadro de controle do documento e itens com resposta em texto/data */
+.pd-controle{border-collapse:collapse;font-size:10.5px;color:#51534A;margin-left:auto;align-self:center}
+.pd-controle th,.pd-controle td{border:1px solid #B9BBB2;padding:2px 8px;text-align:left;white-space:nowrap}
+.pd-controle th{font-weight:normal;color:#744F28;background:#F1F7E4}
+.pd-controle td{font-weight:bold}
+.pd-r.pd-valor{font-weight:bold;color:#51534A}
+.ck-item-tp .ck-resp{flex-wrap:wrap}
+.ck-tp-campo{flex:1 1 220px;min-width:0;font:inherit;padding:8px 10px;border:1px solid var(--linha,#ccc);border-radius:8px;background:var(--campo,#fff);color:inherit}
+textarea.ck-tp-campo{resize:vertical}
+.ck-item-tp.r-ok{border-left-color:#84BD00}
+@media (max-width:600px){.pd-controle{font-size:9.5px}}
+
 /* ═══════════════════════════ Antes e Depois ═══════════════════════════ */
 body[data-aba="ad"] #bt-salvar,body[data-aba="ad"] #bt-pdf,body[data-aba="ad"] .status{display:none}
 
@@ -1200,6 +1212,270 @@ td.exr-ok{color:#5D8700}
 }
 .ad-filtros input[type=search]{border:1px solid var(--linha-forte);background:var(--superficie);border-radius:7px;padding:8px 10px;font:inherit;font-size:14px;color:var(--texto)}
 .ad-filtros input[type=search]:focus{border-color:var(--verde);outline:none;box-shadow:0 0 0 3px var(--verde-claro)}
+
+/* ═══════════════════════════ Anomalias ═══════════════════════════ */
+body[data-aba="an"] #bt-salvar,body[data-aba="an"] #bt-pdf,body[data-aba="an"] .status{display:none}
+
+.an-sub{display:flex;gap:6px;margin:0 0 16px;border-bottom:2px solid var(--linha);flex-wrap:wrap}
+.an-sub button{min-height:46px;border:0;background:none;font:inherit;font-size:15px;color:var(--texto-fraco);padding:0 16px;cursor:pointer;
+  border-bottom:3px solid transparent;margin-bottom:-2px;font-weight:600}
+.an-sub button[aria-pressed="true"]{color:var(--verde-esc);border-bottom-color:var(--verde)}
+
+/* apontamento */
+.an-lista-topo{display:flex;align-items:baseline;gap:12px;margin:20px 0 10px}
+.an-lista-topo h3{margin:0;font-size:17px;color:var(--cinza)}
+.an-lista-topo h3 b{font-size:13px;background:var(--verde);color:#fff;border-radius:10px;padding:1px 8px;margin-left:4px}
+.an-itens{display:grid;gap:14px}
+.an-item{background:#fff;border:1px solid var(--linha);border-left:5px solid var(--marrom);border-radius:var(--r);padding:12px 14px 14px;scroll-margin:90px}
+.an-item.ok{border-left-color:var(--verde)}
+.an-item>header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.an-item>header>b{font-size:15px;color:var(--cinza)}
+.an-num{width:28px;height:28px;border-radius:50%;background:var(--marrom);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
+.an-item.ok .an-num{background:var(--verde)}
+.an-tirar{margin-left:auto;min-height:40px;min-width:40px;justify-content:center}
+.an-item-corpo{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:14px;align-items:start}
+.an-foto{aspect-ratio:4/3}
+.an-campos{display:grid;gap:10px}
+.an-campos textarea{min-height:70px}
+.an-dupla{display:grid;grid-template-columns:1fr 180px;gap:10px}
+.an-fim{margin:0;font-size:13.5px;color:var(--verde-esc);font-weight:600}
+.an-mais{width:100%;margin:14px 0 18px;min-height:64px;border:2px dashed var(--verde);background:var(--verde-claro);color:var(--verde-esc);
+  border-radius:var(--r);font:inherit;font-size:17px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.an-mais svg{width:28px;height:28px}
+.an-assin .ck-assin.feita span{font-size:13px;color:var(--cinza)}
+.an-acoes{margin-bottom:24px}
+
+.an-selo{font-size:12px;font-weight:bold;border-radius:20px;padding:3px 10px;background:#FAF2EC;color:var(--marrom);border:1px solid var(--marrom);white-space:nowrap;display:inline-block}
+.an-selo.ok{background:var(--verde-claro);color:var(--verde-esc);border-color:var(--verde)}
+.an-selo.atencao{background:#FFF4E5;color:#B35C00;border-color:#E08A1E}
+.an-selo.venc{background:#FDECEA;color:#B3261E;border-color:#D9534F}
+
+/* painel */
+.an-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.an-kpi{background:#fff;border:1px solid var(--linha);border-left:5px solid var(--cinza);border-radius:var(--r);padding:12px 14px;text-align:left;
+  font:inherit;cursor:pointer;display:grid;gap:2px;min-height:76px}
+.an-kpi b{font-size:28px;color:var(--cinza);line-height:1.1}
+.an-kpi span{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--texto-fraco)}
+.an-kpi.ab{border-left-color:var(--marrom)} .an-kpi.ab b{color:var(--marrom)}
+.an-kpi.venc{border-left-color:#D9534F} .an-kpi.venc b{color:#B3261E}
+.an-kpi.ok{border-left-color:var(--verde)} .an-kpi.ok b{color:var(--verde-esc)}
+.an-kpi[aria-pressed="true"]{box-shadow:0 0 0 2px var(--verde) inset;background:var(--verde-claro)}
+.an-barra{position:relative;height:22px;background:var(--superficie-2);border-radius:11px;overflow:hidden;margin-bottom:14px}
+.an-barra i{position:absolute;left:0;top:0;bottom:0;background:var(--verde)}
+.an-barra span{position:relative;font-size:12px;font-weight:bold;color:var(--cinza);padding-left:10px;line-height:22px}
+.an-barra.mini{height:6px;margin:6px 0 0}
+
+.an-plista{display:grid;gap:12px}
+.an-pcard{background:#fff;border:1px solid var(--linha);border-left:5px solid var(--marrom);border-radius:var(--r);display:grid;
+  grid-template-columns:auto 1fr auto;gap:14px;padding:12px;align-items:start}
+.an-pcard.venc{border-left-color:#D9534F}
+.an-pcard.ok{border-left-color:var(--verde)}
+.an-pfotos{display:flex;gap:4px}
+.an-pfotos figure{margin:0;position:relative;width:140px;aspect-ratio:4/3;background:var(--superficie-2);border-radius:6px;overflow:hidden}
+.an-pfotos img{width:100%;height:100%;object-fit:cover;display:block}
+.an-pfotos figcaption{position:absolute;left:5px;top:5px;font:bold 10px Arial,Helvetica,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#fff;padding:2px 6px;border-radius:4px}
+.an-pinfo{display:grid;gap:4px;min-width:0}
+.an-pinfo .ref,.an-hinfo .ref{font-size:11px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;color:var(--marrom)}
+.an-pinfo h3{margin:0;font-size:16px;color:var(--cinza);line-height:1.3}
+.an-pinfo p{margin:0;font-size:13.5px;color:var(--cinza);line-height:1.4}
+.an-pinfo p b{color:var(--texto-fraco);font-weight:600}
+.an-pinfo .an-selo{justify-self:start;margin-top:2px}
+.an-pcard .pe,.an-hcard .pe{display:flex;flex-direction:column;gap:8px}
+.an-pcard .pe .bt,.an-hcard .pe .bt{min-height:44px;justify-content:center;min-width:120px}
+
+/* histórico */
+.an-hist{display:grid;gap:12px}
+.an-hcard{background:#fff;border:1px solid var(--linha);border-top:4px solid var(--verde);border-radius:var(--r);padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:14px}
+.an-hinfo{display:grid;gap:3px}
+.an-hinfo h3{margin:0;font-size:17px;color:var(--cinza)}
+.an-hinfo .info{font-size:13px;color:var(--texto-fraco)}
+.an-hsit{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+
+/* diálogo de concluir */
+.an-dlg{max-width:620px;width:calc(100% - 24px)}
+.an-dlg-prob{margin:0 0 10px;font-size:14px;color:var(--cinza)}
+.an-dlg-prob span{color:var(--texto-fraco)}
+.an-dlg-fotos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.an-dlg-fotos figure{margin:0;position:relative;aspect-ratio:4/3;background:var(--superficie-2);border-radius:var(--r);overflow:hidden}
+.an-dlg-fotos figure img{width:100%;height:100%;object-fit:cover}
+.an-dlg-fotos figcaption{position:absolute;left:6px;top:6px;font:bold 11px Arial,Helvetica,sans-serif;text-transform:uppercase;color:#fff;padding:3px 8px;border-radius:4px}
+
+@media (max-width:700px){
+  .an-item-corpo{grid-template-columns:1fr}
+  .an-dupla{grid-template-columns:1fr 1fr}
+  .an-kpis{grid-template-columns:1fr 1fr}
+  .an-pcard{grid-template-columns:1fr}
+  .an-pfotos figure{flex:1;width:auto}
+  .an-pcard .pe,.an-hcard .pe{flex-direction:row;flex-wrap:wrap}
+  .an-pcard .pe .bt,.an-hcard .pe .bt{flex:1 1 120px;min-width:0}
+  .an-hcard{grid-template-columns:1fr}
+  .an-sub button{flex:1;padding:0 6px}
+}
+
+/* prévia */
+.an-previa-palco{overflow:hidden}
+.an-previa-palco .anr-doc{width:210mm;box-sizing:border-box;padding:12mm 12mm 10mm;box-shadow:var(--sombra);border:1px solid var(--linha);background:#fff}
+
+/* o relatório: A4 em pé, padrão SAKUMA (sem preto) */
+.anr-doc{font-family:Arial,Helvetica,sans-serif;color:#51534A;font-size:11.5px;line-height:1.4;background:#fff}
+.anr-cab{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:3px solid #84BD00;padding-bottom:3mm;margin-bottom:4mm}
+.anr-cab h1{margin:0;font-size:21px;color:#51534A}
+.anr-cab p{margin:3px 0 0;font-size:12px;color:#744F28}
+.anr-cab img{height:14mm;width:auto;display:block}
+.anr-quadro{width:100%;border-collapse:collapse;margin-bottom:4mm}
+.anr-quadro th,.anr-quadro td{border:1px solid #D5D8CB;padding:1.6mm 2.4mm;text-align:left}
+.anr-quadro th{background:#F1F7DF;color:#744F28;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;width:22%}
+.anr-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:5mm}
+.anr-kpis div{border:1px solid #D5D8CB;border-left:4px solid #51534A;padding:2mm 3mm;display:grid}
+.anr-kpis .ab{border-left-color:#744F28}
+.anr-kpis .venc{border-left-color:#D9534F}
+.anr-kpis .ok{border-left-color:#84BD00}
+.anr-kpis b{font-size:19px}
+.anr-kpis span{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#6F7268}
+.anr-item{border:1px solid #D5D8CB;margin-bottom:4mm;break-inside:avoid;page-break-inside:avoid}
+.anr-item-cab{display:flex;align-items:center;gap:3mm;background:#F1F7DF;padding:2mm 3mm;border-bottom:1px solid #D5D8CB}
+.anr-item-cab h3{margin:0;font-size:13px;flex:1;color:#51534A}
+.anr-n{width:7mm;height:7mm;border-radius:50%;background:#744F28;color:#fff;font-weight:bold;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.anr-sit{font-size:10px;font-weight:bold;padding:1mm 2.4mm;border-radius:10px;border:1px solid #744F28;color:#744F28;background:#fff;white-space:nowrap}
+.anr-sit.ok{border-color:#84BD00;color:#4F7300}
+.anr-sit.venc{border-color:#D9534F;color:#B3261E}
+.anr-item-corpo{display:grid;grid-template-columns:62mm 1fr;gap:4mm;padding:3mm}
+.anr-fotos{display:grid;gap:2mm}
+.anr-fotos figure{margin:0;border:1px solid #D5D8CB}
+.anr-img{height:44mm;background:#F4F5EE;display:flex;align-items:center;justify-content:center}
+.anr-img img{width:100%;height:100%;object-fit:contain;display:block}
+.anr-img span{color:#8A8C83;font-size:11px}
+.anr-fotos figcaption{font-size:9.5px;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;color:#fff;padding:1mm 2mm}
+.anr-fotos.duas .anr-img{height:34mm}
+.anr-tab{width:100%;border-collapse:collapse;align-self:start}
+.anr-tab th,.anr-tab td{border:1px solid #D5D8CB;padding:1.6mm 2.4mm;text-align:left;vertical-align:top}
+.anr-tab th{width:32mm;background:#F1F7DF;color:#744F28;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.anr-vazio{color:#8A8C83}
+.anr-ass{display:flex;justify-content:center;margin:8mm 0 5mm;break-inside:avoid;page-break-inside:avoid}
+.anr-ass-cx{display:grid;justify-items:center;gap:1mm;width:80mm;text-align:center}
+.anr-ass-cx img{height:22mm;width:100%;object-fit:contain}
+.anr-ass-branco{height:22mm}
+.anr-ass-linha{width:100%;border-top:1px solid #51534A}
+.anr-ass-cx b{font-size:12px}
+.anr-ass-cx span{font-size:10px;color:#6F7268}
+.anr-rod{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #D5D8CB;padding-top:2mm;font-size:9.5px;color:#8A8C83}
+.anr-rod .doc-lop{margin:0}
+.anr-rod .doc-lop img{height:16px}
+.anr-rod .doc-lop span{font-size:9.5px}
+
+#an-imprimir{display:none}
+@media print{
+  body.an-imprimindo>*:not(#an-imprimir){display:none!important}
+  body.an-imprimindo #an-imprimir{display:block!important}
+  body.an-imprimindo .anr-doc{padding:12mm 0 14mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .anr-doc,.anr-doc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* ═════════ Painel das anomalias — desenho do Gestão Rápida Pessoas ═════════ */
+.anp{font-size:14px}
+.anp-cartao{background:var(--superficie);border:1px solid var(--linha);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.anp-cartao h2{font-size:15px;margin:0;font-weight:700;color:var(--texto)}
+.anp-dica{margin:2px 0 0;color:var(--texto-fraco);font-size:13px}
+.anp-barra-tit{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.anp-acoes{display:flex;flex-wrap:wrap;gap:8px}
+.anp-btn{font:inherit;font-weight:600;font-size:13px;padding:9px 14px;border-radius:8px;cursor:pointer;min-height:40px;
+  border:1px solid var(--linha);background:var(--superficie);color:var(--texto);white-space:nowrap}
+.anp-btn:hover{border-color:var(--verde);color:var(--verde-esc)}
+.anp-btn:focus-visible,.anp-card:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
+.anp-btn.principal{background:var(--verde);border-color:var(--verde);color:#fff;padding:10px 18px;font-size:14px}
+.anp-btn.principal:hover{background:#6a9800;border-color:#6a9800;color:#fff}
+.anp-btn.mini{padding:5px 9px;font-size:12px;min-height:32px}
+.anp-aviso{padding:10px 12px;border-radius:8px;font-size:13px;margin:12px 0 0;border:1px solid rgba(201,138,0,.35);background:rgba(201,138,0,.08);color:#8a5f00}
+.anp-filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:14px}
+.anp-campo{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--texto-fraco)}
+.anp-campo select,.anp-campo input{font:inherit;font-size:14px;font-weight:400;min-height:42px;padding:8px 10px;border:1px solid var(--linha);border-radius:8px;background:var(--superficie);color:var(--texto)}
+.anp-campo.larga{grid-column:1/-1}
+.anp-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin-top:14px}
+.anp-card{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;border:1px solid var(--linha);border-left:4px solid var(--linha);
+  border-radius:10px;padding:10px 12px;background:var(--superficie-2);color:inherit;transition:transform .08s}
+.anp-card:hover{transform:translateY(-1px);border-color:var(--verde)}
+.anp-card span{display:block;font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--texto-fraco)}
+.anp-card strong{display:block;font-size:24px;line-height:1.2;margin-top:2px}
+.anp-card small{display:block;font-size:11px;color:var(--texto-fraco)}
+.anp-card[aria-pressed="true"]{outline:2px solid var(--marrom);outline-offset:1px}
+.anp-perigo{border-left-color:#c0392b} .anp-perigo strong{color:#a5342a}
+.anp-alerta{border-left-color:#c98a00} .anp-alerta strong{color:#8a5f00}
+.anp-atencao{border-left-color:var(--marrom)} .anp-atencao strong{color:var(--marrom)}
+.anp-calma{border-left-color:var(--verde)} .anp-calma strong{color:var(--verde-esc)}
+.anp-ok strong{color:var(--texto)}
+.anp-zero{opacity:.6} .anp-zero strong{color:var(--texto-fraco)}
+.anp-progresso{margin-top:14px}
+.anp-progresso-tit{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:var(--texto-fraco)}
+.anp-progresso-tit b{color:var(--verde-esc)}
+.anp-trilho{height:8px;border-radius:4px;border:1px solid var(--linha);overflow:hidden}
+.anp-trilho i{display:block;height:100%;background:var(--verde)}
+.anp-bloco{margin-top:20px}
+.anp-bloco h3{margin:0 0 6px;font-size:13px;color:var(--marrom)}
+.anp-bloco .anp-dica{margin:0 0 8px}
+.anp-rola{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.anp-tab{width:100%;border-collapse:collapse;font-size:12.5px}
+.anp-tab th{background:var(--verde);color:#fff;font-size:11px;font-weight:700;letter-spacing:.4px;padding:8px 9px;text-align:left;border:1px solid var(--verde);white-space:nowrap}
+.anp-tab td{border:1px solid var(--linha);padding:6px 9px;vertical-align:middle}
+.anp-tab tbody tr:nth-child(even) td{background:var(--verde-claro)}
+.anp-tab .ce{text-align:center}
+.anp-tab tr.anp-total td{background:var(--superficie-2);font-weight:700}
+.anp-sem{font-size:11px;color:var(--texto-fraco)}
+.anp-n-perigo{color:#a5342a;font-weight:700} .anp-n-alerta{color:#8a5f00;font-weight:700}
+.anp-n-atencao{color:var(--marrom);font-weight:700} .anp-n-calma{color:var(--verde-esc);font-weight:700}
+.anp-link{background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--verde-esc);cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:2px}
+.anp-tag{font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.anp-tag.perigo{background:rgba(192,57,43,.16);color:#a5342a}
+.anp-tag.alerta{background:rgba(201,138,0,.18);color:#8a5f00}
+.anp-tag.atencao{background:rgba(116,79,40,.13);color:#744F28}
+.anp-tag.calma{background:rgba(132,189,0,.18);color:#4F7300}
+.anp-tag.neutra{background:var(--superficie-2);color:var(--texto-fraco)}
+.anp-graf{margin:0}
+.anp-graf figcaption{font-size:12.5px;font-weight:700;color:var(--texto);margin-bottom:4px}
+.anp-graf svg{width:100%;height:auto;max-height:240px;display:block}
+.anp-eixo{stroke:var(--linha);stroke-width:1}
+.anp-txt{font:11px Arial,Helvetica,sans-serif;fill:var(--texto-fraco)}
+.anp-val{fill:var(--texto);font-weight:700}
+.anp-b-reg{fill:var(--marrom)} .anp-b-con{fill:var(--verde)}
+.anp-legenda{font-size:11.5px;color:var(--texto-fraco);margin:4px 0 0}
+.anp-cx{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px -1px 0}
+.anp-cx.reg{background:var(--marrom)} .anp-cx.con{background:var(--verde)}
+.anp .vazio{padding:20px;text-align:center;color:var(--texto-fraco);font-size:13px;border:1px dashed var(--linha);border-radius:10px}
+/* a lista com fotos, dentro do cartão */
+.anp .an-plista{margin-top:14px}
+.anp .an-pcard{border-radius:10px;border-left-width:4px;background:var(--superficie)}
+.anp .an-pcard.anp-f-vencidas{border-left-color:#c0392b}
+.anp .an-pcard.anp-f-breve{border-left-color:#c98a00}
+.anp .an-pcard.anp-f-noprazo{border-left-color:var(--marrom)}
+.anp .an-pcard.anp-f-concluidas{border-left-color:var(--verde)}
+.anp .an-pcard .pe .anp-btn{min-width:120px}
+@media (max-width:700px){
+  .anp-cards{grid-template-columns:1fr 1fr}
+  .anp-acoes{width:100%} .anp-acoes .anp-btn{flex:1}
+  .anp .an-pcard .pe .anp-btn{flex:1 1 120px;min-width:0}
+}
+
+/* painel impresso */
+.anr-kpis.cinco{grid-template-columns:repeat(5,1fr)}
+.anr-kpis .breve{border-left-color:#c98a00}
+.anr-h2{font-size:13px;color:#744F28;margin:5mm 0 2mm;border-bottom:1px solid #D5D8CB;padding-bottom:1mm}
+.anr-lista{width:100%;border-collapse:collapse;font-size:10.5px;break-inside:auto}
+.anr-lista th{background:#84BD00;color:#fff;text-align:left;padding:1.6mm 2mm;font-size:10px;border:1px solid #84BD00}
+.anr-lista td{border:1px solid #D5D8CB;padding:1.4mm 2mm;vertical-align:top}
+.anr-lista tbody tr:nth-child(even) td{background:#F1F7DF}
+.anr-lista .ce{text-align:center}
+.anr-lista tr.anp-total td{background:#F4F5EE;font-weight:700}
+.anr-lista small{color:#6F7268}
+.anr-lista .anp-link{color:#51534A;text-decoration:none}
+.anr-lista .anp-sem{color:#8A8C83}
+.anr-graf{margin-top:5mm;break-inside:avoid}
+.anr-graf .anp-txt{fill:#6F7268} .anr-graf .anp-val{fill:#51534A} .anr-graf .anp-eixo{stroke:#E1E3D9}
+.anr-graf .anp-b-reg,.anr-graf .anp-cx.reg{fill:#744F28;background:#744F28}
+.anr-graf .anp-b-con,.anr-graf .anp-cx.con{fill:#84BD00;background:#84BD00}
+.anr-graf figcaption{color:#51534A}
+.anr-painel .anr-rod{margin-top:5mm}
+@media (max-width:700px){ .anp-graf svg{min-width:640px;max-height:none} }
+@media print{ .anr-graf .anp-graf svg{min-width:0} }
 </style>
 </head>
 <body>
@@ -1242,6 +1518,7 @@ td.exr-ok{color:#5D8700}
   <div class="abas" role="tablist">
     <button class="aba" id="t-inicio" role="tab" aria-selected="false" aria-controls="painel-inicio" hidden>Início</button>
     <button class="aba" id="t-checklists" role="tab" aria-selected="false" aria-controls="painel-checklists">Checklists prontos</button>
+    <button class="aba" id="t-an" role="tab" aria-selected="false" aria-controls="painel-an">Anomalias <b class="n" id="cont-an" hidden>0</b></button>
     <button class="aba" id="t-ad" role="tab" aria-selected="false" aria-controls="painel-ad">Antes e Depois <b class="n" id="cont-ad" hidden>0</b></button>
     <button class="aba" id="t-ex" role="tab" aria-selected="false" aria-controls="painel-ex">Extintores <b class="n alerta-n" id="cont-ex" hidden>0</b></button>
     <button class="aba" id="t-vistoria" role="tab" aria-selected="true" aria-controls="painel-vistoria">Vistoria <b class="n" id="cont-itens">0</b></button>
@@ -1267,6 +1544,7 @@ td.exr-ok{color:#5D8700}
       <nav class="ql" aria-label="Acesso rápido">
         <button type="button" class="ql-item prim" data-ir="vistoria" title="Vistoria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 9v6M9 12h6"/></svg><span>Vistoria</span></button>
         <button type="button" class="ql-item " data-ir="checklists" title="Checklists prontos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg><span>Checklists prontos</span></button>
+        <button type="button" class="ql-item " data-ir="an" title="Anomalias"><small class="ql-num" id="mi-an" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg><span>Anomalias</span></button>
         <button type="button" class="ql-item " data-ir="ad" title="Antes e Depois"><small class="ql-num" id="mi-ad" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.5"/><rect x="13.5" y="6" width="8" height="12" rx="1.5"/><path d="M5 14l2-2 2 2M16 12l1.5 1.5L20 11"/></svg><span>Antes e Depois</span></button>
         <button type="button" class="ql-item " data-ir="ex" title="Extintores"><small class="ql-num alerta" id="mi-ex" hidden></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="7" width="8" height="14" rx="3"/><path d="M10 7V4h4v3M14 4h3l2 2M12 11v4"/></svg><span>Extintores</span></button>
         <button type="button" class="ql-item " data-ir="aberto" title="Em aberto"><small class="ql-num" id="mi-aberto"></small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Em aberto</span></button>
@@ -1290,6 +1568,16 @@ td.exr-ok{color:#5D8700}
   <section class="painel" id="painel-checklists" role="tabpanel" aria-labelledby="t-checklists" hidden>
     <div id="ck-lista"></div>
     <div id="ck-preencher" hidden></div>
+  </section>
+
+  <!-- ────────── anomalias: apontamento, painel e histórico ────────── -->
+  <section class="painel" id="painel-an" role="tabpanel" aria-labelledby="t-an" hidden>
+    <div class="an-sub" role="group" aria-label="Anomalias">
+      <button type="button" data-an-vista="apontamento" aria-pressed="true">Apontamento</button>
+      <button type="button" data-an-vista="painel" aria-pressed="false">Painel</button>
+      <button type="button" data-an-vista="historico" aria-pressed="false">Histórico</button>
+    </div>
+    <div id="an-corpo"></div>
   </section>
 
   <!-- ────────── antes e depois ────────── -->
@@ -1666,6 +1954,7 @@ td.exr-ok{color:#5D8700}
 
 <!-- ────────── antes e depois: o que vai para a impressão ────────── -->
 <div id="ad-imprimir" hidden></div>
+<div id="an-imprimir" hidden></div>
 <div id="ex-imprimir" hidden></div>
 
 <script src="config.js"></script>
@@ -4514,6 +4803,7 @@ async function chkEnviarFotos(){
         fotos:(it.fotos||[]).filter(f=>f.path).map(f=>({path:f.path}))};
       if(it.cod)o.cod=it.cod;
       if(it.val)o.val=it.val;
+      if(it.tp)o.tp=it.tp;
       if(it.r==="NC"){
         const ap=estado.itens.find(x=>x.origemChk===b.id+":"+it.n);
         if(ap&&ap.prazoData)o.prazo=ap.prazoData;
@@ -4907,6 +5197,46 @@ const CK_PADRAO = {
     ]
   },
   /* Extintores: pedido do Guilherme em 09/10/2026 — bem simples, um extintor por checklist. */
+  /* FORMAGR-02: pedido do Guilherme em 13/10/2026 — idêntico ao CHECK LIST
+     COLHEITA da PariPassu (CLICQ). Quinto campo do item = tipo da resposta:
+     "texto", "longo" ou "data" no lugar de C/NC/NA. "controle" sai no quadro
+     de código/data/revisão do cabeçalho do relatório. */
+  "modelo:formagr-02-colheita": {
+    sigla:"FORMAGR-02", titulo:"Inspeção Colheita", subtitulo:"FORMAGR-02 – Inspeção de Colheita",
+    ref:"FORMAGR-02 – Inspeção de Colheita",
+    arquivo:"",
+    controle:{codigo:"FORMAGR-002-00", data:"2024-12-01", revisao:"1"},
+    papeis:["Avaliador"],
+    soQuadro:true,
+    campos:["Data da verificação", "Início", "Fim"],
+    grupos:[
+      {titulo:"Identificação", itens:[
+        ["1.1", "Fazenda", "", "", "texto"],
+        ["1.2", "Romaneio", "", "", "texto"],
+        ["1.3", "Lote", "", "", "texto"],
+        ["1.4", "PL", "", "", "texto"],
+        ["1.5", "Cultura", "", "", "texto"],
+        ["1.6", "Variedade", "", "", "texto"],
+        ["1.7", "Responsável pela Turma", "", "", "texto"],
+        ["1.8", "Ticket interno (Controle de Carregamento)", "Nº do ticket — e anexe a foto", "", "texto"]
+      ]},
+      {titulo:"Avaliação", itens:[
+        ["2.1", "Área está liberada para colheita?"],
+        ["2.2", "Os sanitários estão em local que não comprometa a segurança alimentar?"],
+        ["2.3", "Refeitório estão em locais seguros?"],
+        ["2.4", "Área a ser colhida está identificada?"],
+        ["2.5", "O fruto está em ponto de colheita?"],
+        ["2.6", "Caixas, Bags, Bin ou caçambas está em bom estado de conservação?"],
+        ["2.7", "Caixas, Bags, Bin ou caçambas foram lavados?"],
+        ["2.8", "Produtos colhidos foram acondicionado corretamente?"],
+        ["2.9", "Produto está sofrendo algum dano mecânico?"]
+      ]},
+      {titulo:"Plano de ação.", itens:[
+        ["3.1", "Data de higienização da caixa?", "", "", "data"],
+        ["3.2", "Plano de ação das não conformidades.", "", "", "longo"]
+      ]}
+    ]
+  },
   "modelo:extintores": {
     sigla:"Extintores", titulo:"Checklist de extintores", subtitulo:"Inspeção visual rápida · NR-23",
     ref:"NR-23 · ABNT NBR 12962 (inspeção e manutenção de extintores)",
@@ -4961,6 +5291,8 @@ function ckCampoCab(rotulo){
   const r=String(rotulo||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[:.]/g,"").trim();
   if(/^(fazenda|unidade|propriedade)/.test(r))return "unidade";
   if(/^data da (verificacao|vistoria|inspecao)/.test(r))return "data";
+  if(r==="inicio")return "inicio";
+  if(r==="fim")return "fim";
   if(/(trabalhadores|colaboradores)/.test(r))return "colaboradores";
   if(r==="responsavel"||/^responsavel (pela|do|da) (turma|setor|area)/.test(r))return "responsavelTurma";
   if(/^(atividade|talhao|setor|local)/.test(r))return "setor";
@@ -4971,6 +5303,7 @@ function ckCampoCab(rotulo){
 function ckTipo(rotulo){
   const r=String(rotulo||"").toLowerCase();
   if(/^data/.test(r))return "date";
+  if(r==="início"||r==="inicio"||r==="fim")return "time";
   if(/^n[º°o]\s/.test(r)||/^numero/.test(r))return "number";
   return "text";
 }
@@ -4979,6 +5312,10 @@ function ckValor(rotulo,cab,modelo){
   if(k)return cab[k]||"";
   return (modelo.valores||{})[rotulo]||"";
 }
+
+/* Item que não é C/NC/NA: a resposta é um texto ou uma data (em it.val) */
+const CK_TIPOS={texto:1,longo:1,data:1};
+function ckTipoItem(it){ return it&&CK_TIPOS[it.tp]?it.tp:""; }
 
 /* ─────────── começar um checklist ─────────── */
 function ckTemRascunho(){
@@ -4998,10 +5335,12 @@ function ckIniciar(chave){
          tecnicoRegistro:ant.tecnicoRegistro||""},
     id:uuid(),salvoEm:null,itens:[],
     modelo:{chave,sigla:m.sigla||"",titulo:m.titulo||"",subtitulo:m.subtitulo||"",ref:m.ref||"",
-            campos:(m.campos||[]).slice(),orientacoes:(m.orientacoes||[]).slice(),valores:{}},
+            campos:(m.campos||[]).slice(),orientacoes:(m.orientacoes||[]).slice(),valores:{},
+            controle:m.controle?Object.assign({},m.controle):null,papeis:Array.isArray(m.papeis)?m.papeis.slice():null,
+            soQuadro:!!m.soQuadro},
     chk:(m.grupos||[]).map((g,gi)=>({
       id:chave.replace(/^modelo:/,"")+"-"+(gi+1), ref:"", titulo:g.titulo||("Grupo "+(gi+1)),
-      itens:(g.itens||[]).map((x,k)=>({n:k+1,cod:String(x[0]||""),txt:String(x[1]||""),dica:String(x[2]||""),nv:String(x[3]||""),r:"",obs:"",fotos:[]}))
+      itens:(g.itens||[]).map((x,k)=>({n:k+1,cod:String(x[0]||""),txt:String(x[1]||""),dica:String(x[2]||""),nv:String(x[3]||""),tp:CK_TIPOS[x[4]]?String(x[4]):"",r:"",obs:"",fotos:[]}))
     }))
   };
   /* "Data" solta no cabeçalho da planilha é a data do documento */
@@ -5107,7 +5446,10 @@ function ckMontarTela(){
    mouse). Ao confirmar, grava a imagem, o nome e a data e hora exatas. Elas
    ficam em estado.modelo.assinaturas, que vai congelado para a base junto do
    checklist (chkEnviarFotos copia o modelo) e saem no relatório. */
-function ckPapeis(){ return ["Responsável pela verificação"]; }
+function ckPapeis(){
+  const p=estado.modelo&&estado.modelo.papeis;
+  return Array.isArray(p)&&p.length?p:["Responsável pela verificação"];
+}
 function ckAssinaturas(){
   const m=estado.modelo; if(!m)return [];
   if(!Array.isArray(m.assinaturas))m.assinaturas=[];
@@ -5193,6 +5535,7 @@ $("#painel-checklists").addEventListener("input",ev=>{
 function ckContagem(blocos){
   const t={total:0,C:0,NC:0,NA:0,sem:0};
   (blocos||[]).forEach(b=>(b.itens||[]).forEach(i=>{
+    if(ckTipoItem(i))return;
     t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;
   }));
   t.pc=(t.C+t.NC)?Math.round(t.C*100/(t.C+t.NC)):null;
@@ -5212,7 +5555,7 @@ function ckRenderPreencher(){
   const p=$("#ck-barra-prog"); if(p)p.style.width=(t.total?Math.round((t.total-t.sem)*100/t.total):0)+"%";
 
   corpo.innerHTML=blocos.map((b,bi)=>{
-    const nc=b.itens.filter(i=>i.r==="NC").length, feitos=b.itens.filter(i=>i.r).length;
+    const nc=b.itens.filter(i=>i.r==="NC").length, feitos=b.itens.filter(i=>i.r||(ckTipoItem(i)&&i.val)).length;
     return `<div class="ck-grupo">
       <div class="ck-grupo-topo">
         <span class="n">${bi+1}</span><span class="tt">${esc(b.titulo)}</span>
@@ -5221,6 +5564,21 @@ function ckRenderPreencher(){
       </div>
       ${b.itens.map(it=>{
         const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
+        const tp=ckTipoItem(it);
+        if(tp){
+          const atr=`data-chk-val="1" data-bloco="${esc(b.id)}" data-n="${it.n}"`;
+          const campo=tp==="longo"?`<textarea class="ck-tp-campo" rows="2" ${atr}>${esc(it.val||"")}</textarea>`
+            :`<input class="ck-tp-campo" type="${tp==="data"?"date":"text"}" value="${esc(it.val||"")}" placeholder="${esc(it.dica||"")}" ${atr}>`;
+          return `<div class="ck-item ck-item-tp${it.val?" r-ok":""}">
+        <div class="ck-txt"><span class="cod">${esc(it.cod||(bi+1)+"."+it.n)}</span>${esc(it.txt)}</div>
+        <div class="ck-resp">${campo}
+          <button type="button" class="ck-bt foto" data-chk-foto="1" data-bloco="${esc(b.id)}" data-n="${it.n}">＋ foto${it.fotos&&it.fotos.length?" ("+it.fotos.length+")":""}</button>
+        </div>
+        ${(it.fotos&&it.fotos.length)?`<div class="chk-fotos">${it.fotos.map((f,fi)=>
+          `<figure><img src="${esc(f.url||f.assinada||"")}" alt="Foto do item ${esc(it.cod||"")}">
+           <button type="button" class="x" data-chk-tirar="${fi}" data-bloco="${esc(b.id)}" data-n="${it.n}" title="Tirar foto">×</button></figure>`).join("")}</div>`:""}
+      </div>`;
+        }
         return `<div class="ck-item${it.r?" r-"+it.r:""}">
         <div class="ck-txt"><span class="cod">${esc(it.cod||(bi+1)+"."+it.n)}</span>${esc(it.txt)}${it.nv&&CK_NIVEL[it.nv]?` <span class="ck-nv ck-nv-${esc(it.nv)}">${CK_NIVEL[it.nv]}</span>`:""}${it.dica?`<span class="ck-dica"><b>Onde conferir:</b> ${esc(it.dica)}</span>`:""}</div>
         <div class="ck-resp">
@@ -5331,7 +5689,7 @@ $("#painel-checklists").addEventListener("click",ev=>{
   const todos=t.closest("[data-ck-todos]");
   if(todos){
     const b=chkBloco(todos.dataset.ckTodos); if(!b)return;
-    b.itens.forEach(i=>{ if(!i.r)i.r="C"; });
+    b.itens.forEach(i=>{ if(!i.r&&!ckTipoItem(i))i.r="C"; });
     chkRender(); render(); salvar();
     return;
   }
@@ -5354,6 +5712,16 @@ $("#painel-checklists").addEventListener("input",ev=>{
     const b=chkBloco(el.dataset.bloco); if(!b)return;
     const it=b.itens.find(x=>x.n===Number(el.dataset.n)); if(!it)return;
     it.val=el.value;
+    if(ckTipoItem(it)){
+      const k=ckTipoItem(it)==="texto"?ckCampoCab(it.txt):null;
+      if(k){ estado.cab[k]=el.value;
+        const espelho=document.querySelector(`#painel-vistoria [data-cab="${k}"]`); if(espelho)espelho.value=el.value; }
+      const cx=el.closest(".ck-item"); if(cx)cx.classList.toggle("r-ok",!!el.value);
+      const g=el.closest(".ck-grupo"), bb=chkBloco(el.dataset.bloco), ct=g&&g.querySelector(".ck-conta");
+      if(ct&&bb){ const nc=bb.itens.filter(i=>i.r==="NC").length;
+        ct.textContent=`${bb.itens.filter(i=>i.r||(ckTipoItem(i)&&i.val)).length}/${bb.itens.length}${nc?` · ${nc} NC`:""}`; }
+      salvar(); renderDoc(); return;
+    }
     const lab=el.closest(".ck-val"), velho=lab&&lab.querySelector(".ck-val-selo");
     if(velho)velho.remove();
     if(lab&&el.value)lab.insertAdjacentHTML("beforeend",ckSeloValidade(el.value));
@@ -5381,6 +5749,16 @@ $("#painel-checklists").addEventListener("input",ev=>{
    before initialization" e travava o app inteiro com rascunho de checklist. */
 function pdResp(r){
   return ({C:["Conforme","c"],NC:["Não conforme","nc"],NA:["Não se aplica","na"]})[r||""]||["Sem resposta","sr"];
+}
+
+/* quadro de controle do documento (código, data, revisão) — modelos com "controle" */
+function pdControle(d){
+  const k=d&&d.controle; if(!k)return "";
+  return `<table class="pd-controle"><tbody>
+    ${k.codigo?`<tr><th>Código:</th><td>${esc(k.codigo)}</td></tr>`:""}
+    ${k.data?`<tr><th>Data:</th><td>${esc(pdData(k.data))}</td></tr>`:""}
+    ${k.revisao?`<tr><th>Revisão:</th><td>${esc(k.revisao)}</td></tr>`:""}
+  </tbody></table>`;
 }
 
 function pdData(iso){ return iso?dataBR(String(iso).slice(0,10)):""; }
@@ -5506,7 +5884,7 @@ function pdPranchaCapa(d,ap){
     </tbody></table></div>`:`<div class="cp-ind"><div class="cp-sub">Índice dos apontamentos</div><p>Nenhuma não conformidade registrada.</p></div>`;
   return `<div class="pr-capa">
     <div class="pd-cab"><div class="pd-titulo"><h1>Relatório fotográfico de vistoria</h1><p>${esc([d.subtitulo,d.codigo].filter(Boolean).join(" · "))}</p></div>
-      <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios"></div>
+      ${pdControle(d)}<img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios"></div>
     <div class="pd-quadro">${quadro.map(([r,v])=>`<div><span>${esc(r)}</span><b>${esc(v)}</b></div>`).join("")}</div>
     <div class="cp-meio">
       <div class="cp-res"><div class="cp-tot"><b>${ap.length}</b><span>apontamento${ap.length===1?"":"s"}</span></div>${barras}
@@ -5559,7 +5937,7 @@ function pdoc(d){
 
   /* resumo do checklist */
   const t={total:0,C:0,NC:0,NA:0,sem:0};
-  (d.blocos||[]).forEach(b=>b.itens.forEach(i=>{t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;}));
+  (d.blocos||[]).forEach(b=>b.itens.forEach(i=>{if(ckTipoItem(i))return;t.total++; if(i.r==="C")t.C++; else if(i.r==="NC")t.NC++; else if(i.r==="NA")t.NA++; else t.sem++;}));
   const pc=(t.C+t.NC)?Math.round(t.C*100/(t.C+t.NC)):null;
   if(t.total)partes.push(`<div class="pd-resumo">
       <div><b>${t.total}</b><span>Itens verificados</span></div>
@@ -5575,9 +5953,15 @@ function pdoc(d){
     const titulo=esc(b.titulo);
     const linhas=b.itens.map((it,k)=>{
       const cod=it.cod||`${n}.${k+1}`;
+      if(ckTipoItem(it)){
+        const v=ckTipoItem(it)==="data"?pdData(it.val):(it.val||"");
+        return `<div class="pd-item pd-item-tp"><div class="pd-q">${esc(cod)} - ${esc(it.txt)}</div>
+        <div class="pd-r pd-valor">${v?nl(v):"—"}</div>
+        ${pdFotosDoItem((it.fotos||[]).map(src=>({src,leg:""})))}</div>`;
+      }
       const [rot,cls]=pdResp(it.r);
       const obs=[];
-      if(it.val){ const dv=ckDiasAte(it.val);
+      if(it.val&&!ckTipoItem(it)){ const dv=ckDiasAte(it.val);
         obs.push(`Data de validade: ${pdData(it.val)}${dv!=null&&dv<0?" (vencido)":dv!=null&&dv<=30?" (vence em "+dv+" dia"+(dv===1?"":"s")+")":""}`); }
       if(it.obs)obs.push(`${esc(it.obsRot||"Observação")}: ${esc(it.obs)}`);
       if(it.r==="NC"&&it.prazo)obs.push(`Prazo para correção: ${pdData(it.prazo)}`);
@@ -5656,7 +6040,7 @@ function pdoc(d){
     <div class="pd-rodape-fixo">${esc(rodapeTxt)}</div>
     <div class="pd-cab">
       <div class="pd-titulo"><h1>${esc(d.titulo)}</h1>${d.subtitulo?`<p>${esc(d.subtitulo)}</p>`:""}</div>
-      <img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios">
+      ${pdControle(d)}<img src="${d.logo||LOGO}" alt="SAKUMA Agronegócios">
     </div>
     <div class="pd-quadro">${quadro.map(([r,v])=>`<div><span>${esc(r)}</span><b>${esc(v)}</b></div>`).join("")}</div>
     <h2 class="pd-resultados">Resultados</h2>
@@ -5671,7 +6055,7 @@ function pdocRascunho(){
     titulo:(b.ref?b.ref+" ":"")+b.titulo,
     itens:b.itens.map(it=>{
       const ap=it.r==="NC"?estado.itens.find(x=>x.origemChk===b.id+":"+it.n):null;
-      return {cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",val:it.val||"",obsRot:m?"Ação necessária":"Observação",
+      return {cod:it.cod||"",txt:it.txt,tp:it.tp||"",r:it.r||"",obs:it.obs||"",val:it.val||"",obsRot:m?"Ação necessária":"Observação",
         prazo:ap&&ap.prazoData||"",fotos:(it.fotos||[]).map(f=>f.url||f.assinada||"")};
     })
   }));
@@ -5696,6 +6080,8 @@ function pdDados(c,m,blocos,apont,logo){
     ident=(m.campos||[]).map(rot=>{
       let v=ckValor(rot,c,m); if(ckTipo(rot)==="date"&&v)v=pdData(v); return [rot,v];
     });
+    /* modelo cujos campos só alimentam o quadro (data, início, fim) não repete a Identificação */
+    if(m.soQuadro)ident=ident.filter(([rot])=>!["data","inicio","fim"].includes(ckCampoCab(rot)));
     fecho=[["Elaboração",[c.tecnico,c.cargo].filter(Boolean).join(" — ")+(c.tecnicoRegistro?" · Registro: "+c.tecnicoRegistro:"")],
       ["Responsável",c.responsavelTurma||""],["Aprovação",[ckValor("Aprovação",c,m)||c.aprovador,c.aprovadorCargo].filter(Boolean).join(" — ")]];
   }else{
@@ -5712,7 +6098,8 @@ function pdDados(c,m,blocos,apont,logo){
   const assinaturas=m?(Array.isArray(m.assinaturas)&&m.assinaturas.length
       ?m.assinaturas.filter((a,i)=>i===0||a.em)
       :ckPapeis().map(p=>({papel:p,nome:"",img:"",em:""}))):null;
-  return {titulo,subtitulo,codigo:c.codigo,data:c.data,cab:c,logo,quadro,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
+  const controle=m&&m.controle&&(m.controle.codigo||m.controle.revisao)?m.controle:null;
+  return {titulo,subtitulo,codigo:c.codigo,data:c.data,cab:c,logo,quadro,controle,ident,blocos,apont,observacoes:c.observacoes,fecho,assinaturas};
 }
 
 /* ─────────── vistoria salva na base (vistorias.js) ───────────
@@ -5726,7 +6113,7 @@ window.pdocSalvo=function(v,itens,logo,sit,normas){
     observacoes:v.observacoes,inicio:v.hora_inicio,fim:v.hora_fim,tecnicoRegistro:v.tecnico_registro,motivo:v.motivo};
   const blocos=blocosBase.map(b=>({
     titulo:(b.ref?b.ref+" ":"")+b.titulo,
-    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,r:it.r||"",obs:it.obs||"",val:it.val||"",
+    itens:(b.itens||[]).map(it=>({cod:it.cod||"",txt:it.txt,tp:it.tp||"",r:it.r||"",obs:it.obs||"",val:it.val||"",
       obsRot:m?"Ação necessária":"Observação",prazo:it.prazo||"",fotos:(it.fotos||[]).map(f=>f._url||"")}))
   }));
   const apont=(itens||[]).filter(it=>!(m&&m.sigla&&String(it.titulo||"").startsWith(m.sigla+" ")))
@@ -5768,6 +6155,11 @@ function ckRenderEditor(){
       <div class="campo largo"><label for="md-titulo">Título</label><input type="text" id="md-titulo" value="${esc(m.titulo||"")}" placeholder="Checklist de Verificação – NR-24"></div>
       <div class="campo largo"><label for="md-sub">Subtítulo / norma</label><input type="text" id="md-sub" value="${esc(m.subtitulo||"")}" placeholder="Portaria MTE nº 1.590/2026"></div>
     </div>
+    <div class="grade" style="padding:0;margin-top:10px">
+      <div class="campo"><label for="md-ctl-cod">Código do documento</label><input type="text" id="md-ctl-cod" value="${esc((m.controle||{}).codigo||"")}" placeholder="FORMAGR-002-00"></div>
+      <div class="campo"><label for="md-ctl-data">Data da revisão</label><input type="date" id="md-ctl-data" value="${esc((m.controle||{}).data||"")}"></div>
+      <div class="campo"><label for="md-ctl-rev">Revisão</label><input type="text" id="md-ctl-rev" value="${esc((m.controle||{}).revisao||"")}" placeholder="1"></div>
+    </div>
     <div class="campo largo" style="margin-top:10px"><label for="md-campos">Campos do cabeçalho — um por linha</label>
       <textarea id="md-campos" rows="5" spellcheck="false">${esc((m.campos||[]).join("\n"))}</textarea></div>
     <div class="campo largo" style="margin-top:10px"><label for="md-itens">Itens — um por linha: Nº | Categoria | Item de verificação</label>
@@ -5783,6 +6175,9 @@ function ckRenderEditor(){
     const titulo=$("#md-titulo").value.trim();
     if(!titulo){toast("O checklist precisa de um título.");return;}
     const grupos=[], idx={};
+    /* item que continua com o mesmo texto guarda dica, nível e tipo de resposta */
+    const antes={};
+    (m.grupos||[]).forEach(g=>(g.itens||[]).forEach(x=>{ antes[String(x[1]||"")]=x; }));
     $("#md-itens").value.split("\n").map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{
       const p=l.split("|").map(x=>x.trim());
       let cod,cat,txt;
@@ -5790,12 +6185,15 @@ function ckRenderEditor(){
       else if(p.length===2){[cod,cat,txt]=[p[0],"Itens",p[1]];}
       else {[cod,cat,txt]=[String(i+1),"Itens",p[0]];}
       if(!(cat in idx)){idx[cat]=grupos.length;grupos.push({titulo:cat,itens:[]});}
-      grupos[idx[cat]].itens.push([cod,txt]);
+      const a=antes[txt];
+      grupos[idx[cat]].itens.push(a&&a.length>2?[cod,txt].concat(a.slice(2)):[cod,txt]);
     });
     if(!grupos.length){toast("O checklist precisa de pelo menos um item.");return;}
+    const ctl={codigo:$("#md-ctl-cod").value.trim(),data:$("#md-ctl-data").value,revisao:$("#md-ctl-rev").value.trim()};
     const obj={sigla:$("#md-sigla").value.trim(),titulo,subtitulo:$("#md-sub").value.trim(),
       ref:[$("#md-sigla").value.trim(),$("#md-sub").value.trim()].filter(Boolean).join(" · "),
       arquivo:m.arquivo||"",
+      controle:(ctl.codigo||ctl.revisao)?ctl:null, papeis:m.papeis||null, soQuadro:!!m.soQuadro,
       campos:$("#md-campos").value.split("\n").map(l=>l.trim().replace(/:$/,"")).filter(Boolean),
       grupos,
       orientacoes:$("#md-orient").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{
@@ -6919,6 +7317,800 @@ const _abrirAppEX=abrirApp;
 abrirApp=async function(){ const r=await _abrirAppEX.apply(this,arguments); exCarregar().then(()=>{ if(!$("#painel-ex").hidden&&!$("#ex-lista").hidden)exRenderLista(); }); return r; };
 if(new URLSearchParams(location.search).get("aba")==="ex")exMostrar("lista");
 if(conectado())exCarregar();
+
+</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   Anomalias
+   Vistoria livre e simples, para quem não é técnico: anda pela fazenda e,
+   para cada coisa errada, tira a foto, escreve o problema, o plano de ação e
+   quem vai arrumar. Três partes:
+     Apontamento — o relatório em preenchimento (novo ou reaberto para editar)
+     Painel      — abertas, vencidas e concluídas, só deste módulo; concluir
+                   com a foto do corrigido
+     Histórico   — todos os relatórios: imprimir de novo, editar, apagar
+   Editar um relatório salvo atualiza o mesmo relatório (decisão do Guilherme).
+   Assinatura: só a de quem fez os apontamentos.
+
+   Roda num <script> próprio: um erro aqui não derruba o login nem o resto do
+   app. Todos os nomes começam com "an" (o _script-extra.js já usa anNorma).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const AN_RASC="sakuma-an-rascunho", AN_CACHE="sakuma-an-lista", AN_NOME="sakuma-an-nome";
+const AN_FAZENDAS=["Sede","Lote 35 PADAP","Fazenda Faca","Fazenda Morro Branco","Fazenda Três Riachos","Fazenda Quebra Cocão"];
+let anRels=[], anCarregou=false, anOffline=false, anAtual=null, anSalvando=false;
+let anVista="apontamento", anVoltar="apontamento";
+let anFiltro={sit:"abertas",local:"",resp:"",busca:""}, anHist={local:"",busca:""};
+let anConcluindo=null;              /* {relId, uid, _src} enquanto o diálogo de concluir está aberto */
+const anDados=new Map();            /* caminho no bucket → foto em data URL (para a impressão) */
+
+/* ─────────── utilidades ─────────── */
+function anHoje(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function anData(iso){ return iso?String(iso).slice(0,10).split("-").reverse().join("/"):""; }
+function anNl(t){ return esc(t||"").replace(/\n/g,"<br>"); }
+function anMaisDias(iso,n){ const [a,m,d]=String(iso||anHoje()).split("-").map(Number); const x=new Date(a,m-1,d+n); return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+/* dias até o prazo: duas meia-noites locais */
+function anDiasAte(iso){ if(!iso)return null; const [a,m,d]=iso.split("-").map(Number); const h=new Date(); h.setHours(0,0,0,0); return Math.round((new Date(a,m-1,d)-h)/86400000); }
+function anPrazoPadrao(){ try{ const n=regras&&regras.dias&&Number(regras.dias["Médio"]); return Number.isFinite(n)&&n>0?n:30; }catch(e){ return 30; } }
+function anConcluida(it){ return it&&it.status==="Concluída"; }
+function anVencida(it){ if(anConcluida(it))return false; const d=anDiasAte(it.prazo); return d!==null&&d<0; }
+function anNomePadrao(){ try{ return localStorage.getItem(AN_NOME)||""; }catch(e){ return ""; } }
+function anCopia(r){ return JSON.parse(JSON.stringify(r)); }
+function anSeloPrazo(it){
+  if(anConcluida(it))return `<span class="an-selo ok">Concluída${it.fim_data?" em "+esc(anData(it.fim_data)):""}</span>`;
+  const d=anDiasAte(it.prazo);
+  if(d===null)return `<span class="an-selo">Aberta · sem prazo</span>`;
+  if(d<0)return `<span class="an-selo venc">Vencida há ${-d} dia${d===-1?"":"s"}</span>`;
+  if(d===0)return `<span class="an-selo atencao">Vence hoje</span>`;
+  const at=(typeof regras!=="undefined"&&Number.isFinite(regras.atencao))?regras.atencao:3;
+  return `<span class="an-selo ${d<=at?"atencao":""}">Aberta · vence em ${d} dia${d===1?"":"s"}</span>`;
+}
+function anSemRede(m){ return /Failed to fetch|NetworkError|Load failed/i.test(String(m||"")); }
+
+/* foto do item: recém-tirada (data URL) ou da base (URL assinada) */
+async function anSrc(cam,novo){ if(novo)return novo; if(!cam)return ""; return anDados.get(cam)||await urlDaFoto(cam); }
+async function anSrcDados(cam,novo){
+  if(novo)return novo; if(!cam)return "";
+  if(anDados.has(cam))return anDados.get(cam);
+  const url=await urlDaFoto(cam); if(!url)return "";
+  try{
+    const b=await (await fetch(url)).blob();
+    const d=await new Promise((ok,erro)=>{const fr=new FileReader();fr.onload=()=>ok(fr.result);fr.onerror=erro;fr.readAsDataURL(b);});
+    anDados.set(cam,d); return d;
+  }catch(e){ return url; }
+}
+
+/* ─────────── rascunho no aparelho ─────────── */
+function anGuardarRascunho(){
+  if(!anAtual)return;
+  try{ localStorage.setItem(AN_RASC,JSON.stringify(anAtual)); }
+  catch(e){ toast("O aparelho está sem espaço para guardar o rascunho com as fotos. Salve o relatório."); }
+}
+function anLerRascunho(){ try{ const t=localStorage.getItem(AN_RASC); return t?JSON.parse(t):null; }catch(e){ return null; } }
+function anApagarRascunho(){ try{ localStorage.removeItem(AN_RASC); }catch(e){} }
+
+function anNovoRel(){
+  return {id:uuid(),_novo:true,codigo:"",local:"",responsavel:anNomePadrao(),data:anHoje(),itens:[],assinatura:"",assinado_em:null};
+}
+function anNovoItem(){
+  return {uid:uuid(),foto:"",problema:"",plano:"",responsavel:"",prazo:anMaisDias(anAtual&&anAtual.data,anPrazoPadrao()),
+    status:"Aberta",fim_foto:"",fim_data:"",fim_obs:""};
+}
+
+/* ─────────── base ─────────── */
+async function anCarregar(){
+  const doCache=()=>{ try{ anRels=JSON.parse(localStorage.getItem(AN_CACHE)||"[]"); }catch(e){ anRels=[]; } };
+  if(!conectado()){ anOffline=true; doCache(); anCarregou=true; anContador(); return; }
+  try{
+    const d=await rest("anomalias_relatorios?select=*&order=data.desc.nullslast,criado_em.desc");
+    anRels=d||[]; anOffline=false; anCarregou=true; anCarregadoEm=new Date();
+    try{ localStorage.setItem(AN_CACHE,JSON.stringify(anRels)); }catch(e){}
+  }catch(e){
+    anOffline=true; anCarregou=true; doCache();
+    if(!/sem-sessao/.test(String(e.message))&&!anSemRede(e.message))console.warn("anomalias:",e);
+  }
+  anContador();
+}
+function anGuardarCache(){ try{ localStorage.setItem(AN_CACHE,JSON.stringify(anRels)); }catch(e){} }
+
+function anTodosItens(){
+  const l=[];
+  anRels.forEach(r=>(r.itens||[]).forEach((it,i)=>l.push({rel:r,it,n:i+1})));
+  return l;
+}
+function anContador(){
+  const n=anTodosItens().filter(x=>!anConcluida(x.it)).length;
+  const c=$("#cont-an"); if(c){ c.textContent=String(n); c.hidden=!n; }
+  const m=$("#mi-an"); if(m){ m.textContent=n?String(n):""; m.hidden=!n; }
+}
+
+async function anProximoCodigo(){
+  try{
+    const d=await rest("anomalias_relatorios?select=codigo&codigo=like.ANOM-*");
+    const maior=(d||[]).reduce((m,x)=>{const k=/^ANOM-(\d+)$/.exec(x.codigo||"");return k?Math.max(m,+k[1]):m;},0);
+    return "ANOM-"+String(maior+1).padStart(3,"0");
+  }catch(e){ return ""; }
+}
+
+/* o que vai para a base: sem as fotos em data URL */
+function anLimparItem(it){
+  const c={...it}; Object.keys(c).forEach(k=>{ if(k[0]==="_")delete c[k]; }); return c;
+}
+
+async function anSalvar(){
+  if(anSalvando||!anAtual)return;
+  const r=anAtual;
+  const foco=s=>{ const e=$(s); if(e){ e.scrollIntoView({block:"center",behavior:"smooth"}); e.focus&&e.focus(); } };
+  if(!String(r.local||"").trim()){ toast("Escreva o local (nome da fazenda)."); foco("#an-local"); return; }
+  if(!String(r.responsavel||"").trim()){ toast("Escreva quem está fazendo o relatório."); foco("#an-resp"); return; }
+  if(!r.itens.length){ toast("Adicione pelo menos uma anomalia."); return; }
+  for(let i=0;i<r.itens.length;i++){
+    const it=r.itens[i], n=i+1;
+    if(!it.foto&&!it._fotoSrc){ toast(`Anomalia ${n}: falta a foto.`); foco(`[data-an-card="${it.uid}"]`); return; }
+    if(!String(it.problema||"").trim()){ toast(`Anomalia ${n}: escreva qual é o problema.`); foco(`[data-an-campo="problema"][data-uid="${it.uid}"]`); return; }
+    if(!String(it.plano||"").trim()){ toast(`Anomalia ${n}: escreva o plano de ação.`); foco(`[data-an-campo="plano"][data-uid="${it.uid}"]`); return; }
+  }
+  if(!conectado()){ anGuardarRascunho(); toast("Sem conexão com a base: ficou guardado no aparelho. Salve de novo quando a rede voltar."); return; }
+  anSalvando=true;
+  const bt=$("#an-salvar"); const rot=bt?bt.innerHTML:""; if(bt){bt.disabled=true;bt.textContent="Salvando…";}
+  try{
+    const carimbo=Date.now();
+    for(const it of r.itens){
+      if(it._fotoSrc){ it.foto=await enviarFoto(`${r.id}/an-${it.uid}-${carimbo}.jpg`,it._fotoSrc); anDados.set(it.foto,it._fotoSrc); delete it._fotoSrc; }
+      if(it._fimSrc){ it.fim_foto=await enviarFoto(`${r.id}/an-${it.uid}-fim-${carimbo}.jpg`,it._fimSrc); anDados.set(it.fim_foto,it._fimSrc); delete it._fimSrc; }
+    }
+    try{ localStorage.setItem(AN_NOME,String(r.responsavel).trim()); }catch(e){}
+    const corpo={local:String(r.local).trim(),responsavel:String(r.responsavel).trim(),data:r.data||null,
+      itens:r.itens.map(anLimparItem),assinatura:r.assinatura||null,assinado_em:r.assinado_em||null};
+    let salvo;
+    if(r._novo){
+      corpo.id=r.id; corpo.codigo=String(r.codigo||"").trim()||await anProximoCodigo()||null;
+      salvo=await rest("anomalias_relatorios",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify(corpo)});
+    }else{
+      if(String(r.codigo||"").trim())corpo.codigo=String(r.codigo).trim();
+      salvo=await rest(`anomalias_relatorios?id=eq.${encodeURIComponent(r.id)}`,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify(corpo)});
+    }
+    if(!salvo||!salvo.length)throw new Error("A base não confirmou a gravação. Confira se você tem acesso a este relatório.");
+    const novo=salvo[0];
+    anRels=[novo,...anRels.filter(x=>x.id!==novo.id)];
+    anGuardarCache(); anApagarRascunho();
+    anAtual=anCopia(novo);
+    anContador();
+    toast(`${novo.codigo||"Relatório"} salvo com ${novo.itens.length} anomalia${novo.itens.length===1?"":"s"}. Elas já aparecem no Painel.`);
+    anRender();
+  }catch(e){
+    anGuardarRascunho();
+    const m=String(e.message||e);
+    toast(anSemRede(m)?"Sem rede: ficou guardado no aparelho. Salve de novo quando a rede voltar.":"Não deu para salvar: "+m.slice(0,110));
+  }finally{
+    anSalvando=false;
+    const b=$("#an-salvar"); if(b&&b.disabled){b.disabled=false;b.innerHTML=rot;}
+  }
+}
+
+async function anApagarRel(id){
+  const r=anRels.find(x=>x.id===id); if(!r)return;
+  if(!confirm(`Apagar o relatório ${r.codigo||""} (${r.local||"sem local"}) com ${(r.itens||[]).length} anomalia(s)? As fotos saem da base e não dá para desfazer.`))return;
+  try{
+    const d=await rest(`anomalias_relatorios?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{Prefer:"return=representation"}});
+    if(!d||!d.length)throw new Error("Só quem lançou ou um administrador pode apagar.");
+    const cams=(r.itens||[]).flatMap(it=>[it.foto,it.fim_foto]).filter(Boolean);
+    for(const cam of cams){ try{ if(typeof window.apagarFoto==="function")await window.apagarFoto(cam);
+      else{ const h=await comToken(); await fetch(`${cfg.url}/storage/v1/object/${encodeURI("vistorias/"+cam)}`,{method:"DELETE",headers:h}); } }catch(e){} }
+    anRels=anRels.filter(x=>x.id!==id); anGuardarCache();
+    if(anAtual&&anAtual.id===id){ anAtual=null; anApagarRascunho(); }
+    anContador(); toast("Relatório apagado."); anRender();
+  }catch(e){ toast("Não deu para apagar: "+String(e.message).slice(0,110)); }
+}
+
+/* grava só a mudança de um item (concluir / reabrir), sem mexer no resto */
+async function anGravarItem(relId,uid,mudar){
+  const r=anRels.find(x=>x.id===relId); if(!r)throw new Error("Relatório não encontrado.");
+  /* lê da base a versão atual, para não apagar o que outra pessoa mudou */
+  let atual=r;
+  try{ const d=await rest(`anomalias_relatorios?select=*&id=eq.${encodeURIComponent(relId)}`); if(d&&d[0])atual=d[0]; }catch(e){ if(anSemRede(e.message))throw e; }
+  const itens=(atual.itens||[]).map(it=>it.uid===uid?{...it,...mudar}:it);
+  const salvo=await rest(`anomalias_relatorios?id=eq.${encodeURIComponent(relId)}`,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({itens})});
+  if(!salvo||!salvo.length)throw new Error("A base não confirmou. Confira se você tem acesso a este relatório.");
+  anRels=anRels.map(x=>x.id===relId?salvo[0]:x); anGuardarCache();
+  if(anAtual&&anAtual.id===relId&&!anAtual._novo){
+    const it=anAtual.itens.find(x=>x.uid===uid); const novo=salvo[0].itens.find(x=>x.uid===uid);
+    if(it&&novo)Object.assign(it,{status:novo.status,fim_foto:novo.fim_foto,fim_data:novo.fim_data,fim_obs:novo.fim_obs});
+  }
+  anContador();
+}
+
+/* ─────────── telas ─────────── */
+function anMostrar(qual){
+  anVista=qual; aba("an");
+}
+function anRender(){
+  const C=$("#an-corpo"); if(!C)return;
+  document.querySelectorAll("[data-an-vista]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.anVista===anVista||(anVista==="previa"&&b.dataset.anVista===anVoltar))));
+  if(anVista==="apontamento")anRenderApontamento();
+  else if(anVista==="painel")anRenderPainel();
+  else if(anVista==="historico")anRenderHistorico();
+}
+
+function anLocais(){
+  return [...new Set([...AN_FAZENDAS,...anRels.map(r=>(r.local||"").trim()).filter(Boolean)])].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+}
+function anResponsaveis(){
+  return [...new Set(anTodosItens().map(x=>(x.it.responsavel||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+}
+
+/* ── Apontamento ── */
+function anRenderApontamento(){
+  const C=$("#an-corpo");
+  if(!anAtual){
+    const rasc=anLerRascunho();
+    anAtual=rasc||anNovoRel();
+  }
+  const r=anAtual;
+  const conc=r.itens.filter(anConcluida).length;
+  C.innerHTML=`
+    <div class="secao-topo">
+      <h2>${r._novo?"Novo relatório de anomalias":"Editando "+esc(r.codigo||"relatório")}</h2>
+      ${r._novo?`<span class="dica">Para cada coisa errada: foto, o problema, o que fazer e quem vai arrumar.</span>`
+        :`<span class="dica">Ao salvar, este mesmo relatório é atualizado.</span>`}
+      ${r._novo?"":`<button class="bt" type="button" data-an-novo style="margin-left:auto">＋ Novo relatório</button>`}
+    </div>
+    ${anOffline?`<p class="ad-aviso">Sem conexão com a base: dá para preencher e imprimir; para salvar, precisa de rede.</p>`:""}
+    <div class="cartao"><div class="grade">
+      <div class="campo"><label for="an-local">Local (fazenda) *</label><input type="text" id="an-local" data-an-rel="local" list="an-locais" value="${esc(r.local)}" placeholder="Ex.: Fazenda Morro Branco"></div>
+      <div class="campo"><label for="an-resp">Quem está fazendo o relatório *</label><input type="text" id="an-resp" data-an-rel="responsavel" value="${esc(r.responsavel)}" placeholder="Seu nome"></div>
+      <div class="campo"><label for="an-data">Data</label><input type="date" id="an-data" data-an-rel="data" value="${esc(r.data||"")}"></div>
+      ${r._novo?"":`<div class="campo"><label for="an-cod">Número</label><input type="text" id="an-cod" data-an-rel="codigo" value="${esc(r.codigo||"")}"></div>`}
+    </div></div>
+    <datalist id="an-locais">${anLocais().map(u=>`<option value="${esc(u)}">`).join("")}</datalist>
+    <datalist id="an-resps">${anResponsaveis().map(u=>`<option value="${esc(u)}">`).join("")}</datalist>
+
+    <div class="an-lista-topo"><h3>Anomalias <b>${r.itens.length}</b></h3>
+      ${r.itens.length?`<span class="dica">${r.itens.length-conc} aberta${r.itens.length-conc===1?"":"s"} · ${conc} concluída${conc===1?"":"s"}</span>`:""}</div>
+    <div class="an-itens">
+      ${r.itens.map((it,i)=>anCardItem(it,i)).join("")||`<div class="vazio"><p>Nenhuma anomalia ainda. Toque em <b>＋ Nova anomalia</b> e tire a foto do que está errado.</p></div>`}
+    </div>
+    <button class="an-mais" type="button" data-an-add>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      ＋ Nova anomalia (tirar foto)
+    </button>
+
+    <div class="cartao ck-assin-cx an-assin">
+      <h3 class="ck-assin-tt">Assinatura de quem fez os apontamentos</h3>
+      ${r.assinatura?`<div class="ck-assin feita"><img src="${esc(r.assinatura)}" alt="Assinatura">
+          <span><b>${esc(r.responsavel||"")}</b> · assinado em ${esc(anQuando(r.assinado_em))}</span>
+          <div class="ck-assin-bts"><button class="bt bt-fantasma" type="button" data-an-refazer>Refazer</button></div></div>`
+        :`<p class="ck-assin-ajuda">Assine com o dedo ou o mouse no quadro e toque em Confirmar. Sai no fim do relatório, com o nome de quem está fazendo.</p>
+          <div class="ck-assin"><canvas class="ck-assin-tela" id="an-tela" aria-label="Quadro para assinar"></canvas>
+          <div class="ck-assin-bts"><button class="bt bt-fantasma" type="button" data-an-limpar>Limpar</button><button class="bt bt-forte" type="button" data-an-assinar>Confirmar assinatura</button></div></div>`}
+    </div>
+
+    <div class="ad-acoes an-acoes">
+      <button class="btn" type="button" id="an-salvar">Salvar relatório</button>
+      <button class="btn secundario" type="button" data-an-rel-atual>Ver / imprimir</button>
+      <button class="bt bt-fantasma bt-perigo" type="button" data-an-descartar style="margin-left:auto">${r._novo?"Descartar":"Apagar relatório"}</button>
+    </div>`;
+  r.itens.forEach(async it=>{
+    const im=C.querySelector(`img[data-an-img="${it.uid}"]`); if(!im)return;
+    const u=await anSrc(it.foto,it._fotoSrc); if(u)im.src=u; else im.replaceWith(Object.assign(document.createElement("span"),{className:"ad-vazia",textContent:"Foto indisponível sem rede"}));
+  });
+  const cv=$("#an-tela"); if(cv&&typeof ckLigarTela==="function")ckLigarTela(cv);
+}
+function anQuando(iso){
+  if(!iso)return ""; const d=new Date(iso); if(isNaN(d))return "";
+  return d.toLocaleDateString("pt-BR")+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+function anCardItem(it,i){
+  const tem=!!(it.foto||it._fotoSrc), c=anConcluida(it);
+  return `<article class="an-item${c?" ok":""}" data-an-card="${esc(it.uid)}" tabindex="-1">
+    <header><span class="an-num">${i+1}</span><b>Anomalia ${i+1}</b>${anSeloPrazo(it)}
+      <button class="bt bt-fantasma bt-perigo an-tirar" type="button" data-an-remover="${esc(it.uid)}" title="Tirar esta anomalia">✕</button></header>
+    <div class="an-item-corpo">
+      <button type="button" class="ad-foto an-foto" data-an-foto="${esc(it.uid)}">
+        ${tem?`<img alt="Foto da anomalia ${i+1}" data-an-img="${esc(it.uid)}"><span class="ad-trocar">Trocar foto</span>`
+          :`<span class="ad-vazia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Tirar foto do problema</span>`}
+      </button>
+      <div class="an-campos">
+        <div class="campo"><label>Qual é o problema *</label><textarea data-an-campo="problema" data-uid="${esc(it.uid)}" placeholder="Ex.: lixo jogado no chão perto do barracão">${esc(it.problema||"")}</textarea></div>
+        <div class="campo"><label>Plano de ação (o que fazer) *</label><textarea data-an-campo="plano" data-uid="${esc(it.uid)}" placeholder="Ex.: recolher o lixo e colocar uma lixeira com tampa">${esc(it.plano||"")}</textarea></div>
+        <div class="an-dupla">
+          <div class="campo"><label>Quem vai arrumar</label><input type="text" list="an-resps" data-an-campo="responsavel" data-uid="${esc(it.uid)}" value="${esc(it.responsavel||"")}" placeholder="Nome de quem resolve"></div>
+          <div class="campo"><label>Prazo</label><input type="date" data-an-campo="prazo" data-uid="${esc(it.uid)}" value="${esc(it.prazo||"")}"></div>
+        </div>
+        ${c?`<p class="an-fim">✓ Concluída${it.fim_data?" em "+esc(anData(it.fim_data)):""}${it.fim_obs?" — "+esc(it.fim_obs):""}</p>`:""}
+      </div>
+    </div>
+  </article>`;
+}
+
+function anTirarFoto(cb){
+  const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*";
+  inp.onchange=()=>{ const f=inp.files&&inp.files[0]; if(f)comprimir(f,cb); };
+  inp.click();
+}
+
+/* ── Painel ──
+   Mesmo desenho dos painéis do Gestão Rápida Pessoas (vencimentos do SST):
+   cartão de cabeçalho com Atualizar e Imprimir o painel, filtros, cartões por
+   faixa de prazo que filtram a lista, "Precisa de atenção", "Por local",
+   "Por responsável" e o gráfico mês a mês. */
+const AN_BREVE=7;   /* "vence em breve": até 7 dias */
+let anCarregadoEm=null;
+const AN_FAIXAS=[
+  {ch:"vencidas",rot:"Vencidas",cor:"perigo",dica:"prazo já passou"},
+  {ch:"breve",rot:"Vencem em até 7 dias",cor:"alerta",dica:"resolver esta semana"},
+  {ch:"noprazo",rot:"Abertas no prazo",cor:"atencao",dica:"mais de 7 dias"},
+  {ch:"concluidas",rot:"Concluídas",cor:"calma",dica:"com foto do corrigido"}
+];
+function anFaixa(it){
+  if(anConcluida(it))return "concluidas";
+  const d=anDiasAte(it.prazo);
+  if(d!==null&&d<0)return "vencidas";
+  if(d!==null&&d<=AN_BREVE)return "breve";
+  return "noprazo";
+}
+function anTagPrazo(it){
+  const f=anFaixa(it), d=anDiasAte(it.prazo);
+  if(f==="concluidas")return `<span class="anp-tag calma">concluída${it.fim_data?" "+esc(anData(it.fim_data)):""}</span>`;
+  if(d===null)return `<span class="anp-tag neutra">sem prazo</span>`;
+  if(f==="vencidas")return `<span class="anp-tag perigo">vencida há ${-d} d</span>`;
+  if(d===0)return `<span class="anp-tag alerta">vence hoje</span>`;
+  if(f==="breve")return `<span class="anp-tag alerta">vence em ${d} d</span>`;
+  return `<span class="anp-tag atencao">em ${d} d</span>`;
+}
+function anBase(){
+  /* recorte dos filtros de cima (local e responsável), sem a faixa */
+  return anTodosItens().filter(({rel,it})=>
+    (!anFiltro.local||(rel.local||"").trim()===anFiltro.local)&&
+    (!anFiltro.resp||(it.responsavel||"").trim()===anFiltro.resp));
+}
+function anFiltrarItens(){
+  const b=anFiltro.busca.trim().toLowerCase();
+  return anBase().filter(({rel,it})=>{
+    const f=anFaixa(it);
+    if(anFiltro.sit==="abertas"&&f==="concluidas")return false;
+    if(!["abertas","todas"].includes(anFiltro.sit)&&f!==anFiltro.sit)return false;
+    if(b&&![rel.codigo,rel.local,rel.responsavel,it.problema,it.plano,it.responsavel].join(" ").toLowerCase().includes(b))return false;
+    return true;
+  }).sort((x,y)=>{
+    const ca=anConcluida(x.it), cb=anConcluida(y.it);
+    if(ca!==cb)return ca?1:-1;
+    if(ca)return String(y.it.fim_data||"").localeCompare(String(x.it.fim_data||""));
+    return String(x.it.prazo||"9999").localeCompare(String(y.it.prazo||"9999"));
+  });
+}
+function anMeses(n){
+  const d=new Date(), l=[];
+  for(let i=n-1;i>=0;i--){ const x=new Date(d.getFullYear(),d.getMonth()-i,1); l.push(`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}`); }
+  return l;
+}
+function anRotMes(k){ return ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"][+k.slice(5,7)-1]+"/"+k.slice(2,4); }
+function anGrafico(base){
+  const meses=anMeses(6);
+  const reg=meses.map(m=>base.filter(x=>String(x.rel.data||"").slice(0,7)===m).length);
+  const con=meses.map(m=>base.filter(x=>anConcluida(x.it)&&String(x.it.fim_data||"").slice(0,7)===m).length);
+  const W=900,H=210,E=34,T=14,B=26, larg=(W-E-8)/meses.length;
+  const max=Math.max(4,...reg,...con);
+  const y=v=>T+(H-T-B)*(1-v/max);
+  const passo=Math.max(1,Math.ceil(max/4));
+  const marcas=[]; for(let v=0;v<=max;v+=passo)marcas.push(v);
+  return `<figure class="anp-graf"><figcaption>Registradas × concluídas · últimos 6 meses</figcaption>
+    <div class="anp-rola"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Anomalias registradas e concluídas por mês">
+      ${marcas.map(v=>`<line class="anp-eixo" x1="${E}" x2="${W-8}" y1="${y(v)}" y2="${y(v)}"/><text class="anp-txt" x="${E-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`).join("")}
+      ${meses.map((m,i)=>{
+        const x=E+i*larg+larg*0.18, w=larg*0.3;
+        const bar=(v,dx,cls,rot)=>v?`<rect class="${cls}" x="${x+dx}" y="${y(v)}" width="${w}" height="${Math.max(1,H-B-y(v))}" rx="3"><title>${anRotMes(m)}: ${v} ${rot}</title></rect><text class="anp-txt anp-val" x="${x+dx+w/2}" y="${y(v)-4}" text-anchor="middle">${v}</text>`:"";
+        return bar(reg[i],0,"anp-b-reg","registrada(s)")+bar(con[i],w+larg*0.04,"anp-b-con","concluída(s)")
+          +`<text class="anp-txt" x="${x+w+larg*0.02}" y="${H-8}" text-anchor="middle">${anRotMes(m)}</text>`;
+      }).join("")}
+    </svg></div>
+    <p class="anp-legenda"><span class="anp-cx reg"></span>registradas no mês (data do relatório) · <span class="anp-cx con"></span>concluídas no mês (data da correção)</p>
+  </figure>`;
+}
+function anTabelaGrupo(base,chave,rotulo,dataAttr){
+  const nomes=[...new Set(base.map(x=>chave(x)))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  if(!nomes.length)return `<div class="vazio">Nenhuma anomalia ainda.</div>`;
+  const tot={vencidas:0,breve:0,noprazo:0,concluidas:0,n:0};
+  const linhas=nomes.map(nm=>{
+    const dele=base.filter(x=>chave(x)===nm);
+    const c=f=>dele.filter(x=>anFaixa(x.it)===f).length;
+    AN_FAIXAS.forEach(f=>tot[f.ch]+=c(f.ch)); tot.n+=dele.length;
+    return `<tr><td><button type="button" class="anp-link" ${dataAttr}="${esc(nm)}">${esc(nm)}</button></td>
+      ${AN_FAIXAS.map(f=>{ const n=c(f.ch); return `<td class="ce${n?" anp-n-"+f.cor:" anp-sem"}">${n||"—"}</td>`; }).join("")}
+      <td class="ce"><b>${dele.length}</b></td></tr>`;
+  }).join("");
+  return `<div class="anp-rola"><table class="anp-tab"><thead><tr><th>${esc(rotulo)}</th>${AN_FAIXAS.map(f=>`<th class="ce">${esc(f.rot.replace("Vencem em até 7 dias","Até 7 dias").replace("Abertas no prazo","No prazo"))}</th>`).join("")}<th class="ce">Total</th></tr></thead>
+    <tbody>${linhas}<tr class="anp-total"><td>Total</td>${AN_FAIXAS.map(f=>`<td class="ce">${tot[f.ch]||"—"}</td>`).join("")}<td class="ce">${tot.n}</td></tr></tbody></table></div>`;
+}
+function anRenderPainel(){
+  const C=$("#an-corpo");
+  const base=anBase();
+  const conta=f=>base.filter(x=>anFaixa(x.it)===f).length;
+  const tot=base.length, conc=conta("concluidas"), pct=tot?Math.round(conc*100/tot):0;
+  const locais=[...new Set(anRels.map(r=>(r.local||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const resps=anResponsaveis();
+  const hora=anCarregadoEm?anCarregadoEm.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):"";
+  const urg=base.filter(x=>["vencidas","breve"].includes(anFaixa(x.it))).sort((a,b)=>String(a.it.prazo||"").localeCompare(String(b.it.prazo||"")));
+  const nomeSit={abertas:"Abertas",todas:"Todas",vencidas:"Vencidas",breve:"Vencem em até 7 dias",noprazo:"Abertas no prazo",concluidas:"Concluídas"}[anFiltro.sit];
+  C.innerHTML=`
+  <div class="anp">
+    <div class="anp-cartao">
+      <div class="anp-barra-tit">
+        <div><h2>Painel das anomalias</h2>
+          <p class="anp-dica">Só as anomalias deste módulo. Clique num cartão para ver a lista.${hora?` · atualizado às ${esc(hora)}`:""}</p></div>
+        <span class="anp-acoes"><button type="button" class="anp-btn" data-an-atualizar>Atualizar</button>
+          <button type="button" class="anp-btn principal" data-an-imp-painel>Imprimir o painel</button></span>
+      </div>
+      ${anOffline?`<div class="anp-aviso">Sem conexão com a base: mostrando o que estava guardado neste aparelho.</div>`:""}
+      <div class="anp-filtros">
+        <label class="anp-campo">Local <select id="an-f-local"><option value="">Todos</option>${locais.map(u=>`<option ${u===anFiltro.local?"selected":""}>${esc(u)}</option>`).join("")}</select></label>
+        <label class="anp-campo">Quem vai arrumar <select id="an-f-resp"><option value="">Todos</option>${resps.map(u=>`<option ${u===anFiltro.resp?"selected":""}>${esc(u)}</option>`).join("")}</select></label>
+      </div>
+      <div class="anp-cards">
+        ${AN_FAIXAS.map(f=>{ const n=conta(f.ch); return `<button type="button" class="anp-card anp-${f.cor}${n?"":" anp-zero"}" data-an-sit="${f.ch}" aria-pressed="${anFiltro.sit===f.ch}">
+          <span>${esc(f.rot)}</span><strong>${n}</strong><small>${n?esc(f.dica):"nada aqui"}</small></button>`; }).join("")}
+        <button type="button" class="anp-card anp-ok" data-an-sit="todas" aria-pressed="${anFiltro.sit==="todas"}"><span>Total</span><strong>${tot}</strong><small>${tot-conc} aberta${tot-conc===1?"":"s"}</small></button>
+      </div>
+      <div class="anp-progresso"><div class="anp-progresso-tit"><b>${pct}% concluídas</b><span>${conc} de ${tot}</span></div><div class="anp-trilho"><i style="width:${pct}%"></i></div></div>
+
+      <div class="anp-bloco"><h3>Precisa de atenção</h3>
+        <p class="anp-dica">Vencidas e as que vencem nos próximos ${AN_BREVE} dias.</p>
+        ${urg.length?`<div class="anp-rola"><table class="anp-tab"><thead><tr><th>Problema</th><th>Local</th><th>Quem vai arrumar</th><th class="ce">Prazo</th><th class="ce">Situação</th><th></th></tr></thead><tbody>
+          ${urg.map(({rel,it,n})=>`<tr><td><b>${esc(it.problema||"—")}</b><br><span class="anp-sem">${esc([rel.codigo,"nº "+n].filter(Boolean).join(" · "))}</span></td>
+            <td>${esc(rel.local||"—")}</td><td>${esc(it.responsavel||"—")}</td><td class="ce">${esc(anData(it.prazo)||"—")}</td>
+            <td class="ce">${anTagPrazo(it)}</td><td class="ce"><button type="button" class="anp-btn mini" data-an-concluir="${esc(rel.id)}|${esc(it.uid)}">Concluir</button></td></tr>`).join("")}
+          </tbody></table></div>`:`<div class="vazio">Nada vencido nem vencendo nos próximos ${AN_BREVE} dias. Tudo em ordem.</div>`}
+      </div>
+
+      <div class="anp-bloco"><h3>Por local</h3>${anTabelaGrupo(base,x=>(x.rel.local||"").trim()||"Sem local","Local","data-an-glocal")}</div>
+      <div class="anp-bloco"><h3>Por responsável</h3>${anTabelaGrupo(base,x=>(x.it.responsavel||"").trim()||"Sem responsável","Quem vai arrumar","data-an-gresp")}</div>
+      <div class="anp-bloco">${anGrafico(base)}</div>
+    </div>
+
+    <div class="anp-cartao">
+      <div class="anp-barra-tit"><div><h2>Lista · ${esc(nomeSit)}</h2><p class="anp-dica">Com as fotos. Concluir pede a foto do corrigido.</p></div>
+        ${anFiltro.sit!=="abertas"?`<span class="anp-acoes"><button type="button" class="anp-btn" data-an-sit="abertas">Ver todas as abertas</button></span>`:""}</div>
+      <div class="anp-filtros"><label class="anp-campo larga">Buscar <input type="search" id="an-f-busca" placeholder="Problema, plano, responsável, número…" value="${esc(anFiltro.busca)}"></label></div>
+      <div class="an-plista" id="an-plista"></div>
+    </div>
+  </div>`;
+  anRenderPlista();
+}
+function anRenderPlista(){
+  const L=$("#an-plista"); if(!L)return;
+  if(!anCarregou){ L.innerHTML=`<div class="vazio">Carregando…</div>`; return; }
+  const lista=anFiltrarItens();
+  if(!lista.length){
+    L.innerHTML=`<div class="vazio">${anRels.length?"Nenhuma anomalia com esse filtro.":"Nenhum relatório de anomalias salvo ainda. Comece em <b>Apontamento</b>."}</div>`; return;
+  }
+  L.innerHTML=lista.map(({rel,it,n})=>{
+    const c=anConcluida(it), f=anFaixa(it);
+    return `<article class="an-pcard anp-f-${f}">
+      <div class="an-pfotos">
+        <figure><img alt="" data-an-pf="${esc(it.foto||"")}"><figcaption class="antes">Problema</figcaption></figure>
+        ${c?`<figure><img alt="" data-an-pf="${esc(it.fim_foto||"")}"><figcaption class="depois">Corrigido</figcaption></figure>`:""}
+      </div>
+      <div class="an-pinfo">
+        <span class="ref">${esc([rel.codigo,"nº "+n,rel.local].filter(Boolean).join(" · "))}</span>
+        <h3>${esc(it.problema||"—")}</h3>
+        <p><b>Plano de ação:</b> ${anNl(it.plano)}</p>
+        <p><b>Quem vai arrumar:</b> ${esc(it.responsavel||"—")} · <b>Prazo:</b> ${esc(anData(it.prazo)||"—")}</p>
+        ${c&&it.fim_obs?`<p><b>O que foi feito:</b> ${anNl(it.fim_obs)}</p>`:""}
+        <span>${anTagPrazo(it)}</span>
+      </div>
+      <div class="pe">
+        ${c?`<button class="anp-btn" type="button" data-an-reabrir="${esc(rel.id)}|${esc(it.uid)}">Reabrir</button>`
+          :`<button class="anp-btn principal" type="button" data-an-concluir="${esc(rel.id)}|${esc(it.uid)}">✓ Concluir</button>`}
+        <button class="anp-btn" type="button" data-an-ver="${esc(rel.id)}">Relatório</button>
+      </div>
+    </article>`;
+  }).join("");
+  [...L.querySelectorAll("img[data-an-pf]")].forEach(async im=>{
+    const cam=im.dataset.anPf; const u=cam?await anSrc(cam):"";
+    if(u)im.src=u; else im.replaceWith(Object.assign(document.createElement("div"),{className:"ad-falta",textContent:cam?"Foto indisponível sem rede":"Sem foto"}));
+  });
+}
+
+/* folha impressa do painel: A4 em pé, padrão SAKUMA, sem assinatura */
+function anFolhaPainel(){
+  const base=anBase();
+  const conta=f=>base.filter(x=>anFaixa(x.it)===f).length;
+  const tot=base.length, conc=conta("concluidas"), pct=tot?Math.round(conc*100/tot):0;
+  const urg=base.filter(x=>["vencidas","breve"].includes(anFaixa(x.it))).sort((a,b)=>String(a.it.prazo||"").localeCompare(String(b.it.prazo||"")));
+  const filtro=[anFiltro.local&&"Local: "+anFiltro.local,anFiltro.resp&&"Responsável: "+anFiltro.resp].filter(Boolean).join(" · ")||"Todos os locais e responsáveis";
+  return `<div class="anr-doc anr-painel">
+    <header class="anr-cab"><div><h1>Painel das Anomalias</h1><p>${esc(filtro)} · emitido em ${esc(anData(anHoje()))}</p></div><img src="${LOGO}" alt="SAKUMA Agronegócios"></header>
+    <div class="anr-kpis cinco">
+      ${AN_FAIXAS.map(f=>`<div class="${{perigo:"venc",alerta:"breve",atencao:"ab",calma:"ok"}[f.cor]}"><b>${conta(f.ch)}</b><span>${esc(f.rot)}</span></div>`).join("")}
+      <div><b>${tot}</b><span>total · ${pct}% concluídas</span></div>
+    </div>
+    <h2 class="anr-h2">Precisa de atenção</h2>
+    ${urg.length?`<table class="anr-lista"><thead><tr><th>Problema</th><th>Local</th><th>Quem vai arrumar</th><th>Prazo</th><th>Situação</th></tr></thead><tbody>
+      ${urg.map(({rel,it,n})=>`<tr><td><b>${esc(it.problema||"—")}</b><br><small>${esc([rel.codigo,"nº "+n].join(" · "))} · ${esc(it.plano||"")}</small></td><td>${esc(rel.local||"—")}</td><td>${esc(it.responsavel||"—")}</td><td>${esc(anData(it.prazo)||"—")}</td><td>${anTagPrazo(it)}</td></tr>`).join("")}
+      </tbody></table>`:`<p class="anr-vazio">Nada vencido nem vencendo nos próximos ${AN_BREVE} dias.</p>`}
+    <h2 class="anr-h2">Por local</h2>${anTabelaGrupo(base,x=>(x.rel.local||"").trim()||"Sem local","Local","data-x").replace(/anp-tab/g,"anr-lista")}
+    <h2 class="anr-h2">Por responsável</h2>${anTabelaGrupo(base,x=>(x.it.responsavel||"").trim()||"Sem responsável","Quem vai arrumar","data-x").replace(/anp-tab/g,"anr-lista")}
+    <div class="anr-graf">${anGrafico(base)}</div>
+    <footer class="anr-rod"><span>SAKUMA Agronegócios · Painel das Anomalias</span>${typeof docLop==="function"?docLop():""}</footer>
+  </div>`;
+}
+
+/* ── Concluir com a foto do corrigido ── */
+function anAbrirConcluir(relId,uid){
+  const rel=anRels.find(x=>x.id===relId), it=rel&&(rel.itens||[]).find(x=>x.uid===uid); if(!it)return;
+  if(!conectado()||anOffline){ toast("Para concluir é preciso estar conectado à base."); return; }
+  anConcluindo={relId,uid,_src:"",data:anHoje(),obs:""};
+  let d=$("#an-dlg");
+  if(!d){ d=document.createElement("dialog"); d.id="an-dlg"; d.className="an-dlg"; document.body.appendChild(d);
+    d.addEventListener("click",anDlgClique); d.addEventListener("input",ev=>{ if(!anConcluindo)return; if(ev.target.id==="an-c-obs")anConcluindo.obs=ev.target.value; if(ev.target.id==="an-c-data")anConcluindo.data=ev.target.value; }); }
+  d.innerHTML=anDlgHtml(rel,it);
+  anSrc(it.foto).then(u=>{ const im=d.querySelector("[data-an-c-antes]"); if(im&&u)im.src=u; });
+  d.showModal ? d.showModal() : d.setAttribute("open","");
+}
+function anDlgHtml(rel,it){
+  const s=anConcluindo;
+  return `<div class="dlg-topo"><h3>Concluir anomalia · ${esc([rel.codigo,rel.local].filter(Boolean).join(" · "))}</h3><button class="x" type="button" data-an-c-cancelar>×</button></div>
+    <div class="dlg-corpo an-dlg-corpo">
+      <p class="an-dlg-prob"><b>${esc(it.problema||"")}</b><br><span>Plano: ${esc(it.plano||"")}</span></p>
+      <div class="an-dlg-fotos">
+        <figure><img alt="" data-an-c-antes><figcaption class="antes">Problema</figcaption></figure>
+        <button type="button" class="ad-foto" data-an-c-foto>${s._src?`<img src="${esc(s._src)}" alt="Foto do corrigido"><span class="ad-trocar">Trocar foto</span>`
+          :`<span class="ad-vazia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Foto do corrigido *</span>`}</button>
+      </div>
+      <div class="campo"><label for="an-c-obs">O que foi feito</label><textarea id="an-c-obs" placeholder="Ex.: lixo recolhido e lixeira instalada">${esc(s.obs)}</textarea></div>
+      <div class="campo"><label for="an-c-data">Data da correção</label><input type="date" id="an-c-data" value="${esc(s.data)}"></div>
+    </div>
+    <div class="dlg-rodape"><button class="bt bt-fantasma" type="button" data-an-c-cancelar>Cancelar</button>
+      <button class="bt bt-forte" type="button" data-an-c-ok>Concluir</button></div>`;
+}
+async function anDlgClique(ev){
+  const d=$("#an-dlg"), s=anConcluindo; if(!s)return;
+  if(ev.target.closest("[data-an-c-cancelar]")){ anConcluindo=null; d.close?d.close():d.removeAttribute("open"); return; }
+  if(ev.target.closest("[data-an-c-foto]")){
+    anTirarFoto(url=>{ s._src=url; const rel=anRels.find(x=>x.id===s.relId), it=rel.itens.find(x=>x.uid===s.uid);
+      d.innerHTML=anDlgHtml(rel,it); anSrc(it.foto).then(u=>{ const im=d.querySelector("[data-an-c-antes]"); if(im&&u)im.src=u; }); });
+    return;
+  }
+  const ok=ev.target.closest("[data-an-c-ok]");
+  if(ok){
+    if(!s._src){ toast("Tire a foto do corrigido para concluir."); return; }
+    ok.disabled=true; ok.textContent="Gravando…";
+    try{
+      const cam=await enviarFoto(`${s.relId}/an-${s.uid}-fim-${Date.now()}.jpg`,s._src); anDados.set(cam,s._src);
+      await anGravarItem(s.relId,s.uid,{status:"Concluída",fim_foto:cam,fim_data:s.data||anHoje(),fim_obs:(s.obs||"").trim()});
+      anConcluindo=null; d.close?d.close():d.removeAttribute("open");
+      toast("Anomalia concluída."); anRender();
+    }catch(e){ ok.disabled=false; ok.textContent="Concluir"; toast(anSemRede(e.message)?"Sem rede. Tente de novo quando a conexão voltar.":"Não deu para concluir: "+String(e.message).slice(0,100)); }
+  }
+}
+async function anReabrir(relId,uid){
+  if(!confirm("Reabrir esta anomalia? Ela volta para as abertas e a foto do corrigido sai do relatório."))return;
+  try{ await anGravarItem(relId,uid,{status:"Aberta",fim_foto:"",fim_data:"",fim_obs:""}); toast("Anomalia reaberta."); anRender(); }
+  catch(e){ toast("Não deu para reabrir: "+String(e.message).slice(0,100)); }
+}
+
+/* ── Histórico ── */
+function anRenderHistorico(){
+  const C=$("#an-corpo");
+  const locais=[...new Set(anRels.map(r=>(r.local||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const b=anHist.busca.trim().toLowerCase();
+  const lista=anRels.filter(r=>{
+    if(anHist.local&&(r.local||"").trim()!==anHist.local)return false;
+    if(b&&![r.codigo,r.local,r.responsavel,...(r.itens||[]).map(i=>i.problema+" "+i.responsavel)].join(" ").toLowerCase().includes(b))return false;
+    return true;
+  });
+  const meu=(typeof sessao!=="undefined"&&sessao&&sessao.uid)||"";
+  C.innerHTML=`
+    <div class="secao-topo"><h2>Histórico de relatórios</h2>
+      <span class="dica">Abra de novo para imprimir ou editar. Editar atualiza o mesmo relatório.</span></div>
+    ${anOffline?`<p class="ad-aviso">Sem conexão com a base: mostrando o que estava guardado neste aparelho.</p>`:""}
+    <div class="ad-filtros">
+      ${locais.length>1?`<select id="an-h-local" aria-label="Local"><option value="">Todos os locais</option>${locais.map(u=>`<option ${u===anHist.local?"selected":""}>${esc(u)}</option>`).join("")}</select>`:""}
+      <input type="search" id="an-h-busca" placeholder="Buscar número, local, responsável…" value="${esc(anHist.busca)}">
+    </div>
+    <div class="an-hist">${!anCarregou?`<div class="vazio"><p>Carregando…</p></div>`:lista.length?lista.map(r=>{
+      const its=r.itens||[], c=its.filter(anConcluida).length, v=its.filter(anVencida).length, pct=its.length?Math.round(c*100/its.length):0;
+      const podeApagar=souAdmin||!r.user_id||r.user_id===meu;
+      return `<article class="an-hcard">
+        <div class="an-hinfo">
+          <span class="ref">${esc(r.codigo||"sem número")} · ${esc(anData(r.data)||"sem data")}</span>
+          <h3>${esc(r.local||"Sem local")}</h3>
+          <span class="info">Feito por ${esc(r.responsavel||"—")} · ${its.length} anomalia${its.length===1?"":"s"}</span>
+          <div class="an-hsit"><span class="an-selo">${its.length-c} aberta${its.length-c===1?"":"s"}</span>${v?`<span class="an-selo venc">${v} vencida${v===1?"":"s"}</span>`:""}<span class="an-selo ok">${c} concluída${c===1?"":"s"}</span></div>
+          <div class="an-barra mini"><i style="width:${pct}%"></i></div>
+        </div>
+        <div class="pe">
+          <button class="bt bt-forte" type="button" data-an-ver="${esc(r.id)}">Imprimir</button>
+          <button class="bt" type="button" data-an-editar="${esc(r.id)}">Editar</button>
+          ${podeApagar?`<button class="bt bt-fantasma bt-perigo" type="button" data-an-apagar="${esc(r.id)}">Apagar</button>`:""}
+        </div>
+      </article>`;}).join(""):`<div class="vazio"><p>${anRels.length?"Nenhum relatório com esse filtro.":"Nenhum relatório salvo ainda."}</p></div>`}</div>`;
+}
+
+function anEditar(id){
+  const r=anRels.find(x=>x.id===id); if(!r)return;
+  const rasc=anLerRascunho();
+  if(anAtual&&anAtual._novo&&anAtual.itens.length&&anAtual.id!==id&&!confirm("Há um relatório novo ainda não salvo neste aparelho. Abrir outro descarta o que não foi salvo. Continuar?"))return;
+  anAtual=(rasc&&rasc.id===id)?rasc:anCopia(r);
+  anGuardarRascunho();
+  anMostrar("apontamento");
+}
+
+/* ─────────── relatório impresso (A4 em pé, padrão SAKUMA) ─────────── */
+async function anMontarDoc(r){
+  const its=r.itens||[];
+  const fotos=await Promise.all(its.map(async it=>[await anSrcDados(it.foto,it._fotoSrc),anConcluida(it)?await anSrcDados(it.fim_foto,it._fimSrc):""]));
+  const conc=its.filter(anConcluida).length, venc=its.filter(anVencida).length;
+  const cod=r.codigo||"Relatório de anomalias";
+  const blocos=its.map((it,i)=>{
+    const [fA,fC]=fotos[i], c=anConcluida(it);
+    const sit=c?`Concluída${it.fim_data?" em "+anData(it.fim_data):""}`:anVencida(it)?"Aberta · vencida":"Aberta";
+    return `<section class="anr-item">
+      <div class="anr-item-cab"><span class="anr-n">${i+1}</span><h3>${esc(it.problema||"")}</h3><span class="anr-sit ${c?"ok":anVencida(it)?"venc":""}">${esc(sit)}</span></div>
+      <div class="anr-item-corpo">
+        <div class="anr-fotos${fC?" duas":""}">
+          <figure><div class="anr-img">${fA?`<img src="${esc(fA)}" alt="">`:`<span>Sem foto</span>`}</div><figcaption class="antes">Problema</figcaption></figure>
+          ${fC?`<figure><div class="anr-img"><img src="${esc(fC)}" alt=""></div><figcaption class="depois">Corrigido</figcaption></figure>`:""}
+        </div>
+        <table class="anr-tab"><tbody>
+          <tr><th>Plano de ação</th><td>${anNl(it.plano)}</td></tr>
+          <tr><th>Quem vai arrumar</th><td>${esc(it.responsavel||"—")}</td></tr>
+          <tr><th>Prazo</th><td>${esc(anData(it.prazo)||"—")}</td></tr>
+          ${c&&it.fim_obs?`<tr><th>O que foi feito</th><td>${anNl(it.fim_obs)}</td></tr>`:""}
+        </tbody></table>
+      </div>
+    </section>`;
+  }).join("");
+  return `<div class="anr-doc">
+    <header class="anr-cab">
+      <div><h1>Relatório de Anomalias</h1><p>${esc([r.codigo,r.local,anData(r.data)].filter(Boolean).join(" · "))}</p></div>
+      <img src="${LOGO}" alt="SAKUMA Agronegócios">
+    </header>
+    <table class="anr-quadro"><tbody>
+      <tr><th>Local</th><td>${esc(r.local||"—")}</td><th>Data</th><td>${esc(anData(r.data)||"—")}</td></tr>
+      <tr><th>Responsável pelos apontamentos</th><td colspan="3">${esc(r.responsavel||"—")}</td></tr>
+    </tbody></table>
+    <div class="anr-kpis">
+      <div><b>${its.length}</b><span>anomalia${its.length===1?"":"s"}</span></div>
+      <div class="ab"><b>${its.length-conc}</b><span>aberta${its.length-conc===1?"":"s"}</span></div>
+      <div class="venc"><b>${venc}</b><span>vencida${venc===1?"":"s"}</span></div>
+      <div class="ok"><b>${conc}</b><span>concluída${conc===1?"":"s"}</span></div>
+    </div>
+    ${blocos||`<p class="anr-vazio">Nenhuma anomalia registrada.</p>`}
+    <section class="anr-ass">
+      <div class="anr-ass-cx">
+        ${r.assinatura?`<img src="${esc(r.assinatura)}" alt="Assinatura">`:`<div class="anr-ass-branco"></div>`}
+        <div class="anr-ass-linha"></div>
+        <b>${esc(r.responsavel||"")}</b>
+        <span>Responsável pelos apontamentos</span>
+        <span>${r.assinatura&&r.assinado_em?"Assinado em "+esc(anQuando(r.assinado_em)):"Data: ____/____/________"}</span>
+      </div>
+    </section>
+    <footer class="anr-rod"><span>SAKUMA Agronegócios · ${esc(cod)} · emitido em ${esc(anData(anHoje()))}</span>${typeof docLop==="function"?docLop():""}</footer>
+  </div>`;
+}
+
+async function anPrevia(r,voltar){
+  anVoltar=voltar||anVista; anVista="previa"; anRender();
+  const C=$("#an-corpo");
+  C.innerHTML=`<div class="secao-topo ad-previa-topo">
+      <button class="bt bt-fantasma" type="button" data-an-previa-voltar>← Voltar</button>
+      <h2>${esc(r.codigo||"Relatório de anomalias")}</h2>
+      <div class="ad-previa-bts"><button class="btn" type="button" data-an-imprimir>Imprimir / PDF</button></div>
+    </div>
+    <p class="dica ad-previa-dica">Folha A4 em pé. Para mandar em PDF: Imprimir → Salvar como PDF.</p>
+    <div class="an-previa-palco" id="an-palco"><div class="vazio"><p>Montando o relatório…</p></div></div>`;
+  const doc=await anMontarDoc(r);
+  const p=$("#an-palco"); if(p&&anVista==="previa"){ p.innerHTML=doc; anZoom(); }
+}
+function anZoom(){
+  const p=$("#an-palco"), d=p&&p.querySelector(".anr-doc"); if(!d)return;
+  d.style.zoom=String(Math.min(1,(p.clientWidth||794)/794));
+}
+window.addEventListener("resize",()=>{ if(anVista==="previa")anZoom(); });
+
+async function anImprimir(html){
+  const p=$("#an-palco"), doc=p&&p.querySelector(".anr-doc");
+  if(!html&&!doc){ toast("O relatório ainda está sendo montado."); return; }
+  const alvo=$("#an-imprimir");
+  alvo.innerHTML=html||doc.outerHTML;
+  const d=alvo.querySelector(".anr-doc"); if(d)d.style.zoom="";
+  await Promise.all([...alvo.querySelectorAll("img")].map(i=>i.decode?i.decode().catch(()=>{}):null));
+  let st=document.getElementById("an-pagina");
+  if(!st){ st=document.createElement("style"); st.id="an-pagina"; }
+  st.textContent="@media print{@page{size:A4 portrait;margin:0 12mm}}";
+  document.head.appendChild(st);
+  document.body.classList.add("an-imprimindo");
+  const limpar=()=>{ document.body.classList.remove("an-imprimindo"); st.remove(); alvo.innerHTML=""; window.removeEventListener("afterprint",limpar); };
+  window.addEventListener("afterprint",limpar);
+  setTimeout(()=>{ try{ window.print(); }catch(e){ toast("A impressão foi bloqueada aqui."); limpar(); } },150);
+}
+
+/* ─────────── eventos ─────────── */
+$("#painel-an").addEventListener("click",ev=>{
+  const t=ev.target, q=s=>t.closest(s);
+  let el;
+  if(el=q("[data-an-vista]")){ anVista=el.dataset.anVista; if(anVista!=="apontamento")anCarregar().then(()=>{ if(anVista===el.dataset.anVista)anRender(); }); anRender(); return; }
+  if(q("[data-an-novo]")){
+    if(anAtual&&!anAtual._novo)anApagarRascunho();
+    anAtual=anNovoRel(); anRender(); return;
+  }
+  if(q("[data-an-add]")){
+    const it=anNovoItem(); anAtual.itens.push(it); anGuardarRascunho(); anRender();
+    anTirarFoto(url=>{ it._fotoSrc=url; anGuardarRascunho(); anRender();
+      const ta=document.querySelector(`[data-an-campo="problema"][data-uid="${it.uid}"]`); if(ta){ ta.scrollIntoView({block:"center"}); ta.focus(); } });
+    return;
+  }
+  if(el=q("[data-an-foto]")){
+    const it=anAtual.itens.find(x=>x.uid===el.dataset.anFoto); if(!it)return;
+    anTirarFoto(url=>{ it._fotoSrc=url; anGuardarRascunho(); anRender(); }); return;
+  }
+  if(el=q("[data-an-remover]")){
+    const i=anAtual.itens.findIndex(x=>x.uid===el.dataset.anRemover); if(i<0)return;
+    const it=anAtual.itens[i];
+    if((it.problema||it.foto||it._fotoSrc)&&!confirm(`Tirar a anomalia ${i+1} do relatório?${anAtual._novo?"":" Ela só sai da base quando você salvar."}`))return;
+    anAtual.itens.splice(i,1); anGuardarRascunho(); anRender(); return;
+  }
+  if(q("[data-an-limpar]")){ const cv=$("#an-tela"); if(cv)ckLigarTela(cv); return; }
+  if(q("[data-an-assinar]")){
+    const cv=$("#an-tela");
+    if(!String(anAtual.responsavel||"").trim()){ toast("Escreva primeiro quem está fazendo o relatório."); const e=$("#an-resp"); if(e)e.focus(); return; }
+    if(!cv||!cv._riscou){ toast("Assine no quadro antes de confirmar."); return; }
+    anAtual.assinatura=cv.toDataURL("image/png"); anAtual.assinado_em=new Date().toISOString();
+    anGuardarRascunho(); anRender(); toast("Assinatura registrada. Salve o relatório para gravar."); return;
+  }
+  if(q("[data-an-refazer]")){ anAtual.assinatura=""; anAtual.assinado_em=null; anGuardarRascunho(); anRender(); return; }
+  if(q("#an-salvar")){ anSalvar(); return; }
+  if(q("[data-an-rel-atual]")){
+    if(!anAtual.itens.length){ toast("Adicione pelo menos uma anomalia."); return; }
+    anPrevia(anAtual,"apontamento"); return;
+  }
+  if(q("[data-an-descartar]")){
+    if(anAtual._novo){
+      if((anAtual.itens.length||anAtual.local)&&!confirm("Descartar este relatório que ainda não foi salvo?"))return;
+      anApagarRascunho(); anAtual=anNovoRel(); anRender();
+    }else anApagarRel(anAtual.id);
+    return;
+  }
+  if(el=q("[data-an-sit]")){ const v=el.dataset.anSit; anFiltro.sit=(anFiltro.sit===v&&v!=="abertas")?"abertas":v; anRenderPainel(); return; }
+  if(q("[data-an-atualizar]")){ anCarregar().then(()=>{ if(anVista==="painel")anRenderPainel(); toast("Painel atualizado."); }); return; }
+  if(q("[data-an-imp-painel]")){ anImprimir(anFolhaPainel()); return; }
+  if(el=q("[data-an-glocal]")){ anFiltro.local=el.dataset.anGlocal==="Sem local"?"":el.dataset.anGlocal; anFiltro.sit="todas"; anRenderPainel(); $("#an-plista").scrollIntoView({behavior:"smooth"}); return; }
+  if(el=q("[data-an-gresp]")){ anFiltro.resp=el.dataset.anGresp==="Sem responsável"?"":el.dataset.anGresp; anFiltro.sit="todas"; anRenderPainel(); $("#an-plista").scrollIntoView({behavior:"smooth"}); return; }
+  if(el=q("[data-an-concluir]")){ const [a,b]=el.dataset.anConcluir.split("|"); anAbrirConcluir(a,b); return; }
+  if(el=q("[data-an-reabrir]")){ const [a,b]=el.dataset.anReabrir.split("|"); anReabrir(a,b); return; }
+  if(el=q("[data-an-ver]")){ const r=anRels.find(x=>x.id===el.dataset.anVer); if(r)anPrevia(r,anVista); return; }
+  if(el=q("[data-an-editar]")){ anEditar(el.dataset.anEditar); return; }
+  if(el=q("[data-an-apagar]")){ anApagarRel(el.dataset.anApagar); return; }
+  if(q("[data-an-previa-voltar]")){ anVista=anVoltar; anRender(); return; }
+  if(q("[data-an-imprimir]")){ anImprimir(); return; }
+});
+$("#painel-an").addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.id==="an-f-busca"){ anFiltro.busca=t.value; anRenderPlista(); return; }
+  if(t.id==="an-h-busca"){ anHist.busca=t.value; const pos=t.selectionStart; anRenderHistorico(); const n=$("#an-h-busca"); if(n){ n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} } return; }
+  if(!anAtual)return;
+  if(t.dataset.anRel){ anAtual[t.dataset.anRel]=t.value; anGuardarRascunho(); return; }
+  if(t.dataset.anCampo){ const it=anAtual.itens.find(x=>x.uid===t.dataset.uid); if(it){ it[t.dataset.anCampo]=t.value; anGuardarRascunho(); } }
+});
+$("#painel-an").addEventListener("change",ev=>{
+  const t=ev.target;
+  if(t.id==="an-f-local"){ anFiltro.local=t.value; anRenderPainel(); return; }
+  if(t.id==="an-f-resp"){ anFiltro.resp=t.value; anRenderPainel(); return; }
+  if(t.id==="an-h-local"){ anHist.local=t.value; anRenderHistorico(); return; }
+  if(t.dataset.anCampo==="prazo")anRender();   /* atualiza o selo do prazo */
+});
+
+/* ─────────── ligações com o resto do app ─────────── */
+if(typeof PAINEIS!=="undefined"&&!PAINEIS.includes("an"))PAINEIS.push("an");
+const _abaAN=aba;
+aba=function(qual){ _abaAN(qual); if(qual==="an")anRender(); };
+$("#t-an").onclick=()=>{ anMostrar(anVista==="previa"?anVoltar:anVista); anCarregar().then(()=>{ if(!$("#painel-an").hidden&&anVista!=="previa"&&anVista!=="apontamento")anRender(); }); };
+const _abrirAppAN=abrirApp;
+abrirApp=async function(){ const r=await _abrirAppAN.apply(this,arguments); anCarregar().then(()=>{ if(!$("#painel-an").hidden&&anVista!=="previa"&&anVista!=="apontamento")anRender(); }); return r; };
+
+if(new URLSearchParams(location.search).get("aba")==="an")anMostrar("apontamento");
+if(conectado())anCarregar();
 
 </script>
 <script>
