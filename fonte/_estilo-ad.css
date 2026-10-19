@@ -128,3 +128,13 @@ body[data-aba="ad"] #bt-salvar,body[data-aba="ad"] #bt-pdf,body[data-aba="ad"] .
 .ad-hist tr.ad-h-aberto td:first-child{box-shadow:inset 4px 0 0 #c98a00}
 .ad-hist tr.ad-h-ok td:first-child{box-shadow:inset 4px 0 0 var(--verde)}
 .ad-hist td .anp-btn.mini{white-space:nowrap;margin:2px 0}
+
+/* mais fotos (19/10/2026) */
+.ad-mais{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ad-mini{position:relative;width:72px;height:54px;border:1px solid var(--linha);border-radius:6px;overflow:hidden;background:#1d1e1a}
+.ad-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.ad-mini-x{position:absolute;top:2px;right:2px;width:20px;height:20px;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:20px;padding:0;cursor:pointer}
+.ad-mais-bt{height:54px;padding:0 12px;border:1.5px dashed var(--linha-forte);border-radius:6px;background:var(--superficie-2);color:var(--texto-2);cursor:pointer;font:inherit;font-size:13px}
+.adr-mais-grade{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr 1fr;grid-auto-rows:1fr;gap:4mm}
+.adr-mais-grade .adr-fig figcaption{padding:1.5mm 2.5mm}
+.adr-mais-grade .adr-fig figcaption b{font-size:12px}

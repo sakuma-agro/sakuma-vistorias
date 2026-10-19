@@ -557,7 +557,7 @@ function ckRenderAssin(){
   const cx=$("#ck-assin"); if(!cx||!estado.modelo)return;
   const lista=ckAssinaturas();
   cx.innerHTML=`<h3 class="ck-assin-tt">Assinatura</h3>
-    <p class="ck-assin-ajuda">O responsável pela verificação assina com o dedo ou o mouse dentro do quadro e toca em <b>Assinar</b>. A data e a hora ficam gravadas junto da assinatura e saem no relatório.</p>
+    <p class="ck-assin-ajuda">Escreva o nome e toque em <b>Assinar</b>: abre uma tela só para a assinatura, com o dedo ou a caneta. A data e a hora ficam gravadas junto da assinatura e saem no relatório.</p>
     <div class="ck-assin-grade">${lista.map((a,i)=>a.em?`
       <div class="ck-assin feita">
         <div class="ck-assin-papel">${esc(a.papel)}</div>
@@ -569,14 +569,53 @@ function ckRenderAssin(){
       <div class="ck-assin">
         <div class="ck-assin-papel">${esc(a.papel)}</div>
         <input type="text" placeholder="Nome de quem assina" value="${esc(a.nome||"")}" data-as-nome="${i}">
-        <canvas class="ck-assin-tela" data-as-tela="${i}" aria-label="Quadro para assinar"></canvas>
-        <div class="ck-assin-bts">
-          <button type="button" class="bt bt-fantasma" data-as-limpar="${i}">Limpar</button>
-          <button type="button" class="btn" data-as-assinar="${i}">Assinar</button>
-        </div>
+        <button type="button" class="ck-assin-abrir" data-as-assinar="${i}">✍ Assinar</button>
       </div>`).join("")}</div>`;
-  cx.querySelectorAll("canvas[data-as-tela]").forEach(ckLigarTela);
 }
+/* Tela só para assinar (19/10/2026, pedido dele): o quadro pequeno dentro
+   do formulário era apertado no celular. Abre em tela cheia, com o quadro
+   ocupando o espaço todo; Confirmar devolve a imagem para quem chamou. */
+function abrirTelaAssinatura(op){
+  const velho=$("#tela-assin"); if(velho)velho.remove();
+  const ov=document.createElement("div"); ov.id="tela-assin"; ov.className="tela-assin";
+  ov.innerHTML=`<div class="tela-assin-topo"><div><b>${esc(op.titulo||"Assinatura")}</b>${op.nome?`<span>${esc(op.nome)}</span>`:""}</div>
+      <button type="button" class="bt bt-fantasma" data-ta-cancelar>Cancelar</button></div>
+    <div class="tela-assin-area"><canvas class="ck-assin-tela tela-assin-canvas" aria-label="Quadro para assinar"></canvas></div>
+    <p class="tela-assin-dica">Assine com o dedo ou a caneta dentro do quadro. No celular, vire o aparelho se quiser mais espaço.</p>
+    <div class="tela-assin-pe"><button type="button" class="bt bt-fantasma" data-ta-limpar>Limpar</button><button type="button" class="btn" data-ta-confirmar>Confirmar assinatura</button></div>`;
+  document.body.appendChild(ov); document.body.classList.add("tela-assin-aberta");
+  const cv=ov.querySelector("canvas"); ckLigarTela(cv);
+  const fechar=()=>{ ov.remove(); document.body.classList.remove("tela-assin-aberta"); };
+  ov.addEventListener("click",ev=>{
+    if(ev.target.closest("[data-ta-cancelar]")){ fechar(); return; }
+    if(ev.target.closest("[data-ta-limpar]")){ ckLigarTela(cv); return; }
+    if(ev.target.closest("[data-ta-confirmar]")){
+      if(!cv._riscou){ toast("Assine dentro do quadro antes de confirmar."); return; }
+      const img=recortarTraco(cv); fechar(); op.aoConfirmar(img);
+    }
+  });
+}
+window.abrirTelaAssinatura=abrirTelaAssinatura;
+/* recorta a imagem no traço (com folga), senão a assinatura feita num quadro
+   em pé sai minúscula dentro da caixa deitada do relatório */
+function recortarTraco(cv){
+  try{
+    const x=cv.getContext("2d"), d=x.getImageData(0,0,cv.width,cv.height).data;
+    let x0=cv.width,y0=cv.height,x1=-1,y1=-1;
+    for(let y=0;y<cv.height;y++)for(let i=0;i<cv.width;i++){ if(d[(y*cv.width+i)*4+3]>10){ if(i<x0)x0=i; if(i>x1)x1=i; if(y<y0)y0=y; if(y>y1)y1=y; } }
+    if(x1<0)return cv.toDataURL("image/png");
+    const f=Math.round(Math.max(12,(x1-x0)*0.06));
+    x0=Math.max(0,x0-f); y0=Math.max(0,y0-f); x1=Math.min(cv.width-1,x1+f); y1=Math.min(cv.height-1,y1+f);
+    let w=x1-x0+1, h=y1-y0+1;
+    /* caixa no mínimo 3:1 deitada, para a assinatura não virar um risco gigante */
+    const minW=h*2.2, minH=w/4;
+    const W=Math.round(Math.max(w,minW)), H=Math.round(Math.max(h,minH));
+    const c2=document.createElement("canvas"); c2.width=W; c2.height=H;
+    c2.getContext("2d").drawImage(cv,x0,y0,w,h,Math.round((W-w)/2),Math.round((H-h)/2),w,h);
+    return c2.toDataURL("image/png");
+  }catch(e){ return cv.toDataURL("image/png"); }
+}
+
 function ckLigarTela(cv){
   const dpr=window.devicePixelRatio||1, w=cv.clientWidth||300, h=cv.clientHeight||140;
   cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
@@ -594,18 +633,16 @@ function ckLigarTela(cv){
 }
 $("#painel-checklists").addEventListener("click",ev=>{
   const t=ev.target;
-  const lim=t.closest("[data-as-limpar]");
-  if(lim){ const cv=document.querySelector(`canvas[data-as-tela="${lim.dataset.asLimpar}"]`); if(cv)ckLigarTela(cv); return; }
   const ass=t.closest("[data-as-assinar]");
   if(ass){
     const i=Number(ass.dataset.asAssinar), a=ckAssinaturas()[i];
-    const cv=document.querySelector(`canvas[data-as-tela="${i}"]`);
     const nome=(document.querySelector(`[data-as-nome="${i}"]`)||{}).value||"";
     if(!nome.trim()){ toast("Escreva o nome de quem está assinando."); return; }
-    if(!cv||!cv._riscou){ toast("Assine dentro do quadro antes de confirmar."); return; }
-    a.nome=nome.trim(); a.img=cv.toDataURL("image/png"); a.em=new Date().toISOString();
-    ckRenderAssin(); salvar(); renderDoc();
-    toast("Assinado em "+ckQuando(a.em)+".");
+    abrirTelaAssinatura({titulo:a.papel||"Assinatura",nome:nome.trim(),aoConfirmar:img=>{
+      a.nome=nome.trim(); a.img=img; a.em=new Date().toISOString();
+      ckRenderAssin(); salvar(); renderDoc();
+      toast("Assinado em "+ckQuando(a.em)+".");
+    }});
     return;
   }
   const ref=t.closest("[data-as-refazer]");

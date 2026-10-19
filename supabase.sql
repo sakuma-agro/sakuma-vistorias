@@ -468,6 +468,9 @@ create table if not exists public.antes_depois (
   atualizado_em timestamptz not null default now()
 );
 
+-- Mais fotos (19/10/2026): lista de {lado, caminho} além da foto principal de cada lado.
+alter table public.antes_depois add column if not exists fotos_mais jsonb not null default '[]'::jsonb;
+
 create index if not exists antes_depois_data_idx on public.antes_depois (data_antes desc);
 
 drop trigger if exists antes_depois_atualizado on public.antes_depois;

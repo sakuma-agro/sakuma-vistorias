@@ -24,6 +24,26 @@ function adTemDepois(r){ return !!(r&&(r._depoisSrc||r.foto_depois)); }
 function adTemAntes(r){ return !!(r&&(r._antesSrc||r.foto_antes)); }
 function adNomePadrao(){ try{ return localStorage.getItem(AD_NOME)||""; }catch(e){ return ""; } }
 function adSituacao(r){ return adTemDepois(r)?"Concluído":"Aguardando o depois"; }
+/* Mais fotos (19/10/2026, pedido dele): além da foto principal de cada lado,
+   quantas quiser. Na base ficam em `fotos_mais` (lista de {lado, caminho});
+   as recém-tiradas ficam em `_mais` ({lado, src}) até salvar. */
+function adMais(r,lado){ return [...((r&&r.fotos_mais)||[]).filter(f=>f.lado===lado).map(f=>({caminho:f.caminho})), ...((r&&r._mais)||[]).filter(f=>f.lado===lado).map(f=>({src:f.src}))]; }
+function adMaisTotal(r){ return ((r&&r.fotos_mais)||[]).length+((r&&r._mais)||[]).length; }
+async function adMaisSrcDados(r,lado){
+  const out=[];
+  for(const f of adMais(r,lado)){ if(f.src){ out.push(f.src); continue; } const d=await adSrcDadosCaminho(f.caminho); if(d)out.push(d); }
+  return out;
+}
+async function adSrcDadosCaminho(cam){
+  if(!cam)return "";
+  if(adDados.has(cam))return adDados.get(cam);
+  const url=await urlDaFoto(cam); if(!url)return "";
+  try{
+    const b=await (await fetch(url)).blob();
+    const d=await new Promise((ok,erro)=>{const fr=new FileReader();fr.onload=()=>ok(fr.result);fr.onerror=erro;fr.readAsDataURL(b);});
+    adDados.set(cam,d); return d;
+  }catch(e){ return url; }
+}
 
 /* foto do registro: a recém-tirada (data URL) ou a da base (URL assinada) */
 async function adSrc(r,lado){
@@ -99,12 +119,27 @@ async function adSalvar(){
     const carimbo=Date.now();
     if(r._antesSrc){ r.foto_antes=await enviarFoto(`${r.id}/antes-${carimbo}.jpg`,r._antesSrc); adDados.set(r.foto_antes,r._antesSrc); }
     if(r._depoisSrc){ r.foto_depois=await enviarFoto(`${r.id}/depois-${carimbo}.jpg`,r._depoisSrc); adDados.set(r.foto_depois,r._depoisSrc); }
+    /* mais fotos: sobe as novas, tira da lista as apagadas */
+    r.fotos_mais=(r.fotos_mais||[]).filter(f=>!(r._maisApagar||[]).includes(f.caminho));
+    const novas=r._mais||[];
+    for(let k=0;k<novas.length;k++){
+      const f=novas[k];
+      const cam=await enviarFoto(`${r.id}/mais-${f.lado}-${carimbo}-${k+1}.jpg`,f.src);
+      adDados.set(cam,f.src); r.fotos_mais.push({lado:f.lado,caminho:cam});
+    }
+    r._mais=[];
+    for(const cam of (r._maisApagar||[])){
+      try{ if(typeof window.apagarFoto==="function")await window.apagarFoto(cam);
+           else{ const h=await comToken(); await fetch(`${cfg.url}/storage/v1/object/${encodeURI("vistorias/"+cam)}`,{method:"DELETE",headers:h}); } }catch(e){}
+    }
+    r._maisApagar=[];
     if(r.autor_nome){ try{ localStorage.setItem(AD_NOME,r.autor_nome); }catch(e){} }
     const corpo={
       titulo:String(r.titulo).trim(), unidade:r.unidade||null, local:r.local||null, descricao:r.descricao||null,
       responsavel:r.responsavel||null, autor:r.autor_nome||r.autor||(sessao&&sessao.email)||null,
       data_antes:r.data_antes||null, foto_antes:r.foto_antes||null,
-      data_depois:adTemDepois(r)?(r.data_depois||adHoje()):null, foto_depois:r.foto_depois||null, obs_depois:r.obs_depois||null
+      data_depois:adTemDepois(r)?(r.data_depois||adHoje()):null, foto_depois:r.foto_depois||null, obs_depois:r.obs_depois||null,
+      fotos_mais:r.fotos_mais||[]
     };
     let salvo;
     if(r._novo){
@@ -113,7 +148,8 @@ async function adSalvar(){
     }else{
       salvo=await rest(`antes_depois?id=eq.${encodeURIComponent(r.id)}`,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify(corpo)});
     }
-    const novo=(salvo&&salvo[0])||{...r,...corpo};
+    let novo=(salvo&&salvo[0])||{...r,...corpo};
+    if(novo&&!novo.fotos_mais)novo={...novo,fotos_mais:corpo.fotos_mais};
     if(!salvo||!salvo.length)throw new Error("A base não confirmou a gravação. Confira se você tem acesso a este registro.");
     adRegs=[novo,...adRegs.filter(x=>x.id!==novo.id)];
     try{ localStorage.setItem(AD_CACHE,JSON.stringify(adRegs)); }catch(e){}
@@ -143,7 +179,7 @@ async function adApagar(){
   try{
     const d=await rest(`antes_depois?id=eq.${encodeURIComponent(r.id)}`,{method:"DELETE",headers:{Prefer:"return=representation"}});
     if(!d||!d.length)throw new Error("Só quem lançou ou um administrador pode apagar.");
-    for(const cam of [r.foto_antes,r.foto_depois].filter(Boolean)){
+    for(const cam of [r.foto_antes,r.foto_depois,...(r.fotos_mais||[]).map(f=>f.caminho)].filter(Boolean)){
       try{ if(typeof window.apagarFoto==="function")await window.apagarFoto(cam);
            else{ const h=await comToken(); await fetch(`${cfg.url}/storage/v1/object/${encodeURI("vistorias/"+cam)}`,{method:"DELETE",headers:h}); } }catch(e){}
     }
@@ -157,7 +193,7 @@ async function adApagar(){
 function adCopia(r){ const c=JSON.parse(JSON.stringify(r)); delete c._sujo; return c; }
 function adNovo(){
   return {id:uuid(),_novo:true,codigo:"",titulo:"",unidade:"",local:"",descricao:"",responsavel:"",
-    autor_nome:adNomePadrao(),data_antes:adHoje(),foto_antes:"",data_depois:"",foto_depois:"",obs_depois:""};
+    autor_nome:adNomePadrao(),data_antes:adHoje(),foto_antes:"",data_depois:"",foto_depois:"",obs_depois:"",fotos_mais:[],_mais:[]};
 }
 
 /* ─────────── telas ─────────── */
@@ -234,7 +270,7 @@ function adRenderGrade(){
       <div class="ad-info">
         <span class="ref">${esc([r.codigo,r.unidade].filter(Boolean).join(" · ")||"—")}</span>
         <h3>${esc(r.titulo)}</h3>
-        <span class="info">${esc([r.local,adData(r.data_antes)+(dep&&r.data_depois?" → "+adData(r.data_depois):"")].filter(Boolean).join(" · "))}</span>
+        <span class="info">${esc([r.local,adData(r.data_antes)+(dep&&r.data_depois?" → "+adData(r.data_depois):"")].filter(Boolean).join(" · "))}${adMaisTotal(r)?` · <b>+${adMaisTotal(r)} foto${adMaisTotal(r)>1?"s":""}</b>`:""}</span>
       </div>
       <div class="pe">
         ${dep?"":`<button class="bt bt-forte" type="button" data-ad-depois="${esc(r.id)}">📷 Tirar o depois</button>`}
@@ -300,6 +336,10 @@ function adRenderForm(){
         ${adTemAntes(r)&&q==="antes"||dep&&q==="depois"?`<img alt="Foto do ${q}" data-ad-src="${q}"><span class="ad-trocar">Trocar foto</span>`
           :`<span class="ad-vazia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Tirar foto do ${q}</span>`}
       </button>
+      <div class="ad-mais">
+        ${adMais(r,q).map((f,i)=>`<span class="ad-mini"><img alt="" ${f.src?`src="${esc(f.src)}"`:`data-ad-mini="${esc(f.caminho)}"`}><button type="button" class="ad-mini-x" data-ad-mais-tirar="${q}" data-ad-mais-i="${i}" aria-label="Tirar esta foto">×</button></span>`).join("")}
+        <button type="button" class="ad-mais-bt" data-ad-mais="${q}">＋ Mais fotos</button>
+      </div>
       <div class="campo"><label for="ad-d-${q}">Data do ${q}</label><input type="date" id="ad-d-${q}" data-ad="data_${q}" value="${esc(r["data_"+q]||"")}"></div>
       ${q==="depois"?`<div class="campo"><label for="ad-obs">O que foi feito</label><textarea id="ad-obs" data-ad="obs_depois" placeholder="Ex.: tampa trocada e lixeira lavada">${esc(r.obs_depois||"")}</textarea></div>`:""}
     </div>`;
@@ -330,6 +370,33 @@ function adRenderForm(){
     const im=alvo.querySelector(`img[data-ad-src="${q}"]`); if(!im)return;
     const u=await adSrc(r,q); if(u)im.src=u; else im.replaceWith(Object.assign(document.createElement("span"),{className:"ad-vazia",textContent:"Foto indisponível sem rede"}));
   });
+  alvo.querySelectorAll("img[data-ad-mini]").forEach(async im=>{
+    const cam=im.dataset.adMini; const u=adDados.get(cam)||await urlDaFoto(cam);
+    if(u)im.src=u; else im.alt="sem rede";
+  });
+}
+
+/* mais fotos: aceita várias de uma vez */
+function adMaisFotos(q){
+  const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*"; inp.multiple=true;
+  inp.onchange=()=>{
+    const fs=[...(inp.files||[])]; if(!fs.length||!adAtual)return;
+    let n=0;
+    const prox=()=>{
+      const f=fs.shift();
+      if(!f){ adGuardarRascunho(); adRenderForm(); toast(`${n} foto${n>1?"s":""} do ${q} adicionada${n>1?"s":""}. Salve para registrar.`); return; }
+      comprimir(f,url=>{ if(adAtual){ (adAtual._mais=adAtual._mais||[]).push({lado:q,src:url}); n++; } prox(); });
+    };
+    prox();
+  };
+  inp.click();
+}
+function adMaisTirar(q,i){
+  const r=adAtual; if(!r)return;
+  const lista=adMais(r,q), f=lista[i]; if(!f)return;
+  if(f.caminho){ r.fotos_mais=(r.fotos_mais||[]).filter(x=>x.caminho!==f.caminho); (r._maisApagar=r._maisApagar||[]).push(f.caminho); }
+  else{ const k=(r._mais||[]).findIndex(x=>x.lado===q&&x.src===f.src); if(k>=0)r._mais.splice(k,1); }
+  adGuardarRascunho(); adRenderForm();
 }
 
 function adAbrir(id){
@@ -378,7 +445,23 @@ function adFolha(r,fA,fD,n,total,tag){
   </section>`;
 }
 
-function adCapa(regs,fotos,total,pag,nPags,ini){
+/* folha extra: as fotos a mais de um registro (até 6 por folha, 3 colunas) */
+const AD_MAIS_POR_FOLHA=6;
+function adFolhaMais(r,fotos,n,total,tag,parte,nPartes){
+  return `<section class="adr-folha">
+    <header class="adr-cab">
+      <div><h1>${esc(r.titulo||"Antes e depois")} · mais fotos${nPartes>1?` (${parte} de ${nPartes})`:""}</h1>
+        <p>${esc(["Antes e Depois",r.codigo,adSituacao(r)].filter(Boolean).join(" · "))}</p></div>
+      <img src="${LOGO}" alt="SAKUMA Agronegócios">
+    </header>
+    <div class="adr-mais-grade">${fotos.map(f=>`<figure class="adr-fig ${f.lado}">
+      <figcaption><b>${f.lado==="antes"?"ANTES":"DEPOIS"}</b><span>${esc(adData(f.lado==="antes"?r.data_antes:r.data_depois))}</span></figcaption>
+      <div class="adr-img"><img src="${esc(f.src)}" alt=""></div></figure>`).join("")}</div>
+    <footer class="adr-rod"><span>SAKUMA Agronegócios · ${esc(tag)} · Folha ${n} de ${total}</span>${typeof docLop==="function"?docLop():""}</footer>
+  </section>`;
+}
+
+function adCapa(regs,fotos,total,pag,nPags,ini,folhaDe){
   const ok=regs.filter(adTemDepois).length;
   const unids=[...new Set(regs.map(r=>r.unidade).filter(Boolean))];
   const datas=regs.map(r=>r.data_antes).filter(Boolean).sort();
@@ -397,7 +480,7 @@ function adCapa(regs,fotos,total,pag,nPags,ini){
       <td><div class="adr-mini">${fotos[i][0]?`<img src="${esc(fotos[i][0])}" alt="">`:""}</div></td>
       <td><div class="adr-mini">${fotos[i][1]?`<img src="${esc(fotos[i][1])}" alt="">`:"—"}</div></td>
       <td><b>${esc(r.titulo)}</b></td><td>${esc([r.unidade,r.local].filter(Boolean).join(" · "))||"—"}</td>
-      <td>${esc(adData(r.data_antes))||"—"}</td><td>${adTemDepois(r)?esc(adData(r.data_depois)):"aguardando"}</td><td>${nPags+i+1}</td></tr>`;}).join("")}
+      <td>${esc(adData(r.data_antes))||"—"}</td><td>${adTemDepois(r)?esc(adData(r.data_depois)):"aguardando"}</td><td>${folhaDe?folhaDe[i]:nPags+i+1}</td></tr>`;}).join("")}
     </tbody></table>
     <footer class="adr-rod"><span>SAKUMA Agronegócios · Galeria Antes e Depois · emitida em ${esc(adData(adHoje()))} · Folha ${pag} de ${total}</span>${typeof docLop==="function"?docLop():""}</footer>
   </section>`;
@@ -405,12 +488,26 @@ function adCapa(regs,fotos,total,pag,nPags,ini){
 
 async function adMontarDoc(regs,galeria){
   const fotos=await Promise.all(regs.map(async r=>[await adSrcDados(r,"antes"),adTemDepois(r)?await adSrcDados(r,"depois"):""]));
+  /* as fotos a mais de cada registro, em folhas de até 6 */
+  const mais=await Promise.all(regs.map(async r=>{
+    const a=(await adMaisSrcDados(r,"antes")).map(src=>({lado:"antes",src}));
+    const d=adTemDepois(r)?(await adMaisSrcDados(r,"depois")).map(src=>({lado:"depois",src})):[];
+    const todas=[...a,...d], folhas=[];
+    for(let i=0;i<todas.length;i+=AD_MAIS_POR_FOLHA)folhas.push(todas.slice(i,i+AD_MAIS_POR_FOLHA));
+    return folhas;
+  }));
   const nPags=galeria?Math.ceil(regs.length/AD_POR_INDICE):0;
-  const total=regs.length+nPags;
+  const total=regs.length+nPags+mais.reduce((s,f)=>s+f.length,0);
   const tag="Galeria Antes e Depois";
   let html="";
-  for(let p=0;p<nPags;p++)html+=adCapa(regs,fotos,total,p+1,nPags,p*AD_POR_INDICE);
-  html+=regs.map((r,i)=>adFolha(r,fotos[i][0],fotos[i][1],nPags+i+1,total,galeria?tag:(r.codigo||"Antes e Depois"))).join("");
+  const folhaDe=[]; { let f=nPags; regs.forEach((r,i)=>{ folhaDe.push(++f); f+=mais[i].length; }); }
+  for(let p=0;p<nPags;p++)html+=adCapa(regs,fotos,total,p+1,nPags,p*AD_POR_INDICE,folhaDe);
+  let n=nPags;
+  regs.forEach((r,i)=>{
+    const t=galeria?tag:(r.codigo||"Antes e Depois");
+    html+=adFolha(r,fotos[i][0],fotos[i][1],++n,total,t);
+    mais[i].forEach((f,k)=>{ html+=adFolhaMais(r,f,++n,total,t,k+1,mais[i].length); });
+  });
   return `<div class="adr-doc">${html}</div>`;
 }
 
@@ -544,6 +641,8 @@ $("#painel-ad").addEventListener("click",ev=>{
   if(el=q("[data-ad-rel]")){ const r=adRegs.find(x=>x.id===el.dataset.adRel); if(r)adPrevia([r],false,"lista"); return; }
   if(el=q("[data-ad-abrir]")){ adAbrir(el.dataset.adAbrir); return; }
   if(q("[data-ad-voltar]")){ adMostrar("lista"); return; }
+  if(el=q("[data-ad-mais-tirar]")){ adMaisTirar(el.dataset.adMaisTirar,+el.dataset.adMaisI); return; }
+  if(el=q("[data-ad-mais]")){ adMaisFotos(el.dataset.adMais); return; }
   if(el=q("[data-ad-tirar]")){ adTirarFoto(el.dataset.adTirar); return; }
   if(q("#ad-salvar")){ adSalvar(); return; }
   if(q("[data-ad-apagar]")){ adApagar(); return; }

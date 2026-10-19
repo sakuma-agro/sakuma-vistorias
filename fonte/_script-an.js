@@ -260,9 +260,8 @@ function anRenderApontamento(){
       ${r.assinatura?`<div class="ck-assin feita"><img src="${esc(r.assinatura)}" alt="Assinatura">
           <span><b>${esc(r.responsavel||"")}</b> · assinado em ${esc(anQuando(r.assinado_em))}</span>
           <div class="ck-assin-bts"><button class="bt bt-fantasma" type="button" data-an-refazer>Refazer</button></div></div>`
-        :`<p class="ck-assin-ajuda">Assine com o dedo ou o mouse no quadro e toque em Confirmar. Sai no fim do relatório, com o nome de quem está fazendo.</p>
-          <div class="ck-assin"><canvas class="ck-assin-tela" id="an-tela" aria-label="Quadro para assinar"></canvas>
-          <div class="ck-assin-bts"><button class="bt bt-fantasma" type="button" data-an-limpar>Limpar</button><button class="bt bt-forte" type="button" data-an-assinar>Confirmar assinatura</button></div></div>`}
+        :`<p class="ck-assin-ajuda">Toque em <b>Assinar</b>: abre uma tela só para a assinatura, com o dedo ou a caneta. Sai no fim do relatório, com o nome de quem está fazendo.</p>
+          <button class="ck-assin-abrir" type="button" data-an-assinar>✍ Assinar</button>`}
     </div>
 
     <div class="ad-acoes an-acoes">
@@ -790,13 +789,13 @@ $("#painel-an").addEventListener("click",ev=>{
     if((it.problema||it.foto||it._fotoSrc)&&!confirm(`Tirar a anomalia ${i+1} do relatório?${anAtual._novo?"":" Ela só sai da base quando você salvar."}`))return;
     anAtual.itens.splice(i,1); anGuardarRascunho(); anRender(); return;
   }
-  if(q("[data-an-limpar]")){ const cv=$("#an-tela"); if(cv)ckLigarTela(cv); return; }
   if(q("[data-an-assinar]")){
-    const cv=$("#an-tela");
     if(!String(anAtual.responsavel||"").trim()){ toast("Escreva primeiro quem está fazendo o relatório."); const e=$("#an-resp"); if(e)e.focus(); return; }
-    if(!cv||!cv._riscou){ toast("Assine no quadro antes de confirmar."); return; }
-    anAtual.assinatura=cv.toDataURL("image/png"); anAtual.assinado_em=new Date().toISOString();
-    anGuardarRascunho(); anRender(); toast("Assinatura registrada. Salve o relatório para gravar."); return;
+    abrirTelaAssinatura({titulo:"Assinatura de quem fez os apontamentos",nome:anAtual.responsavel,aoConfirmar:img=>{
+      anAtual.assinatura=img; anAtual.assinado_em=new Date().toISOString();
+      anGuardarRascunho(); anRender(); toast("Assinatura registrada. Salve o relatório para gravar.");
+    }});
+    return;
   }
   if(q("[data-an-refazer]")){ anAtual.assinatura=""; anAtual.assinado_em=null; anGuardarRascunho(); anRender(); return; }
   if(q("#an-salvar")){ anSalvar(); return; }
