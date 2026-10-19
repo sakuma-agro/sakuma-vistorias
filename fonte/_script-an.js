@@ -717,7 +717,14 @@ async function anMontarDoc(r){
   </div>`;
 }
 
+let anPreviaRel=null;
+/* nome do arquivo ao salvar em PDF: "ANOM-012 - Anomalias - 19-10-2026" */
+function anNomeArquivo(r){
+  const data=anData((r&&r.data)||anHoje()).replace(/\//g,"-");
+  return [r&&r.codigo?r.codigo:"Relatório","Anomalias",data].join(" - ");
+}
 async function anPrevia(r,voltar){
+  anPreviaRel=r;
   anVoltar=voltar||anVista; anVista="previa"; anRender();
   const C=$("#an-corpo");
   C.innerHTML=`<div class="secao-topo ad-previa-topo">
@@ -748,7 +755,12 @@ async function anImprimir(html){
   st.textContent="@media print{@page{size:A4 portrait;margin:0 12mm}}";
   document.head.appendChild(st);
   document.body.classList.add("an-imprimindo");
-  const limpar=()=>{ document.body.classList.remove("an-imprimindo"); st.remove(); alvo.innerHTML=""; window.removeEventListener("afterprint",limpar); };
+  /* nome do PDF: dentro do LOP o navegador usa o título da janela de fora, então troca nas duas */
+  const docs=[document]; try{ if(window.top!==window&&window.top.document)docs.push(window.top.document); }catch(e){}
+  const titulosAntes=docs.map(d=>d.title);
+  const novoTitulo=html?"Painel de Anomalias - "+anData(anHoje()).replace(/\//g,"-"):anNomeArquivo(anPreviaRel);
+  docs.forEach(d=>{ d.title=novoTitulo; });
+  const limpar=()=>{ document.body.classList.remove("an-imprimindo"); st.remove(); alvo.innerHTML=""; docs.forEach((d,i)=>{ d.title=titulosAntes[i]; }); window.removeEventListener("afterprint",limpar); };
   window.addEventListener("afterprint",limpar);
   setTimeout(()=>{ try{ window.print(); }catch(e){ toast("A impressão foi bloqueada aqui."); limpar(); } },150);
 }
