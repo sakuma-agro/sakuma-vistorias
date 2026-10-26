@@ -464,3 +464,11 @@ textarea.ck-tp-campo{resize:vertical}
 .tela-assin-dica{margin:0;font-size:12.5px;color:#7d8175;text-align:center}
 .tela-assin-pe{display:flex;gap:10px;justify-content:flex-end}
 body.tela-assin-aberta{overflow:hidden}
+
+/* Câmera ou galeria (26/10/2026) */
+.origem-foto{position:fixed;inset:0;z-index:10001;background:rgba(27,35,43,.45);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.origem-foto-folha{width:100%;max-width:420px;background:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;font-family:Arial,Helvetica,sans-serif;color:#51534A;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.origem-foto-folha b{font-size:16px;color:#744F28;text-align:center;margin-bottom:2px}
+.origem-foto-folha button{font:inherit;font-size:16px;padding:14px;border-radius:12px;border:1px solid #84BD00;background:#F1F7DF;color:#3E5A00;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
+.origem-foto-folha button span{font-size:20px}
+.origem-foto-folha .origem-foto-cancelar{background:#fff;border-color:#d6d8d0;color:#51534A;font-weight:400}

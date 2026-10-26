@@ -1582,3 +1582,47 @@ try{
     canal.postMessage({tipo:"cheguei",de:eu});
   }
 }catch(e){}
+
+/* ── Câmera ou galeria (26/10/2026) ──
+   Pedido do Guilherme: em qualquer módulo do Vistorias, ao pôr foto, escolher
+   entre abrir a câmera e pegar da galeria. Todos os módulos criam um
+   <input type=file accept=image/*> e chamam .click(); aqui o .click() desses
+   campos passa antes por uma folha com as duas opções. Só em celular/tablet
+   (toque): no computador abre direto o seletor de arquivos. Tudo dentro da
+   função para não repetir nome com o resto do app. */
+(function(){
+  const clicarOriginal = HTMLInputElement.prototype.click;
+  const ehFoto = el => el.type === "file" && /image/.test(el.accept || "") && !el.dataset.origemOk;
+  const temToque = () => { try{ return matchMedia("(pointer:coarse)").matches; }catch(e){ return false; } };
+
+  function escolherOrigem(varias, aoEscolher){
+    const fundo = document.createElement("div");
+    fundo.className = "origem-foto";
+    fundo.innerHTML = `<div class="origem-foto-folha" role="dialog" aria-label="Adicionar foto">
+        <b>Adicionar foto${varias ? "s" : ""}</b>
+        <button type="button" data-origem="camera"><span aria-hidden="true">📷</span> Abrir a câmera</button>
+        <button type="button" data-origem="galeria"><span aria-hidden="true">🖼️</span> Escolher da galeria</button>
+        <button type="button" class="origem-foto-cancelar" data-origem="">Cancelar</button>
+      </div>`;
+    const fechar = () => fundo.remove();
+    fundo.addEventListener("click", ev => {
+      ev.stopPropagation();
+      const b = ev.target.closest("[data-origem]");
+      if(!b){ if(ev.target === fundo) fechar(); return; }
+      fechar();
+      if(b.dataset.origem) aoEscolher(b.dataset.origem);
+    });
+    document.body.appendChild(fundo);
+  }
+
+  HTMLInputElement.prototype.click = function(){
+    if(!ehFoto(this) || !temToque()) return clicarOriginal.call(this);
+    const inp = this;
+    escolherOrigem(inp.multiple, origem => {
+      inp.dataset.origemOk = "1";
+      if(origem === "camera") inp.setAttribute("capture", "environment");
+      else inp.removeAttribute("capture");
+      clicarOriginal.call(inp);
+    });
+  };
+})();
