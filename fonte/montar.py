@@ -117,7 +117,7 @@ if '--lop' in sys.argv:
     # Dentro do LOP o Vistorias usa o ícone da área (família de ícones do LOP,
     # 14/10/2026). O app avulso continua com o gr-vs-192.
     assert corpo_lop.count('src="icons/gr-vs-192.v1.png"') == 2
-    corpo_lop = corpo_lop.replace('src="icons/gr-vs-192.v1.png"', 'src="icons/area-vistorias.v1.svg"')
+    corpo_lop = corpo_lop.replace('src="icons/gr-vs-192.v1.png"', 'src="icons/area-vistorias.v2.svg"')
     open(os.path.join(destino, 'index.html'), 'w', encoding='utf-8').write(
         f'<!doctype html>\n<html lang="pt-BR" data-theme="light">\n<head>\n{cab_lop}\n<style>{estilo}</style>\n</head>\n<body>\n{corpo_lop}</body>\n</html>\n')
     open(os.path.join(destino, 'lop-antes.js'), 'w', encoding='utf-8').write(
