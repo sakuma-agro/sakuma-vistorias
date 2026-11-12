@@ -111,8 +111,11 @@ if '--lop' in sys.argv:
     cab_lop = '\n'.join(l for l in CABECA.split('\n')
                         if 'manifest' not in l and 'rel="icon"' not in l and 'apple-touch-icon' not in l)
     corpo_lop = corpo.replace('<script src="config.js"></script>', '<script src="lop-antes.js"></script>', 1)
+    # ?v= com a VERSAO_VIST do LOP (js/areas.js): o Pages guarda os .js por 10 min
+    # e o vistorias.js / lop-depois.js novos não chegavam junto com o index novo.
+    vv = re.search(r"VERSAO_VIST\s*=\s*'([^']+)'", open(os.path.join(lop, 'js/areas.js'), encoding='utf-8').read()).group(1)
     corpo_lop = corpo_lop.replace('<script src="vistorias.js"></script>',
-                                  '<script src="vistorias.js"></script>\n<script src="lop-depois.js"></script>', 1)
+                                  f'<script src="vistorias.js?v={vv}"></script>\n<script src="lop-depois.js?v={vv}"></script>', 1)
     assert corpo_lop.count('lop-antes.js') == 1 and corpo_lop.count('lop-depois.js') == 1
     # Dentro do LOP o Vistorias usa o ícone da área (família de ícones do LOP,
     # 14/10/2026). O app avulso continua com o gr-vs-192.
